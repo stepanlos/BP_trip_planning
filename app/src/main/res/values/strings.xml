@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Plánovač tras</string>
+    <string name="title_home">Home</string>
+    <string name="title_map">Mapa</string>
+    <string name="title_planning">Plánování</string>
+    <string name="title_history">Historie</string>
+    <string name="title_done">Dokončené</string>
+</resources>
