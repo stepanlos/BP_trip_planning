@@ -1,0 +1,30 @@
+[
+  {
+    "id": "place1",
+    "name": "Park A",
+    "timeRequirement": 120,
+    "mowingCountPerYear": 4,
+    "workCost": 3000,
+    "visitDates": ["2024-03-01", "2024-05-15"],
+    "description": "First place to mow",
+    "distancesToOthers": [
+      { "id": "place2", "distance": 2000 }
+    ],
+    "latitude": 50.087451,
+    "longitude": 14.420671
+  },
+  {
+    "id": "place2",
+    "name": "Park B",
+    "timeRequirement": 90,
+    "mowingCountPerYear": 3,
+    "workCost": 2000,
+    "visitDates": ["2024-04-10"],
+    "description": "Second place to mow",
+    "distancesToOthers": [
+      { "id": "place1", "distance": 2000 }
+    ],
+    "latitude": 50.075538,
+    "longitude": 14.437800
+  }
+]

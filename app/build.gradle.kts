@@ -36,6 +36,9 @@ android {
 
 dependencies {
 
+    implementation(libs.osmdroid.android)
+    implementation(libs.gson)
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

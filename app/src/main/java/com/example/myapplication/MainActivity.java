@@ -9,6 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+import org.osmdroid.config.Configuration;
+import android.app.Application;
+
 public class MainActivity extends AppCompatActivity {
 
 private ActivityMainBinding binding;
