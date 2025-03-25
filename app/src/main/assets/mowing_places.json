@@ -2,7 +2,7 @@
   {
     "id": "1",
     "name": "Sepekov",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2495,
     "visitDates": [
@@ -363,13 +363,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2000",
+    "area": 2000,
     "locked": 0
   },
   {
     "id": "2",
     "name": "Protivín",
-    "timeRequirement": "1,5",
+    "timeRequirement": 1.5,
     "mowingCountPerYear": 2,
     "workCost": 8726,
     "visitDates": [
@@ -732,13 +732,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2000",
+    "area": 2000,
     "locked": 0
   },
   {
     "id": "3",
     "name": "Nosetín",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 4623,
     "visitDates": [
@@ -1099,13 +1099,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1400",
+    "area": 1400,
     "locked": 0
   },
   {
     "id": "4",
     "name": "Zběšičky",
-    "timeRequirement": "0",
+    "timeRequirement": 0.0,
     "mowingCountPerYear": 2,
     "workCost": 4807,
     "visitDates": [
@@ -1466,13 +1466,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2000",
+    "area": 2000,
     "locked": 0
   },
   {
     "id": "5",
     "name": "Strakonice",
-    "timeRequirement": "2,5",
+    "timeRequirement": 2.5,
     "mowingCountPerYear": 3,
     "workCost": 3705,
     "visitDates": [
@@ -1835,13 +1835,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2200",
+    "area": 2200,
     "locked": 1
   },
   {
     "id": "6",
     "name": "Hoštice u Volyně",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 2,
     "workCost": 1892,
     "visitDates": [
@@ -2203,13 +2203,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "300",
+    "area": 300,
     "locked": 0
   },
   {
     "id": "7",
     "name": "Čkyně",
-    "timeRequirement": "2,5",
+    "timeRequirement": 2.5,
     "mowingCountPerYear": 3,
     "workCost": 4696,
     "visitDates": [
@@ -2570,13 +2570,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2000",
+    "area": 2000,
     "locked": 0
   },
   {
     "id": "8",
     "name": "Dub",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 5563,
     "visitDates": [
@@ -2938,13 +2938,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1500",
+    "area": 1500,
     "locked": 0
   },
   {
     "id": "9",
     "name": "Praskolesy",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 3,
     "workCost": 9838,
     "visitDates": [
@@ -3305,13 +3305,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1150",
+    "area": 1150,
     "locked": 0
   },
   {
     "id": "10",
     "name": "Hostomice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 5935,
     "visitDates": [
@@ -3673,13 +3673,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1900",
+    "area": 1900,
     "locked": 0
   },
   {
     "id": "11",
     "name": "Mořina",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 5642,
     "visitDates": [
@@ -4040,13 +4040,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "3300",
+    "area": 3300,
     "locked": 0
   },
   {
     "id": "12",
     "name": "Hostouň nový",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 8786,
     "visitDates": [
@@ -4407,13 +4407,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1350",
+    "area": 1350,
     "locked": 0
   },
   {
     "id": "13",
     "name": "Hostouň Starý",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 9789,
     "visitDates": [
@@ -4775,13 +4775,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1200",
+    "area": 1200,
     "locked": 0
   },
   {
     "id": "14",
     "name": "Zlonice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 717,
     "visitDates": [
@@ -5142,13 +5142,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1400",
+    "area": 1400,
     "locked": 1
   },
   {
     "id": "15",
     "name": "Spomyšl",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8145,
     "visitDates": [
@@ -5510,13 +5510,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2950",
+    "area": 2950,
     "locked": 0
   },
   {
     "id": "16",
     "name": "Bosyně",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 5651,
     "visitDates": [
@@ -5879,13 +5879,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "400",
+    "area": 400,
     "locked": 0
   },
   {
     "id": "17",
     "name": "Písková Lhota",
-    "timeRequirement": "3,5",
+    "timeRequirement": 3.5,
     "mowingCountPerYear": 2,
     "workCost": 4331,
     "visitDates": [
@@ -6248,13 +6248,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2100",
+    "area": 2100,
     "locked": 0
   },
   {
     "id": "18",
     "name": "Pětikozly",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 5625,
     "visitDates": [
@@ -6615,13 +6615,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "700",
+    "area": 700,
     "locked": 0
   },
   {
     "id": "19",
     "name": "Hořice",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 3210,
     "visitDates": [
@@ -6984,13 +6984,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "3600",
+    "area": 3600,
     "locked": 1
   },
   {
     "id": "20",
     "name": "Hradec Králové - Pouchov",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 2088,
     "visitDates": [
@@ -7352,13 +7352,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "3300",
+    "area": 3300,
     "locked": 1
   },
   {
     "id": "21",
     "name": "České Budějovice",
-    "timeRequirement": "8",
+    "timeRequirement": 8.0,
     "mowingCountPerYear": 3,
     "workCost": 8222,
     "visitDates": [
@@ -7719,13 +7719,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "7000",
+    "area": 7000,
     "locked": 1
   },
   {
     "id": "22",
     "name": "Všemyslice",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 3988,
     "visitDates": [
@@ -8087,13 +8087,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "3000",
+    "area": 3000,
     "locked": 1
   },
   {
     "id": "23",
     "name": "Mirotice",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6011,
     "visitDates": [
@@ -8456,13 +8456,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "3500",
+    "area": 3500,
     "locked": 1
   },
   {
     "id": "24",
     "name": "Přelouč",
-    "timeRequirement": "1,5",
+    "timeRequirement": 1.5,
     "mowingCountPerYear": 3,
     "workCost": 8692,
     "visitDates": [
@@ -8823,13 +8823,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1500",
+    "area": 1500,
     "locked": 0
   },
   {
     "id": "25",
     "name": "Kostelec nad Labem",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 3809,
     "visitDates": [
@@ -9192,13 +9192,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1700",
+    "area": 1700,
     "locked": 1
   },
   {
     "id": "26",
     "name": "Mirovice",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6417,
     "visitDates": [
@@ -9561,13 +9561,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "4100",
+    "area": 4100,
     "locked": 0
   },
   {
     "id": "27",
     "name": "Vodňany",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 1910,
     "visitDates": [
@@ -9928,13 +9928,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1608",
+    "area": 1608,
     "locked": 0
   },
   {
     "id": "28",
     "name": "Kovářov",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7306,
     "visitDates": [
@@ -10296,13 +10296,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "2090",
+    "area": 2090,
     "locked": 0
   },
   {
     "id": "29",
     "name": "Čichtice",
-    "timeRequirement": "1,5",
+    "timeRequirement": 1.5,
     "mowingCountPerYear": 2,
     "workCost": 9828,
     "visitDates": [
@@ -10665,13 +10665,13 @@
     ],
     "caretaker": "ROZ",
     "centre": "702",
-    "area": "1439",
+    "area": 1439,
     "locked": 0
   },
   {
     "id": "30",
     "name": "Neveklov",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 3,
     "workCost": 4896,
     "visitDates": [
@@ -11033,13 +11033,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "2200",
+    "area": 2200,
     "locked": 0
   },
   {
     "id": "31",
     "name": "Měchnov",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 3824,
     "visitDates": [
@@ -11402,13 +11402,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "3000",
+    "area": 3000,
     "locked": 0
   },
   {
     "id": "32",
     "name": "Neustupov",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6167,
     "visitDates": [
@@ -11770,13 +11770,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "3000",
+    "area": 3000,
     "locked": 0
   },
   {
     "id": "33",
     "name": "Vlašim",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6071,
     "visitDates": [
@@ -12139,13 +12139,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1950",
+    "area": 1950,
     "locked": 0
   },
   {
     "id": "34",
     "name": "Načeradec",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7924,
     "visitDates": [
@@ -12506,13 +12506,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1000",
+    "area": 1000,
     "locked": 0
   },
   {
     "id": "35",
     "name": "Pravonín",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 9127,
     "visitDates": [
@@ -12875,13 +12875,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1600",
+    "area": 1600,
     "locked": 0
   },
   {
     "id": "36",
     "name": "Babčice",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 6489,
     "visitDates": [
@@ -13244,13 +13244,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1500",
+    "area": 1500,
     "locked": 0
   },
   {
     "id": "37",
     "name": "Přehořov",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2795,
     "visitDates": [
@@ -13613,13 +13613,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "3000",
+    "area": 3000,
     "locked": 0
   },
   {
     "id": "38",
     "name": "Prudice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 3791,
     "visitDates": [
@@ -13981,13 +13981,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "3500",
+    "area": 3500,
     "locked": 0
   },
   {
     "id": "39",
     "name": "Odolena Voda",
-    "timeRequirement": "5",
+    "timeRequirement": 5.0,
     "mowingCountPerYear": 2,
     "workCost": 7612,
     "visitDates": [
@@ -14350,13 +14350,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "5000",
+    "area": 5000,
     "locked": 0
   },
   {
     "id": "40",
     "name": "Lysá nad Labem",
-    "timeRequirement": "1,5",
+    "timeRequirement": 1.5,
     "mowingCountPerYear": 3,
     "workCost": 5872,
     "visitDates": [
@@ -14717,13 +14717,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "2200",
+    "area": 2200,
     "locked": 0
   },
   {
     "id": "41",
     "name": "Křinec",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 8123,
     "visitDates": [
@@ -15086,13 +15086,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "3100",
+    "area": 3100,
     "locked": 0
   },
   {
     "id": "42",
     "name": "Zbraslavice",
-    "timeRequirement": "5",
+    "timeRequirement": 5.0,
     "mowingCountPerYear": 2,
     "workCost": 2297,
     "visitDates": [
@@ -15454,13 +15454,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "4000",
+    "area": 4000,
     "locked": 0
   },
   {
     "id": "43",
     "name": "Malešov",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 6462,
     "visitDates": [
@@ -15821,13 +15821,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "4300",
+    "area": 4300,
     "locked": 1
   },
   {
     "id": "44",
     "name": "Pístina",
-    "timeRequirement": "0,5",
+    "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 5443,
     "visitDates": [
@@ -16188,13 +16188,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1000",
+    "area": 1000,
     "locked": 1
   },
   {
     "id": "45",
     "name": "Černovice u Tábora",
-    "timeRequirement": "0,75",
+    "timeRequirement": 0.75,
     "mowingCountPerYear": 2,
     "workCost": 2265,
     "visitDates": [
@@ -16557,13 +16557,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1800",
+    "area": 1800,
     "locked": 0
   },
   {
     "id": "46",
     "name": "Třeboň",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 5726,
     "visitDates": [
@@ -16926,13 +16926,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "2173",
+    "area": 2173,
     "locked": 1
   },
   {
     "id": "47",
     "name": "Městec Králové",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 7806,
     "visitDates": [
@@ -17295,13 +17295,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "812",
+    "area": 812,
     "locked": 1
   },
   {
     "id": "48",
     "name": "Votice",
-    "timeRequirement": "3,5",
+    "timeRequirement": 3.5,
     "mowingCountPerYear": 3,
     "workCost": 2978,
     "visitDates": [
@@ -17664,13 +17664,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "2340",
+    "area": 2340,
     "locked": 1
   },
   {
     "id": "49",
     "name": "Kovanice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6633,
     "visitDates": [
@@ -18031,13 +18031,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1457",
+    "area": 1457,
     "locked": 1
   },
   {
     "id": "50",
     "name": "Markvarec",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8682,
     "visitDates": [
@@ -18398,13 +18398,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1223",
+    "area": 1223,
     "locked": 0
   },
   {
     "id": "51",
     "name": "Olšany u Dačic",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 3289,
     "visitDates": [
@@ -18766,13 +18766,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "906",
+    "area": 906,
     "locked": 0
   },
   {
     "id": "52",
     "name": "Dolní Bolíkov",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8087,
     "visitDates": [
@@ -19133,13 +19133,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "1700",
+    "area": 1700,
     "locked": 0
   },
   {
     "id": "53",
     "name": "Velký Pěčín",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 1723,
     "visitDates": [
@@ -19500,13 +19500,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "809",
+    "area": 809,
     "locked": 0
   },
   {
     "id": "54",
     "name": "Kardašova Řečice",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 3787,
     "visitDates": [
@@ -19869,13 +19869,13 @@
     ],
     "caretaker": "HEŘ",
     "centre": "703",
-    "area": "929",
+    "area": 929,
     "locked": 0
   },
   {
     "id": "55",
     "name": "Bohostice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 4944,
     "visitDates": [
@@ -20237,13 +20237,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "56",
     "name": "Březnice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 1082,
     "visitDates": [
@@ -20605,13 +20605,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "57",
     "name": "Čelina",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 4904,
     "visitDates": [
@@ -20973,13 +20973,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "58",
     "name": "Český Krumlov",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 9808,
     "visitDates": [
@@ -21340,13 +21340,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "59",
     "name": "Příbram",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 2057,
     "visitDates": [
@@ -21707,13 +21707,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "60",
     "name": "Třebotov",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7306,
     "visitDates": [
@@ -22075,13 +22075,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "61",
     "name": "Zalužany",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2788,
     "visitDates": [
@@ -22443,13 +22443,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "62",
     "name": "Zavržice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7690,
     "visitDates": [
@@ -22810,13 +22810,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "63",
     "name": "Nová Cerekev",
-    "timeRequirement": "",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 3677,
     "visitDates": [
@@ -23179,13 +23179,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "704",
-    "area": "3370",
+    "area": 3370,
     "locked": 1
   },
   {
     "id": "64",
     "name": "Blovice",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 9102,
     "visitDates": [
@@ -23546,13 +23546,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "65",
     "name": "Loučim",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3898,
     "visitDates": [
@@ -23914,13 +23914,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "66",
     "name": "Dlouhý Újezd",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6365,
     "visitDates": [
@@ -24282,13 +24282,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "67",
     "name": "Domažlice",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 4525,
     "visitDates": [
@@ -24651,13 +24651,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "68",
     "name": "Drmoul",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 3156,
     "visitDates": [
@@ -25020,13 +25020,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "69",
     "name": "Hřešihlavy",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 1,
     "workCost": 1711,
     "visitDates": [
@@ -25388,13 +25388,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "70",
     "name": "Horní Lomany",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3084,
     "visitDates": [
@@ -25757,13 +25757,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "71",
     "name": "Janovice",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7558,
     "visitDates": [
@@ -26126,13 +26126,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "72",
     "name": "Kořen",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8918,
     "visitDates": [
@@ -26493,13 +26493,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "včas",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "73",
     "name": "Kožlany",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 9103,
     "visitDates": [
@@ -26860,13 +26860,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "74",
     "name": "Malá Šitboř",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 7850,
     "visitDates": [
@@ -27228,13 +27228,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "75",
     "name": "Město Touškov",
-    "timeRequirement": "4",
+    "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 2187,
     "visitDates": [
@@ -27597,13 +27597,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "76",
     "name": "Mutěnín",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 947,
     "visitDates": [
@@ -27966,13 +27966,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "77",
     "name": "Nečtiny",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 1,
     "workCost": 3130,
     "visitDates": [
@@ -28335,13 +28335,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "78",
     "name": "Nové Sedliště",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3492,
     "visitDates": [
@@ -28704,13 +28704,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "79",
     "name": "Nýrsko",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 765,
     "visitDates": [
@@ -29071,13 +29071,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 1
   },
   {
     "id": "80",
     "name": "Osek",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8476,
     "visitDates": [
@@ -29438,13 +29438,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "81",
     "name": "Pňovany",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 8075,
     "visitDates": [
@@ -29805,13 +29805,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "82",
     "name": "Pořejov",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 6884,
     "visitDates": [
@@ -30172,13 +30172,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "83",
     "name": "Rabštejn nad Střelou",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 1933,
     "visitDates": [
@@ -30540,13 +30540,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "84",
     "name": "Radnice",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 2939,
     "visitDates": [
@@ -30909,13 +30909,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "85",
     "name": "Slatina",
-    "timeRequirement": "1",
+    "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8351,
     "visitDates": [
@@ -31278,13 +31278,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "86",
     "name": "Strážov",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 9931,
     "visitDates": [
@@ -31647,13 +31647,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "87",
     "name": "Terešov",
-    "timeRequirement": "3",
+    "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7839,
     "visitDates": [
@@ -32014,13 +32014,13 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   },
   {
     "id": "88",
     "name": "Všeruby",
-    "timeRequirement": "2",
+    "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8506,
     "visitDates": [
@@ -32383,7 +32383,7 @@
     ],
     "caretaker": "MALÝ",
     "centre": "102",
-    "area": "",
+    "area": 999999,
     "locked": 0
   }
 ]

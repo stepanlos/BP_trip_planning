@@ -6,7 +6,7 @@ public class MowingPlace {
 
     private String id;
     private String name;
-    private int timeRequirement;
+    private double timeRequirement;
     private int mowingCountPerYear;
     private int workCost;
     private List<String> visitDates;
@@ -14,6 +14,10 @@ public class MowingPlace {
     private List<DistanceEntry> distancesToOthers;
     private double latitude;
     private double longitude;
+    private String caretaker;
+    private String centre;
+    private int area;
+    private int locked;
 
     public static class DistanceEntry {
         private String id;
@@ -37,6 +41,38 @@ public class MowingPlace {
     // getters and setters for all fields
 
 
+    public String getCentre() {
+        return centre;
+    }
+
+    public void setCentre(String centre) {
+        this.centre = centre;
+    }
+
+    public String getCaretaker() {
+        return caretaker;
+    }
+
+    public void setCaretaker(String caretaker) {
+        this.caretaker = caretaker;
+    }
+
+    public int getArea() {
+        return area;
+    }
+
+    public void setArea(int area) {
+        this.area = area;
+    }
+
+    public int getLocked() {
+        return locked;
+    }
+
+    public void setLocked(int locked) {
+        this.locked = locked;
+    }
+
     public String getId() {
         return id;
     }
@@ -53,11 +89,11 @@ public class MowingPlace {
         this.name = name;
     }
 
-    public int getTimeRequirement() {
+    public double getTimeRequirement() {
         return timeRequirement;
     }
 
-    public void setTimeRequirement(int timeRequirement) {
+    public void setTimeRequirement(double timeRequirement) {
         this.timeRequirement = timeRequirement;
     }
 
