@@ -9,8 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
-import org.osmdroid.config.Configuration;
-import android.app.Application;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,6 +21,9 @@ private ActivityMainBinding binding;
 
      binding = ActivityMainBinding.inflate(getLayoutInflater());
      setContentView(binding.getRoot());
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
