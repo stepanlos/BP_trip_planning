@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Editable Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPlaceName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etPlaceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Time Requirement -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTimeRequirement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etTimeRequirement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/time_requirement_minutes"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Mowing Count Per Year -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilMowingCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etMowingCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/mowing_count_per_year"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Work Cost -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilWorkCost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etWorkCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/work_cost"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Visit Dates (as comma separated string) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilVisitDates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etVisitDates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/visit_dates_yyyy_mm_dd_comma_separated" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Description -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Latitude -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLatitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etLatitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/latitude"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Longitude -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilLongitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etLongitude"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/longitude"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</ScrollView>

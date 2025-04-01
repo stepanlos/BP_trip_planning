@@ -22,7 +22,7 @@ public class MapViewModel extends AndroidViewModel {
         loadData();
     }
 
-    private void loadData() {
+    void loadData() {
         List<MowingPlace> places = repository.loadMowingPlaces(getApplication());
         placesLiveData.setValue(places);
     }
