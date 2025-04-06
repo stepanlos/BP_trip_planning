@@ -18,7 +18,7 @@ import java.util.List;
 public class MowingPlacesRepository {
 
     private static final String TAG = "MowingPlacesRepository";
-    private static final String JSON_FILE_NAME = "mowing_places.json";
+    private static final String JSON_FILE_NAME = "mowing_places_test.json";
 
     //highest id in loaded places
     private int highestId = 0;
@@ -27,7 +27,6 @@ public class MowingPlacesRepository {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
             InputStream is;
-            //TODO podmínka jestli je třeba načítat z assets nebo z interního úložiště
             if (file.exists()) {
                 // Load from internal storage
                 is = new FileInputStream(file);

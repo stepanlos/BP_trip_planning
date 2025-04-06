@@ -15,4 +15,8 @@
     <string name="title_done">Dokončené</string>
     <string name="visit_dates_yyyy_mm_dd_comma_separated">Data návštěvy (YYYY-MM-DD, oddělené čárkou)</string>
     <string name="work_cost">Cena práce</string>
+    <string name="caretaker">Správce</string>
+    <string name="centre">Středisko</string>
+    <string name="area">Plocha\n</string>
+    <string name="locked">Uzamčeno</string>
 </resources>

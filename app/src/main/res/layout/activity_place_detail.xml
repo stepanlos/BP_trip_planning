@@ -41,6 +41,20 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Editable area -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/area" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Editable Mowing Count Per Year -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilMowingCount"
@@ -53,21 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/mowing_count_per_year"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Editable Work Cost -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilWorkCost"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintEnabled="true">
-
-            <EditText
-                android:id="@+id/etWorkCost"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/work_cost"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,6 +127,65 @@
                 android:hint="@string/longitude"
                 android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable Work Cost -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilWorkCost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etWorkCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/work_cost"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+        <!-- Editable caretaker -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCaretaker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etCaretaker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/caretaker" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Editable centre -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCentre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="true">
+
+            <EditText
+                android:id="@+id/etCentre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/centre" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <!-- Editable locked (switch button) -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swLocked"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/locked" />
+
+
+
 
     </LinearLayout>
 </ScrollView>

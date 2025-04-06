@@ -3,6 +3,7 @@ package com.example.myapplication.ui.detail;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,10 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private EditText etDescription;
     private EditText etLatitude;
     private EditText etLongitude;
+    private EditText etCaretaker;
+    private EditText etCentre;
+    private EditText etArea;
+    private SwitchMaterial swLocked;
 
     private MowingPlace currentPlace;
     private List<MowingPlace> allPlaces;
@@ -58,6 +64,12 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         etLatitude = findViewById(R.id.etLatitude);
         etLongitude = findViewById(R.id.etLongitude);
+        etCaretaker = findViewById(R.id.etCaretaker);
+        etCentre = findViewById(R.id.etCentre);
+        etArea = findViewById(R.id.etArea);
+        swLocked = findViewById(R.id.swLocked);
+
+
 
         // Get the place ID from the Intent extras
         String placeId = getIntent().getStringExtra(EXTRA_PLACE_ID);
@@ -97,6 +109,12 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etDescription.setText(currentPlace.getDescription());
         etLatitude.setText(String.valueOf(currentPlace.getLatitude()));
         etLongitude.setText(String.valueOf(currentPlace.getLongitude()));
+        etCaretaker.setText(currentPlace.getCaretaker());
+        etCentre.setText(currentPlace.getCentre());
+        etArea.setText(String.valueOf(currentPlace.getArea()));
+        //log the locked status
+        Log.d("PlaceDetailActivityLock", "Locked status: " + currentPlace.getLocked());
+        swLocked.setChecked(currentPlace.getLocked() == 1);
     }
 
     // Inflate the menu with the Save action
@@ -166,6 +184,15 @@ public class PlaceDetailActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             currentPlace.setLongitude(0);
         }
+        currentPlace.setCaretaker(etCaretaker.getText().toString().trim());
+        currentPlace.setCentre(etCentre.getText().toString().trim());
+        try {
+            currentPlace.setArea(Integer.parseInt(etArea.getText().toString().trim()));
+        } catch (NumberFormatException e) {
+            currentPlace.setArea(0);
+        }
+        //TODO Nefunguje přepínání zámku
+        currentPlace.setLocked(swLocked.isChecked() ? 1 : 0);
 
         // Update the list in memory (allPlaces list already contains currentPlace by reference)
         // Save the updated list back to JSON using the repository
