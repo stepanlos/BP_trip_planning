@@ -1,17 +1,18 @@
 <resources>
     <string name="app_name">Plánovač tras</string>
+    <string name="detail_title">Detail místa</string>
+    <string name="description">Popis</string>
+    <string name="latitude">Zeměpisná šířka</string>
+    <string name="longitude">Zeměpisná délka</string>
+    <string name="mowing_count_per_year">Počet sečí za rok</string>
+    <string name="place_id">ID místa</string>
+    <string name="save">Uložit</string>
+    <string name="time_requirement_minutes">Časová náročnost (hodiny)</string>
     <string name="title_home">Home</string>
     <string name="title_map">Mapa</string>
     <string name="title_planning">Plánování</string>
     <string name="title_history">Historie</string>
     <string name="title_done">Dokončené</string>
-    <string name="save">Uložit</string>
-    <string name="place_id">ID místa</string>
-    <string name="time_requirement_minutes">Časová náročnost (hodiny)</string>
-    <string name="mowing_count_per_year">Počet sečí za rok</string>
-    <string name="work_cost">Cena práce</string>
     <string name="visit_dates_yyyy_mm_dd_comma_separated">Data návštěvy (YYYY-MM-DD, oddělené čárkou)</string>
-    <string name="description">Popis</string>
-    <string name="latitude">Zeměpisná šířka</string>
-    <string name="longitude">Zeměpisná délka</string>
+    <string name="work_cost">Cena práce</string>
 </resources>

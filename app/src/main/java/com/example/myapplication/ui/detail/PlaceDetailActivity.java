@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,19 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PLACE_ID = "extra_place_id";
-
-    private TextView tvPlaceId;
+    
     private EditText etPlaceName;
     private EditText etTimeRequirement;
     private EditText etMowingCount;
@@ -177,10 +171,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         // Save the updated list back to JSON using the repository
         boolean success = repository.saveMowingPlaces(this, allPlaces);
         if (success) {
-                    String message = "cost: " + currentPlace.getWorkCost();
-
-
-            Toast.makeText(this, message /*"Změny uloženy"*/, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Změny uloženy", Toast.LENGTH_SHORT).show();
             // Optionally, return the updated data back to previous screen via setResult()
             setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
             finish();

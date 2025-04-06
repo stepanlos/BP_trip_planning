@@ -20,10 +20,14 @@ public class MowingPlacesRepository {
     private static final String TAG = "MowingPlacesRepository";
     private static final String JSON_FILE_NAME = "mowing_places.json";
 
+    //highest id in loaded places
+    private int highestId = 0;
+
     public List<MowingPlace> loadMowingPlaces(Context context) {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
             InputStream is;
+            //TODO podmínka jestli je třeba načítat z assets nebo z interního úložiště
             if (file.exists()) {
                 // Load from internal storage
                 is = new FileInputStream(file);
@@ -41,34 +45,24 @@ public class MowingPlacesRepository {
 
             Gson gson = new Gson();
             Type listType = new TypeToken<List<MowingPlace>>() {}.getType();
-            List<MowingPlace> mowingPlaces = gson.fromJson(jsonString, listType);
+            List<MowingPlace> places = gson.fromJson(jsonString, listType);
 
-            // Optional: log a value for debugging
-            for (MowingPlace place : mowingPlaces) {
-                if (Integer.parseInt(place.getId()) == 58) {
-                    Log.d(TAG, "Work cost for place with ID 58: " + place.getWorkCost());
-                    break;
+            // Find the highest ID in the loaded places
+            for (MowingPlace place : places) {
+                if (Integer.parseInt(place.getId()) > highestId) {
+                    highestId =  Integer.parseInt(place.getId());
                 }
             }
-            return mowingPlaces;
+
+            return places;
         } catch (IOException e) {
             Log.e(TAG, "Error reading JSON file", e);
             return Collections.emptyList();
         }
     }
 
-    // TODO: Implement saveMowingPlaces(...) if you want to write back to JSON
-
     // Saves the provided list of places into internal storage as JSON.
     public boolean saveMowingPlaces(Context context, List<MowingPlace> places) {
-        //find place with id 58 and print its workCost using toast
-//        for (MowingPlace place : places) {
-//            if (Integer.parseInt(place.getId()) == 58) {
-//                Log.d(TAG, "Work cost for place with ID 58: " + place.getWorkCost());
-//                break;
-//            }
-//        }
-
         try {
             Gson gson = new Gson();
             String jsonString = gson.toJson(places);
