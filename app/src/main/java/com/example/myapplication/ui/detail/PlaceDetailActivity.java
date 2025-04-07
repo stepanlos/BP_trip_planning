@@ -1,10 +1,8 @@
 package com.example.myapplication.ui.detail;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -17,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
+import com.example.myapplication.util.MatrixApiHelper;
+import com.example.myapplication.util.NetworkHelper;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -26,6 +26,9 @@ import java.util.List;
 public class PlaceDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PLACE_ID = "extra_place_id";
+
+    public static final String EXTRA_NEW_PLACE = "extra_new_place";
+
 
     private EditText etPlaceName;
     private EditText etTimeRequirement;
@@ -74,30 +77,40 @@ public class PlaceDetailActivity extends AppCompatActivity {
         swLocked = findViewById(R.id.swLocked);
         btnDelete = findViewById(R.id.btnDelete); // Initialize the delete button
 
-        // Get the place ID from the Intent extras
-        String placeId = getIntent().getStringExtra(EXTRA_PLACE_ID);
-        if (placeId == null) {
-            Toast.makeText(this, "Nebylo zadáno žádné ID místa", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
 
-        // Find the place in the list
-        for (MowingPlace place : allPlaces) {
-            if (place.getId().equals(placeId)) {
-                currentPlace = place;
-                break;
+        boolean isNewPlace = getIntent().getBooleanExtra(EXTRA_NEW_PLACE, false);
+        if (isNewPlace) {
+            // In creation mode, create a new MowingPlace
+            currentPlace = new MowingPlace();
+            // Assign a new ID: new ID = highestId + 1 from repository (see step 4)
+            currentPlace.setId(String.valueOf(repository.getNextId(this)));
+            // Optionally, clear fields or set defaults
+        } else {
+            // Get the place ID from the Intent extras
+            String placeId = getIntent().getStringExtra(EXTRA_PLACE_ID);
+            if (placeId == null) {
+                Toast.makeText(this, "Nebylo zadáno žádné ID místa", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
             }
-        }
 
-        if (currentPlace == null) {
-            Toast.makeText(this, "Místo nebylo nalezeno", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+            // Find the place in the list
+            for (MowingPlace place : allPlaces) {
+                if (place.getId().equals(placeId)) {
+                    currentPlace = place;
+                    break;
+                }
+            }
 
-        // Populate the fields with current place details
-        populateFields();
+            if (currentPlace == null) {
+                Toast.makeText(this, "Místo nebylo nalezeno", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+
+            // Populate the fields with current place details
+            populateFields();
+        }
 
         // Set up the delete button with a confirmation dialog
         btnDelete.setOnClickListener(v -> new AlertDialog.Builder(PlaceDetailActivity.this)
@@ -198,13 +211,63 @@ public class PlaceDetailActivity extends AppCompatActivity {
         }
         currentPlace.setLocked(swLocked.isChecked() ? 1 : 0);
 
-        boolean success = repository.saveMowingPlaces(this, allPlaces);
-        if (success) {
-            Toast.makeText(this, "Změny uloženy", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
-            finish();
+        // Validate mandatory fields for creation mode
+        boolean isNewPlace = getIntent().getBooleanExtra(EXTRA_NEW_PLACE, false);
+        if (isNewPlace) {
+            if (TextUtils.isEmpty(etLatitude.getText().toString().trim()) ||
+                    TextUtils.isEmpty(etLongitude.getText().toString().trim()) ||
+                    TextUtils.isEmpty(etTimeRequirement.getText().toString().trim()) ||
+                    TextUtils.isEmpty(etMowingCount.getText().toString().trim()) ||
+                    TextUtils.isEmpty(etPlaceName.getText().toString().trim())) {
+                Toast.makeText(this, "Jméno,poloha, časová náročnost a počet sečí jsou povinné položky.", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        // If creation mode, call the Matrix API to compute distances
+        if (isNewPlace) {
+            // Check internet connectivity before calling the API
+            if (!NetworkHelper.isConnected(this)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Žádné připojení k internetu")
+                        .setMessage("Pokud chcete přidat nové místo, připojte se k internetu.")
+                        .setPositiveButton("OK", null)
+                        .show();
+                return;
+            }
+            // Call MatrixApiHelper to update distances
+            MatrixApiHelper.updateDistances(this, currentPlace, allPlaces, new MatrixApiHelper.MatrixApiCallback() {
+                @Override
+                public void onSuccess() {
+                    // Add the new place to the list (allPlaces) and save repository
+                    allPlaces.add(currentPlace);
+                    boolean success = repository.saveMowingPlaces(PlaceDetailActivity.this, allPlaces);
+                    if (success) {
+                        Toast.makeText(PlaceDetailActivity.this, "Nové místo bylo uloženo", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
+                        finish();
+                    } else {
+                        Toast.makeText(PlaceDetailActivity.this, "Chyba při ukládání nového místa", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(PlaceDetailActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
         } else {
-            Toast.makeText(this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
+            // Existing edit mode: update currentPlace and save
+            boolean success = repository.saveMowingPlaces(this, allPlaces);
+            if (success) {
+                Toast.makeText(this, "Změny byly uloženy", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
+                finish();
+            } else {
+                Toast.makeText(this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

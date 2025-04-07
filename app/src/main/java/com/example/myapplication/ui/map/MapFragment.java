@@ -60,15 +60,20 @@ public class MapFragment extends Fragment {
 
         // Link MapView from layout
         mapView = binding.osmMapView;
-        // Activation of multi touch control (zoom gestures, rotation, etc.)
         mapView.setMultiTouchControls(true);
-
-        // Zoom and position (approx. center of Czech Republic)
         mapView.getController().setZoom(7.0);
         mapView.getController().setCenter(new GeoPoint(49.8175, 15.4730));
 
-        // Observing the data from the ViewModel
+        // Observe places and update markers
         mapViewModel.getPlaces().observe(getViewLifecycleOwner(), this::updateMapMarkers);
+
+        // Set up FloatingActionButton for adding a new place
+        binding.fabAddPlace.setOnClickListener(v -> {
+            // Launch PlaceDetailActivity in "create mode"
+            Intent intent = new Intent(getContext(), PlaceDetailActivity.class);
+            intent.putExtra(PlaceDetailActivity.EXTRA_NEW_PLACE, true);
+            detailActivityLauncher.launch(intent);
+        });
 
         return root;
     }

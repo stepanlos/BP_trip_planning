@@ -20,9 +20,6 @@ public class MowingPlacesRepository {
     private static final String TAG = "MowingPlacesRepository";
     private static final String JSON_FILE_NAME = "mowing_places_test.json";
 
-    //highest id in loaded places
-    private int highestId = 0;
-
     public List<MowingPlace> loadMowingPlaces(Context context) {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
@@ -44,16 +41,8 @@ public class MowingPlacesRepository {
 
             Gson gson = new Gson();
             Type listType = new TypeToken<List<MowingPlace>>() {}.getType();
-            List<MowingPlace> places = gson.fromJson(jsonString, listType);
 
-            // Find the highest ID in the loaded places
-            for (MowingPlace place : places) {
-                if (Integer.parseInt(place.getId()) > highestId) {
-                    highestId =  Integer.parseInt(place.getId());
-                }
-            }
-
-            return places;
+            return gson.fromJson(jsonString, listType);
         } catch (IOException e) {
             Log.e(TAG, "Error reading JSON file", e);
             return Collections.emptyList();
@@ -65,6 +54,8 @@ public class MowingPlacesRepository {
         try {
             Gson gson = new Gson();
             String jsonString = gson.toJson(places);
+            //log the JSON string
+            Log.d(TAG, "Saving JSON: \n" + jsonString);
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(jsonString.getBytes("UTF-8"));
@@ -77,4 +68,23 @@ public class MowingPlacesRepository {
             return false;
         }
     }
+
+    public int getNextId(Context context) {
+        // Reload places (or use cached highestId if available)
+        List<MowingPlace> places = loadMowingPlaces(context);
+        int maxId = 0;
+        for (MowingPlace place : places) {
+            int idInt = 0;
+            try {
+                idInt = Integer.parseInt(place.getId());
+            } catch (NumberFormatException e) {
+                // Ignore non-integer IDs
+            }
+            if (idInt > maxId) {
+                maxId = idInt;
+            }
+        }
+        return maxId + 1;
+    }
+
 }

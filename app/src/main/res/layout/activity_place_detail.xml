@@ -61,7 +61,8 @@
                     android:id="@+id/etArea"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/area" />
+                    android:hint="@string/area"
+                    android:inputType="number"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Editable Mowing Count Per Year -->
