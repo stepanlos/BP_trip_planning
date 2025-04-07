@@ -2,22 +2,133 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.planning.PlanningFragment" >
+    android:layout_marginBottom="55dp">
 
-    <TextView
-        android:id="@+id/text_planning"
-        android:layout_width="match_parent"
+    <!-- Start Location Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilStartLocation"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:hint="Start Location (lat,lon)"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <EditText
+            android:id="@+id/etStartLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Start Time Constraint Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilStartTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Start Time (minutes)"
+        app:layout_constraintTop_toBottomOf="@id/tilStartLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <EditText
+            android:id="@+id/etStartTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- End Location Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEndLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="End Location (lat,lon)"
+        app:layout_constraintTop_toBottomOf="@id/tilStartTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <EditText
+            android:id="@+id/etEndLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- End Time Constraint Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEndTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="End Time (minutes)"
+        app:layout_constraintTop_toBottomOf="@id/tilEndLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <EditText
+            android:id="@+id/etEndTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Speed Multiplier Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSpeedMultiplier"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Speed Multiplier"
+        app:layout_constraintTop_toBottomOf="@id/tilEndTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <EditText
+            android:id="@+id/etSpeedMultiplier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Checkbox: Add extra cemeteries if time remains -->
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbAddExtra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add extra cemeteries if time remains"
+        app:layout_constraintTop_toBottomOf="@id/tilSpeedMultiplier"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="8dp"/>
+
+    <!-- Generate Route Button -->
+    <Button
+        android:id="@+id/btnGenerateRoute"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Generate Route"
+        app:layout_constraintTop_toBottomOf="@id/cbAddExtra"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"/>
+
+    <!-- Map Preview (OSM MapView) -->
+    <org.osmdroid.views.MapView
+        android:id="@+id/planningMapView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/btnGenerateRoute"
+        app:layout_constraintBottom_toTopOf="@id/btnOpenMapycZ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"/>
+
+    <!-- Open in Mapy.cz Button -->
+    <Button
+        android:id="@+id/btnOpenMapycZ"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/url_link_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
