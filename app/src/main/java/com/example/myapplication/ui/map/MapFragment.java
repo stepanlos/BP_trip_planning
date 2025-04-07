@@ -46,6 +46,8 @@ public class MapFragment extends Fragment {
             }
     );
 
+    //TODO licence attribution
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

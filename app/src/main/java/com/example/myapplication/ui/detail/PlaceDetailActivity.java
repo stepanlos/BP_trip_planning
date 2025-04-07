@@ -1,14 +1,17 @@
 package com.example.myapplication.ui.detail;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
@@ -17,12 +20,13 @@ import com.example.myapplication.data.MowingPlacesRepository;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_PLACE_ID = "extra_place_id";
-    
+
     private EditText etPlaceName;
     private EditText etTimeRequirement;
     private EditText etMowingCount;
@@ -35,6 +39,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private EditText etCentre;
     private EditText etArea;
     private SwitchMaterial swLocked;
+    private Button btnDelete; // New delete button
 
     private MowingPlace currentPlace;
     private List<MowingPlace> allPlaces;
@@ -55,7 +60,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         allPlaces = repository.loadMowingPlaces(this);
 
         // Find views by ID
-        //tvPlaceId = findViewById(R.id.tvPlaceId);
         etPlaceName = findViewById(R.id.etPlaceName);
         etTimeRequirement = findViewById(R.id.etTimeRequirement);
         etMowingCount = findViewById(R.id.etMowingCount);
@@ -68,8 +72,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etCentre = findViewById(R.id.etCentre);
         etArea = findViewById(R.id.etArea);
         swLocked = findViewById(R.id.swLocked);
-
-
+        btnDelete = findViewById(R.id.btnDelete); // Initialize the delete button
 
         // Get the place ID from the Intent extras
         String placeId = getIntent().getStringExtra(EXTRA_PLACE_ID);
@@ -95,16 +98,22 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
         // Populate the fields with current place details
         populateFields();
+
+        // Set up the delete button with a confirmation dialog
+        btnDelete.setOnClickListener(v -> new AlertDialog.Builder(PlaceDetailActivity.this)
+                .setTitle("Potvrzení")
+                .setMessage("Opravdu chcete odstranit toto místo?")
+                .setPositiveButton("Ano", (dialog, which) -> deleteCurrentPlace())
+                .setNegativeButton("Ne", null)
+                .show());
     }
 
     // Populate the UI with the details of the current place
     private void populateFields() {
-        //tvPlaceId.setText(currentPlace.getId());
         etPlaceName.setText(currentPlace.getName());
         etTimeRequirement.setText(String.valueOf(currentPlace.getTimeRequirement()));
         etMowingCount.setText(String.valueOf(currentPlace.getMowingCountPerYear()));
         etWorkCost.setText(String.valueOf(currentPlace.getWorkCost()));
-        // Convert list of visit dates to comma-separated string
         etVisitDates.setText(TextUtils.join(", ", currentPlace.getVisitDates()));
         etDescription.setText(currentPlace.getDescription());
         etLatitude.setText(String.valueOf(currentPlace.getLatitude()));
@@ -112,8 +121,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etCaretaker.setText(currentPlace.getCaretaker());
         etCentre.setText(currentPlace.getCentre());
         etArea.setText(String.valueOf(currentPlace.getArea()));
-        //log the locked status
-        Log.d("PlaceDetailActivityLock", "Locked status: " + currentPlace.getLocked());
         swLocked.setChecked(currentPlace.getLocked() == 1);
     }
 
@@ -142,9 +149,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Collect data from fields, update the current place, save changes in repository
+    // Save changes to the current place and update repository
     private void saveChanges() {
-        // Update currentPlace with new values from the EditTexts
         currentPlace.setName(etPlaceName.getText().toString().trim());
         try {
             currentPlace.setTimeRequirement(Double.parseDouble(etTimeRequirement.getText().toString().trim()));
@@ -161,7 +167,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             currentPlace.setWorkCost(0);
         }
-        // Split visit dates by comma and trim spaces
         String datesString = etVisitDates.getText().toString().trim();
         if (!datesString.isEmpty()) {
             String[] datesArray = datesString.split(",");
@@ -191,22 +196,41 @@ public class PlaceDetailActivity extends AppCompatActivity {
         } catch (NumberFormatException e) {
             currentPlace.setArea(0);
         }
-        //TODO Nefunguje přepínání zámku
         currentPlace.setLocked(swLocked.isChecked() ? 1 : 0);
 
-        // Update the list in memory (allPlaces list already contains currentPlace by reference)
-        // Save the updated list back to JSON using the repository
         boolean success = repository.saveMowingPlaces(this, allPlaces);
         if (success) {
             Toast.makeText(this, "Změny uloženy", Toast.LENGTH_SHORT).show();
-            // Optionally, return the updated data back to previous screen via setResult()
             setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
             finish();
         } else {
             Toast.makeText(this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
-        finish();
+    // Delete the current place and remove its references from all other places
+    private void deleteCurrentPlace() {
+        // Remove the current place from the list
+        allPlaces.remove(currentPlace);
+
+        // Iterate through all remaining places and remove any distance entry referencing the deleted place
+        for (MowingPlace place : allPlaces) {
+            if (place.getDistancesToOthers() != null) {
+                // Using removeIf (available on API level 24+); alternatively use an iterator
+                place.getDistancesToOthers().removeIf(distanceEntry ->
+                        distanceEntry.getId().equals(currentPlace.getId())
+                );
+            }
+        }
+
+        // Save updated list to JSON via repository
+        boolean success = repository.saveMowingPlaces(this, allPlaces);
+        if (success) {
+            Toast.makeText(this, "Místo bylo odstraněno", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK, new Intent().putExtra("deletedPlaceId", currentPlace.getId()));
+            finish();
+        } else {
+            Toast.makeText(this, "Chyba při odstraňování místa", Toast.LENGTH_SHORT).show();
+        }
     }
 }
