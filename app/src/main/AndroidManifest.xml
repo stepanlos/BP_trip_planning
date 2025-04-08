@@ -31,6 +31,10 @@
             android:name=".ui.detail.PlaceDetailActivity"
             android:label="@string/detail_title" >
         </activity>
+        <activity
+            android:name=".ui.planning.LocationPickerActivity"
+            android:label="Plánování trasy" >
+        </activity>
 
     </application>
 

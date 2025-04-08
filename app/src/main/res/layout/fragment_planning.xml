@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_marginBottom="55dp">
 
-    <!-- Start Location Input -->
+    <!-- Start Location Input  -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilStartLocation"
         android:layout_width="0dp"
@@ -19,24 +19,28 @@
         <EditText
             android:id="@+id/etStartLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Start Time Constraint Input -->
+    <!-- Start Time Input  -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilStartTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Start Time (minutes)"
+        android:hint="Start Time (HH:MM)"
         app:layout_constraintTop_toBottomOf="@id/tilStartLocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="8dp">
         <EditText
-            android:id="@+id/etStartTime"
+            android:id="@+id/tvStartTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"/>
+            android:text="06:00"
+            android:clickable="true"
+            android:focusable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- End Location Input -->
@@ -52,42 +56,51 @@
         <EditText
             android:id="@+id/etEndLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- End Time Constraint Input -->
+    <!-- End Time Input  -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEndTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="End Time (minutes)"
+        android:hint="End Time (HH:MM)"
         app:layout_constraintTop_toBottomOf="@id/tilEndLocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="8dp">
         <EditText
-            android:id="@+id/etEndTime"
+            android:id="@+id/tvEndTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"/>
+            android:text="18:00"
+            android:clickable="true"
+            android:focusable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Speed Multiplier Input -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilSpeedMultiplier"
-        android:layout_width="0dp"
+    <!-- Speed Multiplier Value Display -->
+    <TextView
+        android:id="@+id/tvSpeedMultiplierValue"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Speed Multiplier"
+        android:text="Multiplier: 1.0 x"
         app:layout_constraintTop_toBottomOf="@id/tilEndTime"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="8dp"/>
+
+    <!-- Speed Multiplier SeekBar -->
+    <SeekBar
+        android:id="@+id/seekBarSpeedMultiplier"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvSpeedMultiplierValue"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="8dp">
-        <EditText
-            android:id="@+id/etSpeedMultiplier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_margin="8dp"
+        android:max="5"
+        android:progress="1"/>
 
     <!-- Checkbox: Add extra cemeteries if time remains -->
     <com.google.android.material.checkbox.MaterialCheckBox
@@ -95,7 +108,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add extra cemeteries if time remains"
-        app:layout_constraintTop_toBottomOf="@id/tilSpeedMultiplier"
+        app:layout_constraintTop_toBottomOf="@id/seekBarSpeedMultiplier"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="8dp"/>
 
@@ -121,12 +134,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="8dp"/>
 
-    <!-- Open in Mapy.cz Button -->
+    <!-- Open in Mapy.cz Button (hidden initially) -->
     <Button
         android:id="@+id/btnOpenMapycZ"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/url_link_navigation"
+        android:text="Open in Mapy.cz"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

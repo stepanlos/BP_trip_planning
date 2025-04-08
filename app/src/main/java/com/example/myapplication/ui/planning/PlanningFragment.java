@@ -10,32 +10,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
 import com.example.myapplication.util.TSPPlanner;
-
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlanningFragment extends Fragment {
 
     private FragmentPlanningBinding binding;
-    private PlanningViewModel planningViewModel;
     private MapView planningMapView;
 
     // UI elements for inputs
-    private EditText etStartLocation, etStartTime, etEndLocation, etEndTime, etSpeedMultiplier;
+    private EditText etStartLocation, etEndLocation;
+    private TextView tvStartTime, tvEndTime;
+    private SeekBar sbSpeedMultiplier;
     private CheckBox cbAddExtra;
     private Button btnGenerateRoute, btnOpenMapycZ;
 
@@ -43,9 +41,16 @@ public class PlanningFragment extends Fragment {
     private MowingPlacesRepository placesRepository;
     private List<MowingPlace> availablePlaces;
 
+    // Default time constraints (in minutes from midnight)
+    private int startTimeInMinutes = 480; // default 08:00
+    private int endTimeInMinutes = 1020;  // default 17:00
+
     // Route plan variables
     private List<MowingPlace> finalRoute;
     private double totalRouteTime; // computed route time (driving + mowing)
+
+    private static final int REQUEST_CODE_START = 101;
+    private static final int REQUEST_CODE_END = 102;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -55,14 +60,17 @@ public class PlanningFragment extends Fragment {
 
         // Initialize UI components
         etStartLocation = binding.etStartLocation;
-        etStartTime = binding.etStartTime;
         etEndLocation = binding.etEndLocation;
-        etEndTime = binding.etEndTime;
-        etSpeedMultiplier = binding.etSpeedMultiplier;
+        tvStartTime = binding.tvStartTime;
+        tvEndTime = binding.tvEndTime;
+        sbSpeedMultiplier = binding.seekBarSpeedMultiplier;
         cbAddExtra = binding.cbAddExtra;
         btnGenerateRoute = binding.btnGenerateRoute;
         btnOpenMapycZ = binding.btnOpenMapycZ;
         planningMapView = binding.planningMapView;
+
+        // Hide "Open in Mapy.cz" button until a route is generated
+        btnOpenMapycZ.setVisibility(View.GONE);
 
         // Initialize map view
         planningMapView.setMultiTouchControls(true);
@@ -73,20 +81,79 @@ public class PlanningFragment extends Fragment {
         placesRepository = new MowingPlacesRepository();
         availablePlaces = placesRepository.loadMowingPlaces(getContext());
 
-        // Set up button listeners
+        // Set default times and update TextViews
+        tvStartTime.setText(formatTime(startTimeInMinutes));
+        tvEndTime.setText(formatTime(endTimeInMinutes));
+
+        // Set up time picker listeners for start and end time
+        tvStartTime.setOnClickListener(v -> {
+            showTimePicker(startTimeInMinutes, (hour, minute) -> {
+                startTimeInMinutes = hour * 60 + minute;
+                tvStartTime.setText(formatTime(startTimeInMinutes));
+            });
+        });
+        tvEndTime.setOnClickListener(v -> {
+            showTimePicker(endTimeInMinutes, (hour, minute) -> {
+                endTimeInMinutes = hour * 60 + minute;
+                tvEndTime.setText(formatTime(endTimeInMinutes));
+            });
+        });
+
+        // Set up SeekBar for speed multiplier (multiplier = 0.5 + progress*0.5, max=5)
+        sbSpeedMultiplier.setMax(5);
+        sbSpeedMultiplier.setProgress(1);
+        double speedMultiplier = 0.5 + (sbSpeedMultiplier.getProgress() * 0.5);
+        binding.tvSpeedMultiplierValue.setText("Multiplier: " + speedMultiplier + " x");
+        sbSpeedMultiplier.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double multiplier = 0.5 + (progress * 0.5);
+                binding.tvSpeedMultiplierValue.setText("Multiplier: " + multiplier + "x");
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+
+        // Set up location picker for start and end location fields
+        etStartLocation.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), LocationPickerActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_START);
+        });
+        etEndLocation.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), LocationPickerActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_END);
+        });
+
+        // Set up button listeners for generating route and opening Mapy.cz
         btnGenerateRoute.setOnClickListener(v -> generateRoute());
-        btnOpenMapycZ.setOnClickListener(v -> openMapycZ());
+        btnOpenMapycZ.setOnClickListener(v -> openMapyCz());
 
         return root;
     }
 
+    // Handle results from LocationPickerActivity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == getActivity().RESULT_OK && data != null) {
+            double lat = data.getDoubleExtra(LocationPickerActivity.EXTRA_SELECTED_LAT, 0);
+            double lon = data.getDoubleExtra(LocationPickerActivity.EXTRA_SELECTED_LON, 0);
+            String coordinates = lat + "," + lon;
+            if(requestCode == REQUEST_CODE_START) {
+                etStartLocation.setText(coordinates);
+            } else if(requestCode == REQUEST_CODE_END) {
+                etEndLocation.setText(coordinates);
+            }
+        }
+    }
+
     // Generate route using TSPPlanner (stub implementation)
     private void generateRoute() {
-        // Parse start location input (expected format "lat,lon")
+        // Parse start and end location input (format "lat,lon")
         String startLocStr = etStartLocation.getText().toString().trim();
         String endLocStr = etEndLocation.getText().toString().trim();
         if (TextUtils.isEmpty(startLocStr) || TextUtils.isEmpty(endLocStr)) {
-            Toast.makeText(getContext(), "Please enter start and end locations", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please select start and end locations", Toast.LENGTH_SHORT).show();
             return;
         }
         String[] startParts = startLocStr.split(",");
@@ -100,10 +167,11 @@ public class PlanningFragment extends Fragment {
         double endLat = Double.parseDouble(endParts[0].trim());
         double endLon = Double.parseDouble(endParts[1].trim());
 
-        // Parse time constraints and speed multiplier
-        int startTime = Integer.parseInt(etStartTime.getText().toString().trim());
-        int endTime = Integer.parseInt(etEndTime.getText().toString().trim());
-        double speedMultiplier = Double.parseDouble(etSpeedMultiplier.getText().toString().trim());
+        // Get time constraints from selected times (in minutes)
+        int startTime = startTimeInMinutes;
+        int endTime = endTimeInMinutes;
+        // Get speed multiplier from SeekBar (0.5 + progress*0.5)
+        double speedMultiplier = 0.5 + (sbSpeedMultiplier.getProgress() * 0.5);
 
         // Create special MowingPlace nodes for start and end
         MowingPlace startPlace = new MowingPlace();
@@ -111,7 +179,6 @@ public class PlanningFragment extends Fragment {
         startPlace.setName("Start");
         startPlace.setLatitude(startLat);
         startPlace.setLongitude(startLon);
-        // Set mowing time equal to startTime (or 0 if not applicable)
         startPlace.setTimeRequirement(startTime);
 
         MowingPlace endPlace = new MowingPlace();
@@ -121,23 +188,22 @@ public class PlanningFragment extends Fragment {
         endPlace.setLongitude(endLon);
         endPlace.setTimeRequirement(endTime);
 
-        // For simplicity, assume that the mandatory cemeteries are already selected.
-        // Here, we use all available places as mandatory (in real app, user selection is needed)
+        // For simplicity, assume mandatory cemeteries are all available places
         List<MowingPlace> mandatoryPlaces = new ArrayList<>(availablePlaces);
 
-        // Build the complete list: start, mandatory, end
+        // Build complete list: start, mandatory, end
         List<MowingPlace> nodes = new ArrayList<>();
         nodes.add(startPlace);
         nodes.addAll(mandatoryPlaces);
         nodes.add(endPlace);
 
-        // Generate route using TSP algorithm (stub implementation)
+        // Generate route using TSP algorithm (stub – returns nodes in same order)
         finalRoute = TSPPlanner.generateRoute(nodes, speedMultiplier);
-        // Optionally, if "add extra" is checked, try to add extra cemeteries if time remains
+        // Optionally add extra cemeteries if checkbox is checked
         if (cbAddExtra.isChecked()) {
             finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime, speedMultiplier);
         }
-        // For demonstration, compute total route time (stub: sum of timeRequirement)
+        // Compute total route time (stub: sum of timeRequirement)
         totalRouteTime = 0;
         for (MowingPlace mp : finalRoute) {
             totalRouteTime += mp.getTimeRequirement();
@@ -145,12 +211,13 @@ public class PlanningFragment extends Fragment {
 
         // Update map preview with polyline
         updateMapPreview(finalRoute);
-        Toast.makeText(getContext(), "Route generated. Total time: " + totalRouteTime + " minutes", Toast.LENGTH_LONG).show();
+        // Show the "Open in Mapy.cz" button
+        btnOpenMapycZ.setVisibility(View.VISIBLE);
+        Toast.makeText(getContext(), "Route generated. Total mowing time: " + totalRouteTime / 60 + " h", Toast.LENGTH_LONG).show();
     }
 
     // Draw a polyline on the map connecting the route stops
     private void updateMapPreview(List<MowingPlace> route) {
-        // Remove previous overlays
         planningMapView.getOverlays().clear();
         Polyline polyline = new Polyline();
         List<GeoPoint> geoPoints = new ArrayList<>();
@@ -162,29 +229,62 @@ public class PlanningFragment extends Fragment {
         planningMapView.invalidate();
     }
 
-    // Generate Mapy.cz URL and open in browser
-    private void openMapycZ() {
+    // Generate Mapy.cz URL from the route according to required format and open it in browser
+    private void openMapyCz() {
         if (finalRoute == null || finalRoute.isEmpty()) {
             Toast.makeText(getContext(), "No route generated", Toast.LENGTH_SHORT).show();
             return;
         }
         String url = generateMapyUrl(finalRoute);
-        // Open URL in browser
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
 
-    // Generate Mapy.cz URL from the route (format: ...&rc=lat1,lon1|lat2,lon2|...)
+    // Build Mapy.cz URL with parameters: start, end, routeType, waypoints, navigate
     private String generateMapyUrl(List<MowingPlace> route) {
-        StringBuilder rcBuilder = new StringBuilder();
-        for (MowingPlace mp : route) {
-            if (rcBuilder.length() > 0) {
-                rcBuilder.append("|");
-            }
-            rcBuilder.append(mp.getLatitude()).append(",").append(mp.getLongitude());
+        if (route.size() < 2) {
+            return "";
         }
-        // Example URL: modify parameters as needed
-        String baseUrl = "https://mapy.cz/zakladni?planovani-trasy=&rc=";
-        return baseUrl + rcBuilder.toString();
+        // First and last nodes are start and end
+        MowingPlace start = route.get(0);
+        MowingPlace end = route.get(route.size() - 1);
+        StringBuilder waypointsBuilder = new StringBuilder();
+        for (int i = 1; i < route.size() - 1; i++) {
+            MowingPlace mp = route.get(i);
+            if (waypointsBuilder.length() > 0) {
+                waypointsBuilder.append(";");
+            }
+            // Order: longitude,latitude
+            waypointsBuilder.append(mp.getLongitude()).append(",").append(mp.getLatitude());
+        }
+        String url = "https://mapy.cz/fnc/v1/route?mapset=traffic";
+        url += "&start=" + start.getLongitude() + "," + start.getLatitude();
+        url += "&end=" + end.getLongitude() + "," + end.getLatitude();
+        url += "&routeType=car_fast";
+        if (waypointsBuilder.length() > 0) {
+            url += "&waypoints=" + waypointsBuilder.toString();
+        }
+        return url;
+    }
+
+    // Format time in HH:mm format
+    private String formatTime(int totalMinutes) {
+        int hour = totalMinutes / 60;
+        int minute = totalMinutes % 60;
+        return String.format("%02d:%02d", hour, minute);
+    }
+
+    // Interface for time picker callback
+    public interface TimePickerCallback {
+        void onTimeSelected(int hour, int minute);
+    }
+
+    // Helper method to show TimePicker dialog
+    private void showTimePicker(int initialMinutes, TimePickerCallback callback) {
+        int initialHour = initialMinutes / 60;
+        int initialMinute = initialMinutes % 60;
+        new android.app.TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
+            callback.onTimeSelected(hourOfDay, minute);
+        }, initialHour, initialMinute, true).show();
     }
 }
