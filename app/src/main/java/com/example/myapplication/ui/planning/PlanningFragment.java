@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,12 +43,14 @@ public class PlanningFragment extends Fragment {
     private List<MowingPlace> availablePlaces;
 
     // Default time constraints (in minutes from midnight)
-    private int startTimeInMinutes = 480; // default 08:00
-    private int endTimeInMinutes = 1020;  // default 17:00
+    private int startTimeInMinutes = 360; // default 06:00
+    private int endTimeInMinutes = 1140;  // default 19:00
 
     // Route plan variables
     private List<MowingPlace> finalRoute;
-    private double totalRouteTime; // computed route time (driving + mowing)
+    private double totalMowingTime; // computed route time (driving + mowing)
+
+    private String mapyCzRouteUrl = "";
 
     private static final int REQUEST_CODE_START = 101;
     private static final int REQUEST_CODE_END = 102;
@@ -109,6 +112,7 @@ public class PlanningFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double multiplier = 0.5 + (progress * 0.5);
                 binding.tvSpeedMultiplierValue.setText("Multiplier: " + multiplier + "x");
+                Log.d("PlanningFragment", "Speed multiplier changed to: " + multiplier);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override public void onStopTrackingTouch(SeekBar seekBar) { }
@@ -123,6 +127,8 @@ public class PlanningFragment extends Fragment {
             Intent intent = new Intent(getContext(), LocationPickerActivity.class);
             startActivityForResult(intent, REQUEST_CODE_END);
         });
+
+
 
         // Set up button listeners for generating route and opening Mapy.cz
         btnGenerateRoute.setOnClickListener(v -> generateRoute());
@@ -179,14 +185,14 @@ public class PlanningFragment extends Fragment {
         startPlace.setName("Start");
         startPlace.setLatitude(startLat);
         startPlace.setLongitude(startLon);
-        startPlace.setTimeRequirement(startTime);
+        startPlace.setTimeRequirement(0);
 
         MowingPlace endPlace = new MowingPlace();
         endPlace.setId("end");
         endPlace.setName("End");
         endPlace.setLatitude(endLat);
         endPlace.setLongitude(endLon);
-        endPlace.setTimeRequirement(endTime);
+        endPlace.setTimeRequirement(0);
 
         // For simplicity, assume mandatory cemeteries are all available places
         List<MowingPlace> mandatoryPlaces = new ArrayList<>(availablePlaces);
@@ -197,23 +203,28 @@ public class PlanningFragment extends Fragment {
         nodes.addAll(mandatoryPlaces);
         nodes.add(endPlace);
 
-        // Generate route using TSP algorithm (stub – returns nodes in same order)
+        // Generate route using TSP algorithm
         finalRoute = TSPPlanner.generateRoute(nodes, speedMultiplier);
         // Optionally add extra cemeteries if checkbox is checked
         if (cbAddExtra.isChecked()) {
-            finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime, speedMultiplier);
+            finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier);
         }
         // Compute total route time (stub: sum of timeRequirement)
-        totalRouteTime = 0;
+        totalMowingTime = 0;
         for (MowingPlace mp : finalRoute) {
-            totalRouteTime += mp.getTimeRequirement();
+            totalMowingTime += mp.getTimeRequirement();
         }
+        totalMowingTime /= speedMultiplier;
+
+        mapyCzRouteUrl = generateMapyUrl(finalRoute);
 
         // Update map preview with polyline
         updateMapPreview(finalRoute);
         // Show the "Open in Mapy.cz" button
         btnOpenMapycZ.setVisibility(View.VISIBLE);
-        Toast.makeText(getContext(), "Route generated. Total mowing time: " + totalRouteTime / 60 + " h", Toast.LENGTH_LONG).show();
+        //total mowing time with one decimal in hours
+        double mowingTimeInHours = Math.floor(totalMowingTime / 60.0 * 10) / 10;
+        Toast.makeText(getContext(), "Route generated. Total mowing time: " + mowingTimeInHours + " h", Toast.LENGTH_LONG).show();
     }
 
     // Draw a polyline on the map connecting the route stops

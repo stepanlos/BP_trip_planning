@@ -9,7 +9,7 @@ public class RoutePlan {
     private List<String> routeIds; // Ordered list of MowingPlace IDs
     private String date;          // Date when the route was planned
     private double speedMultiplier;
-    private double totalTime;     // Total time (driving + mowing)
+    private double mowingTime;     // Total time (driving + mowing)
     private List<String> additionalInfo; // Any additional metadata
 
     // Getters and Setters
@@ -38,12 +38,12 @@ public class RoutePlan {
         this.speedMultiplier = speedMultiplier;
     }
 
-    public double getTotalTime() {
-        return totalTime;
+    public double getMowingTime() {
+        return mowingTime;
     }
 
-    public void setTotalTime(double totalTime) {
-        this.totalTime = totalTime;
+    public void setMowingTime(double mowingTime) {
+        this.mowingTime = mowingTime;
     }
 
     public List<String> getAdditionalInfo() {
