@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.planning;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -70,6 +71,7 @@ public class PlanningFragment extends Fragment {
     private static final int REQUEST_CODE_START = 101;
     private static final int REQUEST_CODE_END = 102;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -156,8 +158,15 @@ public class PlanningFragment extends Fragment {
 
         // Set up button listeners for generating route and opening Mapy.cz
         btnGenerateRoute.setOnClickListener(v -> generateRoute());
-        // Opravený listener pro tlačítko Open in Mapy.cz – volá metodu openMapyCz()
+        // Corrected listener for openMapyCz()
         btnOpenMapycZ.setOnClickListener(v -> openMapyCz());
+
+        planningMapView.setOnTouchListener((v, event) -> {
+            // Request parent (NestedScrollView) not to intercept touch events
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            // Return false so that map can handle events as usual
+            return false;
+        });
 
         return root;
     }
