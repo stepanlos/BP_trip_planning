@@ -18,7 +18,7 @@ import java.util.List;
 public class MowingPlacesRepository {
 
     private static final String TAG = "MowingPlacesRepository";
-    private static final String JSON_FILE_NAME = "mowing_places_line_aerial.json";
+    private static final String JSON_FILE_NAME = "mowing_places.json";
 
     public List<MowingPlace> loadMowingPlaces(Context context) {
         try {

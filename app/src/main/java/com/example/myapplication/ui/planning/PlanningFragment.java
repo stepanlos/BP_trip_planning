@@ -1,46 +1,62 @@
 package com.example.myapplication.ui.planning;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
+import com.example.myapplication.ui.planning.LocationPickerActivity;
 import com.example.myapplication.util.TSPPlanner;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PlanningFragment extends Fragment {
 
     private FragmentPlanningBinding binding;
     private MapView planningMapView;
 
-    // UI elements for inputs
+    // UI elements for location and time inputs
     private EditText etStartLocation, etEndLocation;
     private TextView tvStartTime, tvEndTime;
     private SeekBar sbSpeedMultiplier;
     private CheckBox cbAddExtra;
-    private Button btnGenerateRoute, btnOpenMapycZ;
+    private Button btnGenerateRoute, btnOpenMapycZ, btnAddWaypoint;
 
-    // Repository to load available cemeteries (MowingPlaces)
+    // Container for dynamic waypoint entries
+    private ViewGroup llWaypoints;
+
+    // Repository for available cemeteries and mapping from name to MowingPlace
     private MowingPlacesRepository placesRepository;
     private List<MowingPlace> availablePlaces;
+    private Map<String, MowingPlace> nameToPlace;
 
     // Default time constraints (in minutes from midnight)
     private int startTimeInMinutes = 360; // default 06:00
@@ -48,8 +64,7 @@ public class PlanningFragment extends Fragment {
 
     // Route plan variables
     private List<MowingPlace> finalRoute;
-    private double totalMowingTime; // computed route time (driving + mowing)
-
+    private double totalMowingTime; // computed total time (driving + mowing)
     private String mapyCzRouteUrl = "";
 
     private static final int REQUEST_CODE_START = 101;
@@ -70,7 +85,9 @@ public class PlanningFragment extends Fragment {
         cbAddExtra = binding.cbAddExtra;
         btnGenerateRoute = binding.btnGenerateRoute;
         btnOpenMapycZ = binding.btnOpenMapycZ;
+        btnAddWaypoint = binding.btnAddWaypoint;
         planningMapView = binding.planningMapView;
+        llWaypoints = binding.llWaypoints;
 
         // Hide "Open in Mapy.cz" button until a route is generated
         btnOpenMapycZ.setVisibility(View.GONE);
@@ -83,6 +100,13 @@ public class PlanningFragment extends Fragment {
         // Initialize repository and load available places (cemeteries)
         placesRepository = new MowingPlacesRepository();
         availablePlaces = placesRepository.loadMowingPlaces(getContext());
+        // Build a mapping from cemetery name to MowingPlace for auto complete suggestions (assume unique names)
+        nameToPlace = new ArrayMap<>();
+        List<String> placeNames = new ArrayList<>();
+        for (MowingPlace mp : availablePlaces) {
+            nameToPlace.put(mp.getName(), mp);
+            placeNames.add(mp.getName());
+        }
 
         // Set default times and update TextViews
         tvStartTime.setText(formatTime(startTimeInMinutes));
@@ -112,7 +136,6 @@ public class PlanningFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double multiplier = 0.5 + (progress * 0.5);
                 binding.tvSpeedMultiplierValue.setText("Multiplier: " + multiplier + "x");
-                Log.d("PlanningFragment", "Speed multiplier changed to: " + multiplier);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override public void onStopTrackingTouch(SeekBar seekBar) { }
@@ -128,10 +151,12 @@ public class PlanningFragment extends Fragment {
             startActivityForResult(intent, REQUEST_CODE_END);
         });
 
-
+        // Set up Add Waypoint button to add a new searchable dropdown for mandatory waypoints
+        btnAddWaypoint.setOnClickListener(v -> addWaypointEntry());
 
         // Set up button listeners for generating route and opening Mapy.cz
         btnGenerateRoute.setOnClickListener(v -> generateRoute());
+        // Opravený listener pro tlačítko Open in Mapy.cz – volá metodu openMapyCz()
         btnOpenMapycZ.setOnClickListener(v -> openMapyCz());
 
         return root;
@@ -153,19 +178,46 @@ public class PlanningFragment extends Fragment {
         }
     }
 
-    // Generate route using TSPPlanner (stub implementation)
+    // Adds a new waypoint entry row to the dynamic container (llWaypoints)
+    private void addWaypointEntry() {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View waypointView = inflater.inflate(R.layout.waypoint_item, llWaypoints, false);
+        AutoCompleteTextView actvWaypoint = waypointView.findViewById(R.id.actvWaypoint);
+        ImageButton btnRemove = waypointView.findViewById(R.id.btnRemoveWaypoint);
+
+        // Create adapter for suggestions (using available place names)
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, new ArrayList<>(nameToPlace.keySet()));
+        actvWaypoint.setThreshold(1);
+        actvWaypoint.setAdapter(adapter);
+
+        // On item click, set tag with corresponding MowingPlace object
+        actvWaypoint.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedName = (String) parent.getItemAtPosition(position);
+            if (nameToPlace.containsKey(selectedName)) {
+                actvWaypoint.setTag(nameToPlace.get(selectedName));
+            }
+        });
+
+        // Remove button listener
+        btnRemove.setOnClickListener(v -> llWaypoints.removeView(waypointView));
+
+        // Add the new waypoint view to container
+        llWaypoints.addView(waypointView);
+    }
+
+    // Generate route using TSPPlanner with mandatory waypoints selected by user
     private void generateRoute() {
         // Parse start and end location input (format "lat,lon")
         String startLocStr = etStartLocation.getText().toString().trim();
         String endLocStr = etEndLocation.getText().toString().trim();
         if (TextUtils.isEmpty(startLocStr) || TextUtils.isEmpty(endLocStr)) {
-            Toast.makeText(getContext(), "Please select start and end locations", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Prosím, vyberte start a end lokaci", Toast.LENGTH_SHORT).show();
             return;
         }
         String[] startParts = startLocStr.split(",");
         String[] endParts = endLocStr.split(",");
         if (startParts.length != 2 || endParts.length != 2) {
-            Toast.makeText(getContext(), "Location format must be 'lat,lon'", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Formát lokace musí být 'lat,lon'", Toast.LENGTH_SHORT).show();
             return;
         }
         double startLat = Double.parseDouble(startParts[0].trim());
@@ -173,7 +225,7 @@ public class PlanningFragment extends Fragment {
         double endLat = Double.parseDouble(endParts[0].trim());
         double endLon = Double.parseDouble(endParts[1].trim());
 
-        // Get time constraints from selected times (in minutes)
+        // Get time constraints (in minutes)
         int startTime = startTimeInMinutes;
         int endTime = endTimeInMinutes;
         // Get speed multiplier from SeekBar (0.5 + progress*0.5)
@@ -194,37 +246,45 @@ public class PlanningFragment extends Fragment {
         endPlace.setLongitude(endLon);
         endPlace.setTimeRequirement(0);
 
-        // For simplicity, assume mandatory cemeteries are all available places
-        List<MowingPlace> mandatoryPlaces = new ArrayList<>(availablePlaces);
+        // Retrieve mandatory waypoints from dynamic container
+        List<MowingPlace> mandatoryWaypoints = new ArrayList<>();
+        int count = llWaypoints.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View waypointView = llWaypoints.getChildAt(i);
+            AutoCompleteTextView actv = waypointView.findViewById(R.id.actvWaypoint);
+            Object tag = actv.getTag();
+            if (tag instanceof MowingPlace) {
+                mandatoryWaypoints.add((MowingPlace) tag);
+            }
+        }
 
-        // Build complete list: start, mandatory, end
+        // Build complete list: start, mandatory waypoints (in order), end
         List<MowingPlace> nodes = new ArrayList<>();
         nodes.add(startPlace);
-        nodes.addAll(mandatoryPlaces);
+        nodes.addAll(mandatoryWaypoints);
         nodes.add(endPlace);
 
-        // Generate route using TSP algorithm
+        // Generate route using TSP algorithm (Christofides–Serdyukov)
         finalRoute = TSPPlanner.generateRoute(nodes, speedMultiplier);
         // Optionally add extra cemeteries if checkbox is checked
         if (cbAddExtra.isChecked()) {
             finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier);
         }
-        // Compute total route time (stub: sum of timeRequirement)
+        // Compute total mowing time (stub: sum of timeRequirement divided by speed multiplier)
         totalMowingTime = 0;
         for (MowingPlace mp : finalRoute) {
             totalMowingTime += mp.getTimeRequirement();
         }
         totalMowingTime /= speedMultiplier;
 
+        // Generate Mapy.cz route URL
         mapyCzRouteUrl = generateMapyUrl(finalRoute);
 
         // Update map preview with polyline
         updateMapPreview(finalRoute);
         // Show the "Open in Mapy.cz" button
         btnOpenMapycZ.setVisibility(View.VISIBLE);
-        //total mowing time with one decimal in hours
-        double mowingTimeInHours = Math.floor(totalMowingTime / 60.0 * 10) / 10;
-        Toast.makeText(getContext(), "Route generated. Total mowing time: " + mowingTimeInHours + " h", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Trasa vygenerována. Celkový čas sekání: " + totalMowingTime + " h", Toast.LENGTH_LONG).show();
     }
 
     // Draw a polyline on the map connecting the route stops
@@ -240,18 +300,8 @@ public class PlanningFragment extends Fragment {
         planningMapView.invalidate();
     }
 
-    // Generate Mapy.cz URL from the route according to required format and open it in browser
-    private void openMapyCz() {
-        if (finalRoute == null || finalRoute.isEmpty()) {
-            Toast.makeText(getContext(), "No route generated", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String url = generateMapyUrl(finalRoute);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(intent);
-    }
-
-    // Build Mapy.cz URL with parameters: start, end, routeType, waypoints, navigate
+    // Generate Mapy.cz URL according to required format:
+    // Example: https://mapy.cz/fnc/v1/route?mapset=traffic&start=lon,lat&end=lon,lat&routeType=car_fast&waypoints=lon,lat;lon,lat&navigate=true
     private String generateMapyUrl(List<MowingPlace> route) {
         if (route.size() < 2) {
             return "";
@@ -290,12 +340,22 @@ public class PlanningFragment extends Fragment {
         void onTimeSelected(int hour, int minute);
     }
 
-    // Helper method to show TimePicker dialog
+    // Helper method for showing TimePicker dialog
     private void showTimePicker(int initialMinutes, TimePickerCallback callback) {
         int initialHour = initialMinutes / 60;
         int initialMinute = initialMinutes % 60;
         new android.app.TimePickerDialog(getContext(), (view, hourOfDay, minute) -> {
             callback.onTimeSelected(hourOfDay, minute);
         }, initialHour, initialMinute, true).show();
+    }
+
+    // Method to open Mapy.cz route using the generated URL
+    private void openMapyCz() {
+        if (mapyCzRouteUrl == null || mapyCzRouteUrl.isEmpty()) {
+            Toast.makeText(getContext(), "Trasa není vygenerována", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapyCzRouteUrl));
+        startActivity(intent);
     }
 }

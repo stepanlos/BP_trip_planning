@@ -112,13 +112,36 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="8dp"/>
 
+    <!-- Dynamic container for mandatory (waypoint) selections -->
+    <LinearLayout
+        android:id="@+id/llWaypoints"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/cbAddExtra"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp">
+        <!-- Initially empty; new waypoint entries will be added here -->
+    </LinearLayout>
+
+    <!-- Button to add a new waypoint -->
+    <Button
+        android:id="@+id/btnAddWaypoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+ přidat místo průjezdu"
+        app:layout_constraintTop_toBottomOf="@id/llWaypoints"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="8dp"/>
+
     <!-- Generate Route Button -->
     <Button
         android:id="@+id/btnGenerateRoute"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Generate Route"
-        app:layout_constraintTop_toBottomOf="@id/cbAddExtra"
+        app:layout_constraintTop_toBottomOf="@id/btnAddWaypoint"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="8dp"/>
