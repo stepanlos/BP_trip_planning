@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.DigitsKeyListener;
 import android.util.ArrayMap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
-import com.example.myapplication.ui.planning.LocationPickerActivity;
 import com.example.myapplication.util.DiacriticInsensitiveAdapter;
 import com.example.myapplication.util.TSPPlanner;
 
@@ -53,7 +51,7 @@ public class PlanningFragment extends Fragment {
     private TextView tvStartTime, tvEndTime;
     private SeekBar sbSpeedMultiplier;
     private CheckBox cbAddExtra;
-    private Button btnGenerateRoute, btnOpenMapycZ, btnAddWaypoint;
+    private Button btnGenerateRoute, btnOpenMapycZ, btnOpenGoogleMaps, btnAddWaypoint;
 
     // Containers for dynamic entries: waypoints and extra options
     private ViewGroup llWaypoints;
@@ -76,6 +74,7 @@ public class PlanningFragment extends Fragment {
     private List<MowingPlace> finalRoute;
     private double totalMowingTime; // computed total time (driving + mowing)
     private String mapyCzRouteUrl = "";
+    private String googleMapsUrl = "";
 
     private static final int REQUEST_CODE_START = 101;
     private static final int REQUEST_CODE_END = 102;
@@ -97,6 +96,7 @@ public class PlanningFragment extends Fragment {
         cbAddExtra = binding.cbAddExtra;
         btnGenerateRoute = binding.btnGenerateRoute;
         btnOpenMapycZ = binding.btnOpenMapycZ;
+        btnOpenGoogleMaps = binding.btnOpenGoogleMaps;
         btnAddWaypoint = binding.btnAddWaypoint;
         planningMapView = binding.planningMapView;
         // Get the waypoint container (llWaypoints) and extra options container (llExtraOptions)
@@ -110,6 +110,7 @@ public class PlanningFragment extends Fragment {
 
         // Hide "Open in Mapy.cz" button initially
         btnOpenMapycZ.setVisibility(View.GONE);
+        btnOpenGoogleMaps.setVisibility(View.GONE);
 
         // Initialize map view
         planningMapView.setMultiTouchControls(true);
@@ -202,6 +203,8 @@ public class PlanningFragment extends Fragment {
 
         // Open Mapy.cz button listener
         btnOpenMapycZ.setOnClickListener(v -> openMapyCz());
+        // Open Google Maps button listener
+        btnOpenGoogleMaps.setOnClickListener(v -> openGoogleMaps());
 
         return root;
     }
@@ -335,8 +338,10 @@ public class PlanningFragment extends Fragment {
         totalMowingTime /= speedMultiplier;
 
         mapyCzRouteUrl = generateMapyUrl(finalRoute);
+        googleMapsUrl = generateGoogleMapsUrl(finalRoute);
         updateMapPreview(finalRoute);
         btnOpenMapycZ.setVisibility(View.VISIBLE);
+        btnOpenGoogleMaps.setVisibility(View.VISIBLE);
         //format totalMowingTime to one decimal place
         String formattedMowingTime = String.format("%.1f", totalMowingTime);
         // Show total time in hours and move the toast a little bit up
@@ -381,6 +386,32 @@ public class PlanningFragment extends Fragment {
         return url;
     }
 
+    // Generate Google Maps URL for directions.
+    // Format: https://www.google.com/maps/dir/?api=1&origin=lat,lon&destination=lat,lon&waypoints=lat,lon|lat,lon&travelmode=driving
+    private String generateGoogleMapsUrl(List<MowingPlace> route) {
+        if (route.size() < 2)
+            return "";
+        MowingPlace start = route.get(0);
+        MowingPlace end = route.get(route.size() - 1);
+        StringBuilder waypointsBuilder = new StringBuilder();
+        // Google Maps API očekává waypointy oddělené svislou čarou
+        for (int i = 1; i < route.size() - 1; i++) {
+            MowingPlace mp = route.get(i);
+            if (waypointsBuilder.length() > 0) {
+                waypointsBuilder.append("|");
+            }
+            waypointsBuilder.append(mp.getLatitude()).append(",").append(mp.getLongitude());
+        }
+        StringBuilder url = new StringBuilder("https://www.google.com/maps/dir/?api=1");
+        url.append("&origin=").append(start.getLatitude()).append(",").append(start.getLongitude());
+        url.append("&destination=").append(end.getLatitude()).append(",").append(end.getLongitude());
+        if (waypointsBuilder.length() > 0) {
+            url.append("&waypoints=").append(waypointsBuilder.toString());
+        }
+        url.append("&travelmode=driving");
+        return url.toString();
+    }
+
     private String formatTime(int totalMinutes) {
         int hour = totalMinutes / 60;
         int minute = totalMinutes % 60;
@@ -405,6 +436,16 @@ public class PlanningFragment extends Fragment {
             return;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapyCzRouteUrl));
+        startActivity(intent);
+    }
+
+    // Open Google Maps route in browser
+    private void openGoogleMaps() {
+        if (googleMapsUrl == null || googleMapsUrl.isEmpty()) {
+            Toast.makeText(getContext(), "Trasa není vygenerována", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(googleMapsUrl));
         startActivity(intent);
     }
 }

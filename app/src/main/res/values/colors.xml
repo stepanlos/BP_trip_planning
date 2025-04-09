@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color>
     <color name="mapyCZ">#1EAE00</color>
+    <color name="googleMapsColor">#4186F5</color>
 </resources>

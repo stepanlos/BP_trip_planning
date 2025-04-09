@@ -221,5 +221,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp"/>
+
+        <!-- New: Open in Google Maps Button (hidden initially) -->
+        <Button
+            android:id="@+id/btnOpenGoogleMaps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Otevřít v Google Maps"
+            android:visibility="gone"
+            android:backgroundTint="@color/googleMapsColor"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/btnOpenMapycZ"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="8dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
