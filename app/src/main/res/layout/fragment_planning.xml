@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Parent NestedScrollView for vertical scrolling of all content -->
+<!-- Parent NestedScrollView allows vertical scrolling -->
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <!-- ConstraintLayout as content of scroll -->
+    <!-- ConstraintLayout as content container -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,13 +41,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp">
+            <!-- focusable false => always open TimePicker on click -->
             <EditText
                 android:id="@+id/tvStartTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="06:00"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="false"
+                android:clickable="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- End Location Input -->
@@ -78,13 +79,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp">
+            <!-- focusable false -->
             <EditText
                 android:id="@+id/tvEndTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="18:00"
-                android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="false"
+                android:clickable="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Speed Multiplier Value Display -->
@@ -119,13 +121,56 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="8dp"/>
 
-        <!-- Dynamic container for mandatory (waypoint) selections -->
+        <!-- Extra Options Container (invisible by default) -->
+        <LinearLayout
+            android:id="@+id/llExtraOptions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/cbAddExtra"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="8dp">
+
+            <!-- Row for "Čas od posledního sečení (týdny):" with input -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp">
+                <TextView
+                    android:id="@+id/tvLastMowingLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Čas od posledního sečení (týdny): " />
+                <EditText
+                    android:id="@+id/etLastMowingTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:ems="4"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <!-- Checkbox for "Nepřidávat místa se splněným počtem navštívení pro tento rok" -->
+            <CheckBox
+                android:id="@+id/cbExcludeVisited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nepřidávat místa se splněným počtem navštívení pro tento rok"
+                android:checked="true"
+                android:layout_marginLeft="16dp"/>
+        </LinearLayout>
+
+
+        <!-- Container for dynamic waypoint entries (always visible) -->
         <LinearLayout
             android:id="@+id/llWaypoints"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/cbAddExtra"
+            app:layout_constraintTop_toBottomOf="@id/llExtraOptions"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp">
@@ -168,8 +213,10 @@
             android:id="@+id/btnOpenMapycZ"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Open in Mapy.cz"
+            android:text="Otevřít v Mapy.cz"
             android:visibility="gone"
+            android:backgroundTint="@color/mapyCZ"
+            android:textColor="@color/white"
             app:layout_constraintTop_toBottomOf="@id/planningMapView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
