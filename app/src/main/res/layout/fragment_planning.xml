@@ -18,7 +18,7 @@
             android:id="@+id/tilStartLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Start Location (lat,lon)"
+            android:hint="@string/start_point"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
             android:id="@+id/tilStartTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Start Time (HH:MM)"
+            android:hint="@string/start_time"
             app:layout_constraintTop_toBottomOf="@id/tilStartLocation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
                 android:id="@+id/tvStartTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="06:00"
+                android:text="@string/def_start_time"
                 android:focusable="false"
                 android:clickable="true"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -56,7 +56,7 @@
             android:id="@+id/tilEndLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="End Location (lat,lon)"
+            android:hint="@string/end_point"
             app:layout_constraintTop_toBottomOf="@id/tilStartTime"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,7 @@
             android:id="@+id/tilEndTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="End Time (HH:MM)"
+            android:hint="@string/end_time"
             app:layout_constraintTop_toBottomOf="@id/tilEndLocation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
                 android:id="@+id/tvEndTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="18:00"
+                android:text="@string/def_end_time"
                 android:focusable="false"
                 android:clickable="true"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -94,7 +94,7 @@
             android:id="@+id/tvSpeedMultiplierValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Multiplier: 1.0 x"
+            android:text="@string/work_speed"
             app:layout_constraintTop_toBottomOf="@id/tilEndTime"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="8dp"/>
@@ -116,7 +116,7 @@
             android:id="@+id/cbAddExtra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add extra cemeteries if time remains"
+            android:text="@string/add_extra_places_to_route"
             app:layout_constraintTop_toBottomOf="@id/seekBarSpeedMultiplier"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="8dp"/>
@@ -143,7 +143,7 @@
                     android:id="@+id/tvLastMowingLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Čas od posledního sečení (týdny): " />
+                    android:text="@string/last_mowing_in" />
                 <EditText
                     android:id="@+id/etLastMowingTime"
                     android:layout_width="wrap_content"
@@ -158,7 +158,7 @@
                 android:id="@+id/cbExcludeVisited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nepřidávat místa se splněným počtem navštívení pro tento rok"
+                android:text="@string/do_not_add_completed_this_year"
                 android:checked="true"
                 android:layout_marginLeft="16dp"/>
         </LinearLayout>
@@ -182,7 +182,7 @@
             android:id="@+id/btnAddWaypoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+ přidat místo průjezdu"
+            android:text="@string/add_waypoint"
             app:layout_constraintTop_toBottomOf="@id/llWaypoints"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_margin="8dp"/>
@@ -192,7 +192,7 @@
             android:id="@+id/btnGenerateRoute"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Generate Route"
+            android:text="@string/generate_route"
             app:layout_constraintTop_toBottomOf="@id/btnAddWaypoint"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -213,7 +213,7 @@
             android:id="@+id/btnOpenMapycZ"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Otevřít v Mapy.cz"
+            android:text="@string/open_in_mapy_cz"
             android:visibility="gone"
             android:backgroundTint="@color/mapyCZ"
             android:textColor="@color/white"

@@ -154,12 +154,12 @@ public class PlanningFragment extends Fragment {
         sbSpeedMultiplier.setMax(5);
         sbSpeedMultiplier.setProgress(1);
         double speedMultiplier = 0.5 + (sbSpeedMultiplier.getProgress() * 0.5);
-        binding.tvSpeedMultiplierValue.setText("Multiplier: " + speedMultiplier + " x");
+        binding.tvSpeedMultiplierValue.setText("Rychlost práce: " + speedMultiplier + " x");
         sbSpeedMultiplier.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double multiplier = 0.5 + (progress * 0.5);
-                binding.tvSpeedMultiplierValue.setText("Multiplier: " + multiplier + "x");
+                binding.tvSpeedMultiplierValue.setText("Rychlost práce: " + multiplier + "x");
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override public void onStopTrackingTouch(SeekBar seekBar) { }
