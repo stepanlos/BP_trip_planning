@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.planning;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -274,7 +273,7 @@ public class PlanningFragment extends Fragment {
         nodes.add(endPlace);
 
         // Generate route using TSP algorithm (Christofides–Serdyukov)
-        finalRoute = TSPPlanner.generateRoute(nodes, speedMultiplier);
+        finalRoute = TSPPlanner.generateRoute(nodes);
         // Optionally add extra cemeteries if checkbox is checked
         if (cbAddExtra.isChecked()) {
             finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier);

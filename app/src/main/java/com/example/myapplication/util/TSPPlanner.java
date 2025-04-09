@@ -17,10 +17,9 @@ public class TSPPlanner {
      * distancesToOthers list, with missing values estimated via Haversine formula.
      *
      * @param nodes           List of MowingPlace nodes (including the start and end nodes).
-     * @param speedMultiplier Speed multiplier (not used for route calculation, but included for signature compatibility).
      * @return Ordered list of MowingPlace objects representing the route from start to end.
      */
-    public static List<MowingPlace> generateRoute(List<MowingPlace> nodes, double speedMultiplier) {
+    public static List<MowingPlace> generateRoute(List<MowingPlace> nodes) {
         if (nodes == null || nodes.isEmpty()) {
             return Collections.emptyList();
         }
