@@ -367,6 +367,10 @@ public class PlanningFragment extends Fragment {
                     MowingPlace mp = finalRoute.get(i);
                     if (i > 0) {
                         MowingPlace previousMp = finalRoute.get(i - 1);
+                        //avoid null pointer exception
+                        if (previousMp.getDistancesToOthers() == null) {
+                            continue;
+                        }
                         for (MowingPlace.DistanceEntry entry : previousMp.getDistancesToOthers()) {
                             if (entry.getId().equals(mp.getId())) {
                                 totalMowingTime += entry.getDuration() / 3600.0; // convert seconds to hours
@@ -397,7 +401,7 @@ public class PlanningFragment extends Fragment {
                 routePlanRepository.saveRoutePlans(getContext(), routePlans);
 
                 String formattedMowingTime = String.format("%.1f", totalMowingTime);
-                Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas sekání: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
             }
         };
 

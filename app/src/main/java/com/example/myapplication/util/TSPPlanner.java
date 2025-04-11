@@ -1,7 +1,5 @@
 package com.example.myapplication.util;
 
-import android.util.Log;
-
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlace.DistanceEntry;
 
@@ -13,46 +11,45 @@ import java.util.*;
 public class TSPPlanner {
 
     /**
-     * Generates a near-optimal ordered route from start to end using a modified TSP algorithm.
-     * A dummy node is added among the intermediate nodes that has zero distance to start and end,
-     * and extremely high distance to all other intermediate nodes.
-     * After computing the TSP cycle (using Christofides), the dummy node is removed and the cycle is "cut"
-     * at its position, yielding a final route from start -> intermediate nodes -> end.
+     * Generates a near-optimal ordered route of MowingPlace nodes, starting at the node with ID "start"
+     * and ending at the node with ID "end", using a 3/2-approximation TSP algorithm (Christofides).
+     * All intermediate nodes are visited exactly once. Distances are based on the provided
+     * distancesToOthers list, with missing values estimated via Haversine formula.
      *
-     * @param nodes List of MowingPlace nodes, where the nodes with id "start" and "end" represent the start and end.
-     * @return Ordered list of MowingPlace objects representing the final route.
+     * @param nodes           List of MowingPlace nodes (including the start and end nodes).
+     * @return Ordered list of MowingPlace objects representing the route from start to end.
      */
     public static List<MowingPlace> generateRoute(List<MowingPlace> nodes) {
         if (nodes == null || nodes.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Identify start and end nodes and collect intermediate nodes.
+        // Identify start and end nodes by ID
         MowingPlace startNode = null;
         MowingPlace endNode = null;
-        List<MowingPlace> intermediates = new ArrayList<>();
         for (MowingPlace place : nodes) {
             if ("start".equals(place.getId())) {
                 startNode = place;
             } else if ("end".equals(place.getId())) {
                 endNode = place;
-            } else {
-                intermediates.add(place);
             }
         }
         if (startNode == null || endNode == null) {
-            // If start or end are missing, return the input list
+            // If we cannot find the start or end node, return the input or empty route
             return nodes;
         }
 
-        // Create a dummy node and add it to the intermediate nodes list.
-        MowingPlace dummyNode = new MowingPlace();
-        dummyNode.setId("dummy");
-        // Other attributes of dummy can remain at their default values.
-        intermediates.add(dummyNode);
+        // Prepare list of intermediate nodes (exclude start and end from TSP cycle computation)
+        List<MowingPlace> intermediates = new ArrayList<>();
+        for (MowingPlace place : nodes) {
+            if (place != startNode && place != endNode) {
+                intermediates.add(place);
+            }
+        }
+        int nInter = intermediates.size();
 
-        // Build mappings for intermediate nodes (indices 0 .. nInter-1)
-        int nInter = intermediates.size(); // now includes dummy node
+        // Map node IDs to matrix indices for convenience
+        // We will assign indices 0..nInter-1 to intermediate nodes, index nInter to start, and nInter+1 to end.
         Map<String, Integer> indexById = new HashMap<>();
         Map<Integer, MowingPlace> nodeByIndex = new HashMap<>();
         for (int i = 0; i < nInter; i++) {
@@ -60,7 +57,6 @@ public class TSPPlanner {
             indexById.put(place.getId(), i);
             nodeByIndex.put(i, place);
         }
-        // Assign new indices for start and end nodes.
         int startIndex = nInter;
         int endIndex = nInter + 1;
         indexById.put(startNode.getId(), startIndex);
@@ -68,49 +64,36 @@ public class TSPPlanner {
         nodeByIndex.put(startIndex, startNode);
         nodeByIndex.put(endIndex, endNode);
 
-        int totalNodes = nInter + 2; // intermediates (with dummy) + start + end
+        int totalNodes = nInter + 2;  // total nodes including start and end
+        // Initialize distance matrix for all nodes (use double for distances)
         double[][] dist = new double[totalNodes][totalNodes];
-
-        // Initialize the distance matrix.
+        // Fill with some large default for missing values
         for (int i = 0; i < totalNodes; i++) {
             Arrays.fill(dist[i], Double.POSITIVE_INFINITY);
             dist[i][i] = 0.0;
         }
 
-        // Populate distance matrix using the distancesToOthers list for nodes provided in input.
+        // Populate distance matrix using distancesToOthers lists
         for (MowingPlace place : nodes) {
             Integer i = indexById.get(place.getId());
-            if (i == null) continue;
-            List<MowingPlace.DistanceEntry> dList = place.getDistancesToOthers();
+            if (i == null) continue;  // skip if not in our index map
+            List<DistanceEntry> dList = place.getDistancesToOthers();
             if (dList != null) {
-                for (MowingPlace.DistanceEntry entry : dList) {
+                for (DistanceEntry entry : dList) {
                     Integer j = indexById.get(entry.getId());
                     if (j != null) {
+                        // Use provided distance (convert to double)
                         dist[i][j] = entry.getDistance();
                     }
                 }
             }
         }
 
-        // Explicitly set distances for the dummy node:
-        int dummyIndex = indexById.get("dummy");
-        // Set distance from dummy to start and end as 0.
-        dist[dummyIndex][startIndex] = 0.0;
-        dist[startIndex][dummyIndex] = 0.0;
-        dist[dummyIndex][endIndex] = 0.0;
-        dist[endIndex][dummyIndex] = 0.0;
-        // For dummy node to all other intermediate nodes (except start and end), set distance to a very high value.
-        for (int j = 0; j < totalNodes; j++) {
-            if (j != dummyIndex && j != startIndex && j != endIndex) {
-                dist[dummyIndex][j] = Double.POSITIVE_INFINITY;
-                dist[j][dummyIndex] = Double.POSITIVE_INFINITY;
-            }
-        }
-
-        // Ensure symmetry: if distance is missing, estimate via Haversine formula.
+        // Ensure symmetry and compute missing distances via Haversine formula
         for (int i = 0; i < totalNodes; i++) {
             for (int j = i + 1; j < totalNodes; j++) {
                 if (dist[i][j] == Double.POSITIVE_INFINITY && dist[j][i] == Double.POSITIVE_INFINITY) {
+                    // Distance missing in both directions – calculate using Haversine
                     MowingPlace pi = nodeByIndex.get(i);
                     MowingPlace pj = nodeByIndex.get(j);
                     double havDist = haversineDistance(pi.getLatitude(), pi.getLongitude(),
@@ -118,10 +101,12 @@ public class TSPPlanner {
                     dist[i][j] = havDist;
                     dist[j][i] = havDist;
                 } else if (dist[i][j] == Double.POSITIVE_INFINITY) {
+                    // Use the known opposite direction distance
                     dist[i][j] = dist[j][i];
                 } else if (dist[j][i] == Double.POSITIVE_INFINITY) {
                     dist[j][i] = dist[i][j];
                 } else {
+                    // Both distances are present; enforce symmetry by taking the minimum
                     double d = Math.min(dist[i][j], dist[j][i]);
                     dist[i][j] = d;
                     dist[j][i] = d;
@@ -129,18 +114,19 @@ public class TSPPlanner {
             }
         }
 
-        // Run Christofides algorithm on the intermediate nodes (indices 0..nInter-1), i.e. including the dummy node.
+        // We will run Christofides on the intermediate nodes (indices 0..nInter-1).
         int n = nInter;
-        List<Integer> cycleOrder = new ArrayList<>();
+        List<Integer> cycleOrder = new ArrayList<>();  // this will store the Hamiltonian cycle (tour) for intermediate nodes
 
         if (n > 0) {
-            // 1. Compute MST on intermediate nodes using Prim's algorithm.
+            // 1. Compute MST on intermediate nodes using Prim's algorithm
             boolean[] inMST = new boolean[n];
             double[] minEdge = new double[n];
             int[] parent = new int[n];
             Arrays.fill(minEdge, Double.POSITIVE_INFINITY);
             Arrays.fill(parent, -1);
-            minEdge[0] = 0.0;
+            minEdge[0] = 0.0;  // start MST from node 0 (arbitrary choice)
+
             for (int k = 0; k < n; k++) {
                 int u = -1;
                 for (int v = 0; v < n; v++) {
@@ -148,8 +134,9 @@ public class TSPPlanner {
                         u = v;
                     }
                 }
-                if (u == -1) break; // graph disconnected? Should not happen.
+                if (u == -1) break;  // should not happen if graph is connected
                 inMST[u] = true;
+                // Update neighbor distances
                 for (int w = 0; w < n; w++) {
                     if (!inMST[w] && dist[u][w] < minEdge[w]) {
                         minEdge[w] = dist[u][w];
@@ -158,12 +145,12 @@ public class TSPPlanner {
                 }
             }
 
-            // Build MST adjacency list.
+            // Build adjacency list for MST
             List<Set<Integer>> mstAdj = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 mstAdj.add(new HashSet<>());
             }
-            for (int v = 1; v < n; v++) { // v = 0 is the arbitrary root.
+            for (int v = 1; v < n; v++) {  // v=0 is root, parent of root stays -1
                 int u = parent[v];
                 if (u != -1) {
                     mstAdj.get(u).add(v);
@@ -171,7 +158,7 @@ public class TSPPlanner {
                 }
             }
 
-            // 2. Identify vertices with odd degree in the MST.
+            // 2. Find all vertices with odd degree in MST
             List<Integer> oddVertices = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 if (mstAdj.get(i).size() % 2 != 0) {
@@ -179,61 +166,70 @@ public class TSPPlanner {
                 }
             }
 
-            // 3. Compute a minimum-weight perfect matching on the odd-degree vertices.
+            // 3. Compute minimum weight perfect matching on the subgraph induced by odd-degree vertices
+            // We will find pairs among oddVertices that minimize the sum of distances.
             List<int[]> matchingEdges = new ArrayList<>();
-            int mOdd = oddVertices.size();
-            if (mOdd > 0) {
-                if (mOdd <= 16) {
-                    int mMaskSize = 1 << mOdd;
+            int m = oddVertices.size();
+            if (m > 0) {
+                if (m <= 16) {
+                    // Use DP bitmask algorithm for exact minimum-weight perfect matching (for small sets)
+                    int mMaskSize = 1 << m;
                     double[] dpMatch = new double[mMaskSize];
                     int[] pairChoice = new int[mMaskSize];
                     Arrays.fill(dpMatch, Double.POSITIVE_INFINITY);
                     dpMatch[0] = 0.0;
+                    // Iterate over all subsets of odd vertices
                     for (int mask = 0; mask < mMaskSize; mask++) {
-                        if (dpMatch[mask] == Double.POSITIVE_INFINITY)
-                            continue;
+                        if (dpMatch[mask] == Double.POSITIVE_INFINITY) continue;
+                        // Find first unmatched vertex in this subset
                         int i;
-                        for (i = 0; i < mOdd; i++) {
-                            if ((mask & (1 << i)) == 0)
+                        for (i = 0; i < m; i++) {
+                            if ((mask & (1 << i)) == 0) {
                                 break;
+                            }
                         }
-                        if (i >= mOdd)
-                            continue; // all matched.
+                        if (i >= m) continue; // no unmatched vertices
                         int maskWithI = mask | (1 << i);
-                        for (int j = i + 1; j < mOdd; j++) {
-                            if ((mask & (1 << j)) != 0)
-                                continue;
+                        // Try pairing i with any other unmatched j
+                        for (int j = i + 1; j < m; j++) {
+                            if ((mask & (1 << j)) != 0) continue;
                             int newMask = maskWithI | (1 << j);
+                            // vertices indices in original graph:
                             int v1 = oddVertices.get(i);
                             int v2 = oddVertices.get(j);
                             double edgeWeight = dist[v1][v2];
                             if (dpMatch[newMask] > dpMatch[mask] + edgeWeight) {
                                 dpMatch[newMask] = dpMatch[mask] + edgeWeight;
+                                // store this pairing choice for reconstruction
                                 pairChoice[newMask] = (i << 16) | j;
                             }
                         }
                     }
-                    int fullMask = (1 << mOdd) - 1;
+                    // Reconstruct matching pairs from DP result
+                    int fullMask = (1 << m) - 1;
                     int curMask = fullMask;
+                    boolean[] matched = new boolean[m];
                     while (curMask != 0) {
                         int pair = pairChoice[curMask];
                         int i = pair >> 16;
                         int j = pair & 0xFFFF;
+                        // Add the edge (oddVertices[i], oddVertices[j]) to matching
                         int v1 = oddVertices.get(i);
                         int v2 = oddVertices.get(j);
                         matchingEdges.add(new int[]{v1, v2});
+                        // Remove i and j from the current mask
                         curMask &= ~(1 << i);
                         curMask &= ~(1 << j);
                     }
                 } else {
-                    // Use a greedy matching approach for larger sets.
+                    // For larger sets of odd vertices, use a greedy approach (approximate matching)
                     Set<Integer> unmatched = new HashSet<>(oddVertices);
                     while (!unmatched.isEmpty()) {
                         Iterator<Integer> it = unmatched.iterator();
                         int v1 = it.next();
                         it.remove();
-                        if (unmatched.isEmpty())
-                            break;
+                        if (unmatched.isEmpty()) break;
+                        // find the closest unmatched vertex to v1
                         int v2 = -1;
                         double minDist = Double.POSITIVE_INFINITY;
                         for (int u : unmatched) {
@@ -242,13 +238,14 @@ public class TSPPlanner {
                                 v2 = u;
                             }
                         }
+                        // add pair (v1, v2)
                         unmatched.remove(v2);
                         if (v2 != -1) {
                             matchingEdges.add(new int[]{v1, v2});
                         }
                     }
                 }
-                // Add matching edges to the MST adjacency to form an Eulerian multigraph.
+                // Add matching edges to MST adjacency to form Eulerian multigraph
                 for (int[] edge : matchingEdges) {
                     int u = edge[0];
                     int v = edge[1];
@@ -257,12 +254,12 @@ public class TSPPlanner {
                 }
             }
 
-            // 4. Find an Eulerian tour in the multigraph (MST + matching).
+            // 4. Eulerian circuit: find an Eulerian tour in the combined graph (MST + matching)
             List<Integer> eulerTour = new ArrayList<>();
             Stack<Integer> stack = new Stack<>();
             Stack<Integer> path = new Stack<>();
-            stack.push(0); // Start from an arbitrary intermediate vertex.
-            // Create a modifiable copy of the adjacency list.
+            stack.push(0);  // start from vertex 0
+            // We will copy the adjacency list to modify while finding the tour
             List<Deque<Integer>> adjCopy = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 adjCopy.add(new ArrayDeque<>(mstAdj.get(i)));
@@ -270,19 +267,24 @@ public class TSPPlanner {
             while (!stack.isEmpty()) {
                 int u = stack.peek();
                 if (adjCopy.get(u).isEmpty()) {
+                    // No more edges out of u, add to tour
                     path.push(u);
                     stack.pop();
                 } else {
-                    int v = adjCopy.get(u).poll();
+                    // Follow an unused edge
+                    int v = adjCopy.get(u).poll();  // get a neighbor
+                    // Remove the edge v->u as well
                     adjCopy.get(v).remove(u);
                     stack.push(v);
                 }
             }
+            // path stack now contains the Eulerian circuit in reverse order
             while (!path.isEmpty()) {
                 eulerTour.add(path.pop());
             }
 
-            // 5. Shortcut the Eulerian tour to form a Hamiltonian cycle (remove repeated vertices).
+            // 5. Make it a Hamiltonian circuit by skipping repeated vertices (shortcutting)
+            // We traverse the Euler tour and add each vertex once.
             Set<Integer> visited = new HashSet<>();
             for (int vertex : eulerTour) {
                 if (!visited.contains(vertex)) {
@@ -290,47 +292,98 @@ public class TSPPlanner {
                     visited.add(vertex);
                 }
             }
+            // The cycleOrder now contains each intermediate vertex exactly once, forming a tour (cycle).
         }
 
-        // At this point, cycleOrder contains the TSP order of intermediate nodes (including the dummy).
-        // Find the dummy node in the cycle and rotate the list so that dummy is the first element.
-        int dummyPos = -1;
-        for (int i = 0; i < cycleOrder.size(); i++) {
-            MowingPlace place = nodeByIndex.get(cycleOrder.get(i));
-            if ("dummy".equals(place.getId())) {
-                dummyPos = i;
-                break;
+        // If there are no intermediate nodes, then the route is simply start -> end
+        if (cycleOrder.isEmpty()) {
+            return Arrays.asList(startNode, endNode);
+        }
+
+        // 6. Convert the Hamiltonian cycle to a path from start to end by finding the best edge to break.
+        // We will evaluate each edge of the cycle to determine where to "cut" the cycle and insert start and end.
+        double bestIncrease = Double.POSITIVE_INFINITY;
+        int breakIndex = 0;
+        boolean attachSwapped = false;
+        int cycleSize = cycleOrder.size();
+        // Calculate total cycle cost (for reference)
+        double cycleCost = 0.0;
+        for (int k = 0; k < cycleSize; k++) {
+            int vi = cycleOrder.get(k);
+            int vj = cycleOrder.get((k + 1) % cycleSize);
+            cycleCost += dist[vi][vj];
+        }
+        // Try removing each edge (cycle[i] - cycle[i+1]) and connecting start/end to the break
+        for (int i = 0; i < cycleSize; i++) {
+            int u = cycleOrder.get(i);
+            int v = cycleOrder.get((i + 1) % cycleSize);
+            // Compute the cost increase if we remove edge (u,v) and attach start to u and end to v
+            double cost1 = dist[startIndex][u] + dist[v][endIndex] - dist[u][v];
+            // Compute the cost increase if we attach start to v and end to u instead
+            double cost2 = dist[startIndex][v] + dist[u][endIndex] - dist[u][v];
+            if (cost1 < bestIncrease) {
+                bestIncrease = cost1;
+                breakIndex = i;
+                attachSwapped = false;
+            }
+            if (cost2 < bestIncrease) {
+                bestIncrease = cost2;
+                breakIndex = i;
+                attachSwapped = true;
             }
         }
-        if (dummyPos != -1) {
-            List<Integer> rotated = new ArrayList<>();
-            for (int i = 0; i < cycleOrder.size(); i++) {
-                rotated.add(cycleOrder.get((dummyPos + i) % cycleOrder.size()));
-            }
-            cycleOrder = rotated;
-            // Remove the dummy node (now at the beginning of the list).
-            cycleOrder.remove(0);
-        }
 
-        // Build the final route: start -> (ordered intermediate nodes) -> end.
-        List<MowingPlace> finalRoute = new ArrayList<>();
-        finalRoute.add(startNode);
-        for (Integer idx : cycleOrder) {
-            finalRoute.add(nodeByIndex.get(idx));
+        // Retrieve the chosen edge to break
+        int breakU = cycleOrder.get(breakIndex);
+        int breakV = cycleOrder.get((breakIndex + 1) % cycleSize);
+        // Prepare an adjacency list for the cycle to help retrieve the path order after breaking
+        Map<Integer, List<Integer>> cycleAdj = new HashMap<>();
+        for (int i = 0; i < cycleSize; i++) {
+            int u = cycleOrder.get(i);
+            int v = cycleOrder.get((i + 1) % cycleSize);
+            cycleAdj.computeIfAbsent(u, x -> new ArrayList<>()).add(v);
+            cycleAdj.computeIfAbsent(v, x -> new ArrayList<>()).add(u);
         }
-        finalRoute.add(endNode);
+        // Remove the chosen edge (breakU - breakV) from the cycle adjacency to "break" the cycle
+        cycleAdj.get(breakU).remove((Integer) breakV);
+        cycleAdj.get(breakV).remove((Integer) breakU);
 
-        return finalRoute;
+        // Find the path between breakU and breakV in this broken cycle (it should be a linear path now)
+        int pathStart = attachSwapped ? breakV : breakU;
+        int pathEnd = attachSwapped ? breakU : breakV;
+        List<Integer> intermediatePath = findPathInTree(cycleAdj, pathStart, pathEnd);
+
+        // 7. Build the final route: start node -> (intermediate path nodes in order) -> end node
+        List<MowingPlace> route = new ArrayList<>();
+        route.add(startNode);
+        for (int idx : intermediatePath) {
+            // Add each intermediate place by index
+            route.add(nodeByIndex.get(idx));
+        }
+        route.add(endNode);
+
+        return route;
     }
 
-    // Helper: Haversine distance calculation (in meters).
+    /**
+     * Computes the great-circle distance between two points on Earth using the Haversine formula.
+     * @param lat1 Latitude of first point in degrees.
+     * @param lon1 Longitude of first point in degrees.
+     * @param lat2 Latitude of second point in degrees.
+     * @param lon2 Longitude of second point in degrees.
+     * @return Distance between the two points in meters.
+     */
     private static double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371000; // Earth radius in meters
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        // Earth radius in meters
+        final double R = 6371000.0;
+        // Convert degrees to radians
+        double phi1 = Math.toRadians(lat1);
+        double phi2 = Math.toRadians(lat2);
+        double dPhi = Math.toRadians(lat2 - lat1);
+        double dLambda = Math.toRadians(lon2 - lon1);
+        // Haversine formula
+        double a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLambda / 2) * Math.sin(dLambda / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
@@ -387,8 +440,6 @@ public class TSPPlanner {
      * @return Updated route with extra cemeteries added if possible.
      */
     public static List<MowingPlace> addExtraCemeteries(List<MowingPlace> currentRoute, List<MowingPlace> allAvailablePlaces, int endTime, double speedMultiplier, boolean addVisited, int timeFromLastVisit) {
-        //log parametres
-        Log.d("TSPPlanner", " endTime=" + endTime + ", speedMultiplier=" + speedMultiplier + ", addVisited=" + addVisited + ", timeFromLastVisit=" + timeFromLastVisit);
         // For demonstration, if current route time is less than endTime, add one extra place (if available)
         double currentTime = 0;
         for (MowingPlace mp : currentRoute) {
