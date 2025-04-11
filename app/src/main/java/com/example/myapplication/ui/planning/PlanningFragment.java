@@ -362,6 +362,20 @@ public class PlanningFragment extends Fragment {
                 }
                 totalMowingTime /= speedMultiplier;
 
+                //go through finalRoute and add the driving time to each place using distance entry duration
+                for (int i = 0; i < finalRoute.size(); i++) {
+                    MowingPlace mp = finalRoute.get(i);
+                    if (i > 0) {
+                        MowingPlace previousMp = finalRoute.get(i - 1);
+                        for (MowingPlace.DistanceEntry entry : previousMp.getDistancesToOthers()) {
+                            if (entry.getId().equals(mp.getId())) {
+                                totalMowingTime += entry.getDuration() / 3600.0; // convert seconds to hours
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 mapyCzRouteUrl = generateMapyUrl(finalRoute);
                 googleMapsUrl = generateGoogleMapsUrl(finalRoute);
                 updateMapPreview(finalRoute);

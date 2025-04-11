@@ -115,17 +115,27 @@ public class MatrixApiHelper {
                                 if (resObj.has("length") && resObj.get("length").getAsInt() >= 0) {
                                     distance = resObj.get("length").getAsInt();
                                 }
+                                int duration = -1;
+                                if (resObj.has("duration") && resObj.get("duration").getAsInt() >= 0) {
+                                    duration = resObj.get("duration").getAsInt();
+                                    Log.d(TAG, "Duration: " + duration + " seconds");
+                                }
+
+                                // update the distances for the new place
                                 MowingPlace.DistanceEntry entry = new MowingPlace.DistanceEntry();
                                 entry.setId(batch.get(i).getId());
                                 entry.setDistance(distance);
+                                entry.setDuration(duration);
                                 newPlaceDistances.add(entry);
 
+                                // update the distances for the batch
                                 if (batch.get(i).getDistancesToOthers() == null) {
                                     batch.get(i).setDistancesToOthers(new ArrayList<>());
                                 }
                                 MowingPlace.DistanceEntry reverseEntry = new MowingPlace.DistanceEntry();
                                 reverseEntry.setId(newPlace.getId());
                                 reverseEntry.setDistance(distance);
+                                reverseEntry.setDuration(duration);
                                 batch.get(i).getDistancesToOthers().add(reverseEntry);
                             }
                         } else {
