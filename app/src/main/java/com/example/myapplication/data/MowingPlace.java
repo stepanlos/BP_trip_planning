@@ -23,6 +23,8 @@ public class MowingPlace {
         private String id;
         private int distance;
 
+        private int duration;
+
         // getters and setters
         public String getId() {
             return id;
@@ -35,6 +37,12 @@ public class MowingPlace {
         }
         public void setDistance(int distance) {
             this.distance = distance;
+        }
+        public int getDuration() {
+            return duration;
+        }
+        public void setDuration(int duration) {
+            this.duration = duration;
         }
     }
 

@@ -343,7 +343,18 @@ public class PlanningFragment extends Fragment {
                 // Now proceed with route generation:
                 finalRoute = TSPPlanner.generateRoute(nodes);
                 if (cbAddExtra.isChecked()) {
-                    finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier, cbIncludeVisited.isChecked(), Integer.parseInt(etLastMowingTime.getText().toString()));
+                    // Add extra cemeteries if checkbox is checked
+                    //try to parse last mowing time to int
+                    int lastMowingTime = 0;
+                    if (etLastMowingTime.getText() != null && !TextUtils.isEmpty(etLastMowingTime.getText().toString())) {
+                        try {
+                            lastMowingTime = Integer.parseInt(etLastMowingTime.getText().toString());
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), "Čas posledního sekání není platný", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                    finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier, cbIncludeVisited.isChecked(), lastMowingTime);
                 }
                 totalMowingTime = 0;
                 for (MowingPlace mp : finalRoute) {

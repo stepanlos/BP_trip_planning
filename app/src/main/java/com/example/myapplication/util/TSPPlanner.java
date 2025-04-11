@@ -1,5 +1,7 @@
 package com.example.myapplication.util;
 
+import android.util.Log;
+
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlace.DistanceEntry;
 
@@ -385,6 +387,8 @@ public class TSPPlanner {
      * @return Updated route with extra cemeteries added if possible.
      */
     public static List<MowingPlace> addExtraCemeteries(List<MowingPlace> currentRoute, List<MowingPlace> allAvailablePlaces, int endTime, double speedMultiplier, boolean addVisited, int timeFromLastVisit) {
+        //log parametres
+        Log.d("TSPPlanner", " endTime=" + endTime + ", speedMultiplier=" + speedMultiplier + ", addVisited=" + addVisited + ", timeFromLastVisit=" + timeFromLastVisit);
         // For demonstration, if current route time is less than endTime, add one extra place (if available)
         double currentTime = 0;
         for (MowingPlace mp : currentRoute) {
