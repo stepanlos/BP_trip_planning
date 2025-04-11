@@ -2,10 +2,8 @@ package com.example.myapplication.data;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,18 +24,20 @@ public class RoutePlanRepository {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
             InputStream is;
-            if (file.exists()) {
+            if (file.exists() && file.length() > 0) {
+                // Load from internal storage if the file exists and is not empty
                 is = new FileInputStream(file);
+                Log.d(TAG, "Loading route plans from internal storage");
             } else {
-                // If file does not exist, return empty list
-                return Collections.emptyList();
+                // Otherwise, load from assets
+                is = context.getAssets().open(JSON_FILE_NAME);
+                Log.d(TAG, "Loading route plans from assets");
             }
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
             String jsonString = new String(buffer, "UTF-8");
-
             Gson gson = new Gson();
             Type listType = new TypeToken<List<RoutePlan>>() {}.getType();
             return gson.fromJson(jsonString, listType);

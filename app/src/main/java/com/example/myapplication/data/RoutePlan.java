@@ -1,56 +1,57 @@
 package com.example.myapplication.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Model class representing a route plan.
  */
 public class RoutePlan {
-    private List<String> routeIds; // Ordered list of MowingPlace IDs
-    private String date;          // Date when the route was planned
-    private double speedMultiplier;
-    private double mowingTime;     // Total time (driving + mowing)
-    private List<String> additionalInfo; // Any additional metadata
+    // List of the names of all stops (excluding start and end)
+    private List<MowingPlace> routePlaces;
+    // URL for Mapy.cz route
+    private String mapyCzUrl;
+    // URL for Google Maps route
+    private String googleMapsUrl;
+    // Date and time when the route plan was created (format "yyyy-MM-dd HH:mm")
+    private String dateTime;
 
     // Getters and Setters
+    public List<String> getRoutePlaces() {
+        // Return the names of the route places
+        List<String> names = new ArrayList<>();
+        for (MowingPlace place : routePlaces) {
+            names.add(place.getName());
+        }
+        return names;
 
-    public List<String> getRouteIds() {
-        return routeIds;
     }
 
-    public void setRouteIds(List<String> routeIds) {
-        this.routeIds = routeIds;
+    public void setRoutePlaces(List<MowingPlace> routePlacesNames) {
+        this.routePlaces = routePlacesNames;
     }
 
-    public String getDate() {
-        return date;
+    public String getMapyCzUrl() {
+        return mapyCzUrl;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMapyCzUrl(String mapyCzUrl) {
+        this.mapyCzUrl = mapyCzUrl;
     }
 
-    public double getSpeedMultiplier() {
-        return speedMultiplier;
+    public String getGoogleMapsUrl() {
+        return googleMapsUrl;
     }
 
-    public void setSpeedMultiplier(double speedMultiplier) {
-        this.speedMultiplier = speedMultiplier;
+    public void setGoogleMapsUrl(String googleMapsUrl) {
+        this.googleMapsUrl = googleMapsUrl;
     }
 
-    public double getMowingTime() {
-        return mowingTime;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setMowingTime(double mowingTime) {
-        this.mowingTime = mowingTime;
-    }
-
-    public List<String> getAdditionalInfo() {
-        return additionalInfo;
-    }
-
-    public void setAdditionalInfo(List<String> additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 }

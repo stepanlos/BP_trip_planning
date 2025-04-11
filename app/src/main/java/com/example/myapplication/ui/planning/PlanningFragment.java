@@ -28,6 +28,8 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
+import com.example.myapplication.data.RoutePlan;
+import com.example.myapplication.data.RoutePlanRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
 import com.example.myapplication.util.DiacriticInsensitiveAdapter;
 import com.example.myapplication.util.TSPPlanner;
@@ -342,6 +344,23 @@ public class PlanningFragment extends Fragment {
         updateMapPreview(finalRoute);
         btnOpenMapycZ.setVisibility(View.VISIBLE);
         btnOpenGoogleMaps.setVisibility(View.VISIBLE);
+
+        //save route plan to history
+        RoutePlan routePlan = new RoutePlan();
+        routePlan.setRoutePlaces(finalRoute);
+        routePlan.setMapyCzUrl(mapyCzRouteUrl);
+        routePlan.setGoogleMapsUrl(googleMapsUrl);
+        //set today's date and time yyyy-MM-dd HH:mm:ss
+        routePlan.setDateTime(String.format("%tF %tT", System.currentTimeMillis(), System.currentTimeMillis()));
+        RoutePlanRepository routePlanRepository = new RoutePlanRepository();
+        List<RoutePlan> routePlans = routePlanRepository.loadRoutePlans(getContext());
+        if (routePlans == null) {
+            routePlans = new ArrayList<>();
+        }
+        routePlans.add(routePlan);
+        routePlanRepository.saveRoutePlans(getContext(), routePlans);
+
+
         //format totalMowingTime to one decimal place
         String formattedMowingTime = String.format("%.1f", totalMowingTime);
         // Show total time in hours and move the toast a little bit up
