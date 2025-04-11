@@ -155,7 +155,7 @@
 
             <!-- Checkbox for "Nepřidávat místa se splněným počtem navštívení pro tento rok" -->
             <CheckBox
-                android:id="@+id/cbExcludeVisited"
+                android:id="@+id/cbIncludeVisited"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/do_not_add_completed_this_year"

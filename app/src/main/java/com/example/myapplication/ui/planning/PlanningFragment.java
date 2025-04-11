@@ -32,6 +32,7 @@ import com.example.myapplication.data.RoutePlan;
 import com.example.myapplication.data.RoutePlanRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
 import com.example.myapplication.util.DiacriticInsensitiveAdapter;
+import com.example.myapplication.util.MatrixApiHelper;
 import com.example.myapplication.util.TSPPlanner;
 
 import org.osmdroid.util.GeoPoint;
@@ -41,6 +42,7 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlanningFragment extends Fragment {
 
@@ -61,7 +63,7 @@ public class PlanningFragment extends Fragment {
 
     // Extra options UI elements
     private EditText etLastMowingTime;
-    private CheckBox cbExcludeVisited;
+    private CheckBox cbIncludeVisited;
 
     // Repository for available cemeteries and mapping from name to MowingPlace
     private MowingPlacesRepository placesRepository;
@@ -107,7 +109,7 @@ public class PlanningFragment extends Fragment {
 
         // Extra options: initialize etLastMowingTime and cbExcludeVisited
         etLastMowingTime = llExtraOptions.findViewById(R.id.etLastMowingTime);
-        cbExcludeVisited = llExtraOptions.findViewById(R.id.cbExcludeVisited);
+        cbIncludeVisited = llExtraOptions.findViewById(R.id.cbIncludeVisited);
         etLastMowingTime.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
 
         // Hide "Open in Mapy.cz" button initially
@@ -275,13 +277,13 @@ public class PlanningFragment extends Fragment {
         String startLocStr = etStartLocation.getText().toString().trim();
         String endLocStr = etEndLocation.getText().toString().trim();
         if (TextUtils.isEmpty(startLocStr) || TextUtils.isEmpty(endLocStr)) {
-            Toast.makeText(getContext(), "Prosím, vyberte start a end lokaci", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Prosím, vyberte startovní a koncovou lokaci", Toast.LENGTH_SHORT).show();
             return;
         }
         String[] startParts = startLocStr.split(",");
         String[] endParts = endLocStr.split(",");
         if (startParts.length != 2 || endParts.length != 2) {
-            Toast.makeText(getContext(), "Formát lokace musí být 'lat,lon'", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Formát lokace musí být 'zem. šířka,zem. délka'", Toast.LENGTH_SHORT).show();
             return;
         }
         double startLat = Double.parseDouble(startParts[0].trim());
@@ -308,7 +310,7 @@ public class PlanningFragment extends Fragment {
         endPlace.setLongitude(endLon);
         endPlace.setTimeRequirement(0);
 
-        // Retrieve mandatory waypoints from llWaypoints; skip entries where AutoCompleteTextView is empty
+        // Retrieve mandatory waypoints
         List<MowingPlace> mandatoryWaypoints = new ArrayList<>();
         int count = llWaypoints.getChildCount();
         for (int i = 0; i < count; i++) {
@@ -328,43 +330,80 @@ public class PlanningFragment extends Fragment {
         nodes.addAll(mandatoryWaypoints);
         nodes.add(endPlace);
 
-        // Generate route using TSPPlanner (Christofides–Serdyukov)
-        finalRoute = TSPPlanner.generateRoute(nodes);
-        if (cbAddExtra.isChecked()) {
-            finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier);
-        }
-        totalMowingTime = 0;
-        for (MowingPlace mp : finalRoute) {
-            totalMowingTime += mp.getTimeRequirement();
-        }
-        totalMowingTime /= speedMultiplier;
+        // Prepare allPlaces list for distance updates
+        List<MowingPlace> allPlaces = new ArrayList<>(availablePlaces);
 
-        mapyCzRouteUrl = generateMapyUrl(finalRoute);
-        googleMapsUrl = generateGoogleMapsUrl(finalRoute);
-        updateMapPreview(finalRoute);
-        btnOpenMapycZ.setVisibility(View.VISIBLE);
-        btnOpenGoogleMaps.setVisibility(View.VISIBLE);
+        // Use an AtomicInteger to count completed update attempts (for start and end)
+        final AtomicInteger updatesCompleted = new AtomicInteger(0);
 
-        //save route plan to history
-        RoutePlan routePlan = new RoutePlan();
-        routePlan.setRoutePlaces(finalRoute);
-        routePlan.setMapyCzUrl(mapyCzRouteUrl);
-        routePlan.setGoogleMapsUrl(googleMapsUrl);
-        //set today's date and time yyyy-MM-dd HH:mm:ss
-        routePlan.setDateTime(String.format("%tF %tT", System.currentTimeMillis(), System.currentTimeMillis()));
-        RoutePlanRepository routePlanRepository = new RoutePlanRepository();
-        List<RoutePlan> routePlans = routePlanRepository.loadRoutePlans(getContext());
-        if (routePlans == null) {
-            routePlans = new ArrayList<>();
-        }
-        routePlans.add(routePlan);
-        routePlanRepository.saveRoutePlans(getContext(), routePlans);
+        // Helper method to check if both updates are done
+        Runnable checkAndGenerateRoute = () -> {
+            if (updatesCompleted.get() >= 2) {
+                // Both start and end updates have finished (successfully or not)
+                // Now proceed with route generation:
+                finalRoute = TSPPlanner.generateRoute(nodes);
+                if (cbAddExtra.isChecked()) {
+                    finalRoute = TSPPlanner.addExtraCemeteries(finalRoute, availablePlaces, endTime - startTime, speedMultiplier, cbIncludeVisited.isChecked(), Integer.parseInt(etLastMowingTime.getText().toString()));
+                }
+                totalMowingTime = 0;
+                for (MowingPlace mp : finalRoute) {
+                    totalMowingTime += mp.getTimeRequirement();
+                }
+                totalMowingTime /= speedMultiplier;
 
+                mapyCzRouteUrl = generateMapyUrl(finalRoute);
+                googleMapsUrl = generateGoogleMapsUrl(finalRoute);
+                updateMapPreview(finalRoute);
+                btnOpenMapycZ.setVisibility(View.VISIBLE);
+                btnOpenGoogleMaps.setVisibility(View.VISIBLE);
 
-        //format totalMowingTime to one decimal place
-        String formattedMowingTime = String.format("%.1f", totalMowingTime);
-        // Show total time in hours and move the toast a little bit up
-        Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas sekání: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
+                // Save route plan to repository
+                RoutePlan routePlan = new RoutePlan();
+                routePlan.setRoutePlaces(finalRoute);
+                routePlan.setMapyCzUrl(mapyCzRouteUrl);
+                routePlan.setGoogleMapsUrl(googleMapsUrl);
+                routePlan.setDateTime(String.format("%tF %tT", System.currentTimeMillis(), System.currentTimeMillis()));
+                RoutePlanRepository routePlanRepository = new RoutePlanRepository();
+                List<RoutePlan> routePlans = routePlanRepository.loadRoutePlans(getContext());
+                if (routePlans == null) {
+                    routePlans = new ArrayList<>();
+                }
+                routePlans.add(routePlan);
+                routePlanRepository.saveRoutePlans(getContext(), routePlans);
+
+                String formattedMowingTime = String.format("%.1f", totalMowingTime);
+                Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas sekání: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
+            }
+        };
+
+        // Update distances for startPlace
+        MatrixApiHelper.updateDistances(getContext(), startPlace, allPlaces, new MatrixApiHelper.MatrixApiCallback() {
+            @Override
+            public void onSuccess() {
+                updatesCompleted.incrementAndGet();
+                checkAndGenerateRoute.run();
+            }
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Zjišťování vzdálenosti startu a cíle se nezdařilo, výsledek může být nepřesný.", Toast.LENGTH_SHORT).show();
+                updatesCompleted.incrementAndGet();
+                checkAndGenerateRoute.run();
+            }
+        });
+
+        // Update distances for endPlace
+        MatrixApiHelper.updateDistances(getContext(), endPlace, allPlaces, new MatrixApiHelper.MatrixApiCallback() {
+            @Override
+            public void onSuccess() {
+                updatesCompleted.incrementAndGet();
+                checkAndGenerateRoute.run();
+            }
+            @Override
+            public void onFailure(String errorMessage) {
+                updatesCompleted.incrementAndGet();
+                checkAndGenerateRoute.run();
+            }
+        });
     }
 
     // Draw polyline on map preview

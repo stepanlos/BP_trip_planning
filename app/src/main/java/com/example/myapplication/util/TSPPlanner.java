@@ -384,7 +384,7 @@ public class TSPPlanner {
      * @param speedMultiplier Speed multiplier applied.
      * @return Updated route with extra cemeteries added if possible.
      */
-    public static List<MowingPlace> addExtraCemeteries(List<MowingPlace> currentRoute, List<MowingPlace> allAvailablePlaces, int endTime, double speedMultiplier) {
+    public static List<MowingPlace> addExtraCemeteries(List<MowingPlace> currentRoute, List<MowingPlace> allAvailablePlaces, int endTime, double speedMultiplier, boolean addVisited, int timeFromLastVisit) {
         // For demonstration, if current route time is less than endTime, add one extra place (if available)
         double currentTime = 0;
         for (MowingPlace mp : currentRoute) {

@@ -33,6 +33,16 @@ public class MatrixApiHelper {
         void onFailure(String errorMessage);
     }
 
+    /**
+     * Updates distances for a new place against all other places.
+     * This method will call the API in batches of MAX_BATCH_SIZE.
+     * It will also limit the number of API calls to MAX_CALLS.
+     *
+     * @param context the context of the calling activity
+     * @param newPlace the new place to update distances for
+     * @param allPlaces the list of all places to compare against
+     * @param callback the callback to handle success or failure
+     */
     public static void updateDistances(Context context, MowingPlace newPlace, List<MowingPlace> allPlaces, MatrixApiCallback callback) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
