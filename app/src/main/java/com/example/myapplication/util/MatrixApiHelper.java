@@ -133,7 +133,7 @@ public class MatrixApiHelper {
                             return;
                         }
                     } else {
-                        mainHandler.post(() -> callback.onFailure("kód odpovědi: " + responseCode));
+                        mainHandler.post(() -> callback.onFailure("Chyba při volání API: " + responseCode));
                         return;
                     }
                     callsMade++;
@@ -146,14 +146,5 @@ public class MatrixApiHelper {
                 mainHandler.post(() -> callback.onFailure(e.getMessage()));
             }
         }).start();
-    }
-
-    public static boolean isConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm != null) {
-            NetworkInfo ni = cm.getActiveNetworkInfo();
-            return ni != null && ni.isConnected();
-        }
-        return false;
     }
 }
