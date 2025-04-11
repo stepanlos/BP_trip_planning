@@ -35,16 +35,18 @@
             app:layout_constraintTop_toBottomOf="@id/tvCreationDate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="2dp"/>
 
         <!-- Button to open in Mapy.cz -->
 
         <!-- Button to open in Google Maps -->
         <Button
             android:id="@+id/btnOpenMapyCzRoute"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:backgroundTint="@color/mapyCZ"
+
             android:text="Otevřít v Mapy.cz"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,9 +54,11 @@
 
         <Button
             android:id="@+id/btnOpenGoogleMapsRoute"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
+            android:backgroundTint="@color/googleMapsColor"
+
             android:text="Otevřít v Google Maps"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +67,7 @@
         <!-- Button to mark a stop as completed -->
 <!--        <Button-->
 <!--            android:id="@+id/btnMarkStopCompleted"-->
-<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:text="Označit jako dokončené"-->
 <!--            app:layout_constraintTop_toBottomOf="@id/btnOpenGoogleMapsRoute"-->
@@ -74,9 +78,11 @@
         <!-- Delete Route Plan Button -->
         <Button
             android:id="@+id/btnDeleteRoutePlan"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
+            android:backgroundTint="@android:color/holo_red_dark"
+
             android:text="Smazat trasu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

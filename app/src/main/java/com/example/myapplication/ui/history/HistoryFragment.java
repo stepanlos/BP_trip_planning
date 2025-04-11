@@ -120,17 +120,10 @@ public class HistoryFragment extends Fragment {
 
             // Delete button listener
             holder.btnDelete.setOnClickListener(v -> {
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Potvrdit")
-                        .setMessage("Opravdu chcete smazat tuto trasu?")
-                        .setPositiveButton("Ano", (dialog, which) -> {
-                            int pos = holder.getAdapterPosition();
-                            plans.remove(pos);
-                            routePlanRepository.saveRoutePlans(getContext(), plans);
-                            notifyItemRemoved(pos);
-                        })
-                        .setNegativeButton("Ne", null)
-                        .show();
+                int pos = holder.getAdapterPosition();
+                plans.remove(pos);
+                routePlanRepository.saveRoutePlans(getContext(), plans);
+                notifyItemRemoved(pos);
             });
 
             // Open in Mapy.cz button listener
