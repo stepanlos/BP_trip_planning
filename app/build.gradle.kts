@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.jakewharton.threetenabp)
 
     implementation(libs.osmdroid.android)
     implementation(libs.gson)
