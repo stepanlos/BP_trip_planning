@@ -108,35 +108,20 @@
                     android:hint="@string/description" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Editable Latitude -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilLatitude"
+                android:id="@+id/tilLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:hintEnabled="true">
-
                 <EditText
-                    android:id="@+id/etLatitude"
+                    android:id="@+id/etLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/latitude"
-                    android:inputType="numberDecimal" />
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:hint="Poloha"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Editable Longitude -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilLongitude"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hintEnabled="true">
-
-                <EditText
-                    android:id="@+id/etLongitude"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/longitude"
-                    android:inputType="numberDecimal" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Editable Work Cost -->
             <com.google.android.material.textfield.TextInputLayout

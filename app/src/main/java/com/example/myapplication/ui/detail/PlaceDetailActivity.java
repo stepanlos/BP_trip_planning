@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,12 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlacesRepository;
+import com.example.myapplication.ui.planning.LocationPickerActivity;
 import com.example.myapplication.util.MatrixApiHelper;
 import com.example.myapplication.util.NetworkHelper;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class PlaceDetailActivity extends AppCompatActivity {
@@ -29,6 +30,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_NEW_PLACE = "extra_new_place";
 
+    private static final int REQUEST_CODE_LOCATION = 1001;
+
 
     private EditText etPlaceName;
     private EditText etTimeRequirement;
@@ -36,8 +39,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private EditText etWorkCost;
     private EditText etVisitDates;
     private EditText etDescription;
-    private EditText etLatitude;
-    private EditText etLongitude;
+    private EditText etLocation;
     private EditText etCaretaker;
     private EditText etCentre;
     private EditText etArea;
@@ -69,8 +71,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etWorkCost = findViewById(R.id.etWorkCost);
         etVisitDates = findViewById(R.id.etVisitDates);
         etDescription = findViewById(R.id.etDescription);
-        etLatitude = findViewById(R.id.etLatitude);
-        etLongitude = findViewById(R.id.etLongitude);
+        etLocation = findViewById(R.id.etLocation);
         etCaretaker = findViewById(R.id.etCaretaker);
         etCentre = findViewById(R.id.etCentre);
         etArea = findViewById(R.id.etArea);
@@ -119,6 +120,16 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 .setPositiveButton("Ano", (dialog, which) -> deleteCurrentPlace())
                 .setNegativeButton("Ne", null)
                 .show());
+
+        etLocation.setFocusable(false);
+        etLocation.setClickable(true);
+        etLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlaceDetailActivity.this, LocationPickerActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_LOCATION);
+            }
+        });
     }
 
     // Populate the UI with the details of the current place
@@ -129,8 +140,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etWorkCost.setText(String.valueOf(currentPlace.getWorkCost()));
         etVisitDates.setText(TextUtils.join(", ", currentPlace.getVisitDates()));
         etDescription.setText(currentPlace.getDescription());
-        etLatitude.setText(String.valueOf(currentPlace.getLatitude()));
-        etLongitude.setText(String.valueOf(currentPlace.getLongitude()));
+        etLocation.setText(currentPlace.getLatitude() + "," + currentPlace.getLongitude());
         etCaretaker.setText(currentPlace.getCaretaker());
         etCentre.setText(currentPlace.getCentre());
         etArea.setText(String.valueOf(currentPlace.getArea()));
@@ -160,6 +170,18 @@ public class PlaceDetailActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_LOCATION && resultCode == RESULT_OK && data != null) {
+            double lat = data.getDoubleExtra(LocationPickerActivity.EXTRA_SELECTED_LAT, 0);
+            double lon = data.getDoubleExtra(LocationPickerActivity.EXTRA_SELECTED_LON, 0);
+            // Format the coordinates as "lat, lon"
+            etLocation.setText(lat + "," + lon);
+        }
+        // (Keep any other requestCode branches if needed)
     }
 
     // Save changes to the current place and update repository
@@ -192,14 +214,18 @@ public class PlaceDetailActivity extends AppCompatActivity {
             currentPlace.setVisitDates(new ArrayList<>());
         }
         currentPlace.setDescription(etDescription.getText().toString().trim());
-        try {
-            currentPlace.setLatitude(Double.parseDouble(etLatitude.getText().toString().trim()));
-        } catch (NumberFormatException e) {
+        String locationString = etLocation.getText().toString().trim();
+        String[] locationParts = locationString.split(",");
+        if (locationParts.length == 2) {
+            try {
+                currentPlace.setLatitude(Double.parseDouble(locationParts[0].trim()));
+                currentPlace.setLongitude(Double.parseDouble(locationParts[1].trim()));
+            } catch (NumberFormatException e) {
+                currentPlace.setLatitude(0);
+                currentPlace.setLongitude(0);
+            }
+        } else {
             currentPlace.setLatitude(0);
-        }
-        try {
-            currentPlace.setLongitude(Double.parseDouble(etLongitude.getText().toString().trim()));
-        } catch (NumberFormatException e) {
             currentPlace.setLongitude(0);
         }
         currentPlace.setCaretaker(etCaretaker.getText().toString().trim());
@@ -214,8 +240,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         // Validate mandatory fields for creation mode
         boolean isNewPlace = getIntent().getBooleanExtra(EXTRA_NEW_PLACE, false);
         if (isNewPlace) {
-            if (TextUtils.isEmpty(etLatitude.getText().toString().trim()) ||
-                    TextUtils.isEmpty(etLongitude.getText().toString().trim()) ||
+            if (TextUtils.isEmpty(etLocation.getText().toString().trim()) ||
                     TextUtils.isEmpty(etTimeRequirement.getText().toString().trim()) ||
                     TextUtils.isEmpty(etMowingCount.getText().toString().trim()) ||
                     TextUtils.isEmpty(etPlaceName.getText().toString().trim())) {
