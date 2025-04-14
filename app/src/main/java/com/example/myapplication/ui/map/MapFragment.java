@@ -61,8 +61,8 @@ public class MapFragment extends Fragment {
         // Link MapView from layout
         mapView = binding.osmMapView;
         mapView.setMultiTouchControls(true);
-        mapView.getController().setZoom(7.0);
-        mapView.getController().setCenter(new GeoPoint(49.8175, 15.4730));
+        mapView.getController().setZoom(7.8);
+        mapView.getController().setCenter(new GeoPoint(49.8175, 15.0));
 
         // Observe places and update markers
         mapViewModel.getPlaces().observe(getViewLifecycleOwner(), this::updateMapMarkers);

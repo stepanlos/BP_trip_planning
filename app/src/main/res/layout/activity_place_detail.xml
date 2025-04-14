@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:amdroid="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_alignTop="@+id/action_save">
 
     <!-- Scrollable content with all the TextInputLayouts -->
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btnDelete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/area"
-                    android:inputType="number"/>
+                    android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Editable Mowing Count Per Year -->
@@ -115,13 +116,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:hintEnabled="true">
+
                 <EditText
                     android:id="@+id/etLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
                     android:clickable="true"
-                    android:hint="Poloha"/>
+                    android:focusable="false"
+                    android:hint="Poloha" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -139,9 +141,6 @@
                     android:hint="@string/work_cost"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
-
-
-
 
 
             <!-- Editable caretaker -->
@@ -173,15 +172,12 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-
             <!-- Editable locked (switch button) -->
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/swLocked"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/locked" />
-
-
 
 
         </LinearLayout>
@@ -193,6 +189,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Odstranit"
+        amdroid:layout_margin="4dp"
         android:backgroundTint="@android:color/holo_red_dark"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"

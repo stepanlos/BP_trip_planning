@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".ui.planning.LocationPickerActivity"
-            android:label="Plánování trasy" >
+            android:label="Vyberte polohu" >
         </activity>
 
     </application>

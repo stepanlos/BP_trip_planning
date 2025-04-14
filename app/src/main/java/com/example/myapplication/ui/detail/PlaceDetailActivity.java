@@ -186,6 +186,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
 
     // Save changes to the current place and update repository
     private void saveChanges() {
+        boolean changedLocation = false;
+
         currentPlace.setName(etPlaceName.getText().toString().trim());
         try {
             currentPlace.setTimeRequirement(Double.parseDouble(etTimeRequirement.getText().toString().trim()));
@@ -218,6 +220,11 @@ public class PlaceDetailActivity extends AppCompatActivity {
         String[] locationParts = locationString.split(",");
         if (locationParts.length == 2) {
             try {
+                // Check if the location has changed
+                if (currentPlace.getLatitude() != Double.parseDouble(locationParts[0].trim()) ||
+                        currentPlace.getLongitude() != Double.parseDouble(locationParts[1].trim())) {
+                    changedLocation = true;
+                }
                 currentPlace.setLatitude(Double.parseDouble(locationParts[0].trim()));
                 currentPlace.setLongitude(Double.parseDouble(locationParts[1].trim()));
             } catch (NumberFormatException e) {
@@ -284,14 +291,49 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 }
             });
         } else {
-            // Existing edit mode: update currentPlace and save
-            boolean success = repository.saveMowingPlaces(this, allPlaces);
-            if (success) {
-                Toast.makeText(this, "Změny byly uloženy", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
-                finish();
+            // If the location has changed, update distances for all places
+            if (changedLocation) {
+                // Check internet connectivity before calling the API
+                if (!NetworkHelper.isConnected(this)) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Žádné připojení k internetu")
+                            .setMessage("Pokud chcete aktualizovat vzdálenosti, připojte se k internetu.")
+                            .setPositiveButton("OK", null)
+                            .show();
+                    return;
+                }
+                // Call MatrixApiHelper to update distances
+                MatrixApiHelper.updateDistances(this, currentPlace, allPlaces, new MatrixApiHelper.MatrixApiCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Save updated list to JSON via repository
+                        boolean success = repository.saveMowingPlaces(PlaceDetailActivity.this, allPlaces);
+                        if (success) {
+                            Toast.makeText(PlaceDetailActivity.this, "Změny byly uloženy", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
+                            finish();
+                        } else {
+                            Toast.makeText(PlaceDetailActivity.this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(PlaceDetailActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
+                        });
+                    }
+                });
             } else {
-                Toast.makeText(this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
+                // Existing edit mode: update currentPlace and save
+                boolean success = repository.saveMowingPlaces(this, allPlaces);
+                if (success) {
+                    Toast.makeText(this, "Změny byly uloženy", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
+                    finish();
+                } else {
+                    Toast.makeText(this, "Chyba při ukládání změn", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
