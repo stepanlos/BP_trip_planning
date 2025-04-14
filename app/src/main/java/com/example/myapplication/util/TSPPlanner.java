@@ -297,8 +297,9 @@ public class TSPPlanner {
 
         // If there are no intermediate nodes, then the route is simply start -> end
         if (cycleOrder.isEmpty()) {
-            return Arrays.asList(startNode, endNode);
+            return new ArrayList<>(Arrays.asList(startNode, endNode));
         }
+
 
         // 6. Convert the Hamiltonian cycle to a path from start to end by finding the best edge to break.
         // We will evaluate each edge of the cycle to determine where to "cut" the cycle and insert start and end.
