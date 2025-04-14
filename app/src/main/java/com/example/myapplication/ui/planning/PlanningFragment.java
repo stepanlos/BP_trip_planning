@@ -402,6 +402,7 @@ public class PlanningFragment extends Fragment {
 
                 String formattedMowingTime = String.format("%.1f", totalMowingTime);
                 Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
+                scrollToBottom();
             }
         };
 
