@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class MowingPlacesRepository {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            String jsonString = new String(buffer, "UTF-8");
+            String jsonString = new String(buffer, StandardCharsets.UTF_8);
 
             Gson gson = new Gson();
             Type listType = new TypeToken<List<MowingPlace>>() {}.getType();
@@ -58,7 +59,7 @@ public class MowingPlacesRepository {
             Log.d(TAG, "Saving JSON: \n" + jsonString);
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
             FileOutputStream fos = new FileOutputStream(file);
-            fos.write(jsonString.getBytes("UTF-8"));
+            fos.write(jsonString.getBytes(StandardCharsets.UTF_8));
             fos.close();
             Log.d(TAG, "Mowing places saved to " + file.getAbsolutePath());
             loadMowingPlaces(context); // Reload the data after saving

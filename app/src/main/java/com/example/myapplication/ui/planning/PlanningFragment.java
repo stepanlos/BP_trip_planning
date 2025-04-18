@@ -469,7 +469,7 @@ public class PlanningFragment extends Fragment {
         url += "&end=" + end.getLongitude() + "," + end.getLatitude();
         url += "&routeType=car_fast";
         if (waypointsBuilder.length() > 0) {
-            url += "&waypoints=" + waypointsBuilder.toString();
+            url += "&waypoints=" + waypointsBuilder;
         }
         return url;
     }
@@ -494,7 +494,7 @@ public class PlanningFragment extends Fragment {
         url.append("&origin=").append(start.getLatitude()).append(",").append(start.getLongitude());
         url.append("&destination=").append(end.getLatitude()).append(",").append(end.getLongitude());
         if (waypointsBuilder.length() > 0) {
-            url.append("&waypoints=").append(waypointsBuilder.toString());
+            url.append("&waypoints=").append(waypointsBuilder);
         }
         url.append("&travelmode=driving");
         return url.toString();

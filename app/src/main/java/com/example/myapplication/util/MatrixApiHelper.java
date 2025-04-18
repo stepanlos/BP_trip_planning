@@ -1,8 +1,6 @@
 package com.example.myapplication.util;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -107,7 +105,7 @@ public class MatrixApiHelper {
                         Gson gson = new Gson();
                         JsonObject jsonResponse = gson.fromJson(response.toString(), JsonObject.class);
                         JsonArray matrixArray = jsonResponse.getAsJsonArray("matrix");
-                        if (matrixArray != null && matrixArray.size() > 0) {
+                        if (matrixArray != null && !matrixArray.isEmpty()) {
                             JsonArray results = matrixArray.get(0).getAsJsonArray();
                             for (int i = 0; i < results.size(); i++) {
                                 JsonObject resObj = results.get(i).getAsJsonObject();

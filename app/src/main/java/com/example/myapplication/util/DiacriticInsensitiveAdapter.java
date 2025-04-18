@@ -9,13 +9,11 @@ import java.util.List;
 
 public class DiacriticInsensitiveAdapter<T> extends ArrayAdapter<T> {
 
-    private List<T> items;
-    private List<T> itemsAll;
-    private List<T> suggestions;
+    private final List<T> itemsAll;
+    private final List<T> suggestions;
 
     public DiacriticInsensitiveAdapter(Context context, int resource, List<T> objects) {
         super(context, resource, objects);
-        this.items = new ArrayList<>(objects);
         this.itemsAll = new ArrayList<>(objects);
         this.suggestions = new ArrayList<>();
     }
@@ -25,7 +23,7 @@ public class DiacriticInsensitiveAdapter<T> extends ArrayAdapter<T> {
         return nameFilter;
     }
 
-    private Filter nameFilter = new Filter() {
+    private final Filter nameFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
