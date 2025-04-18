@@ -3,6 +3,7 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -198,15 +199,34 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp"/>
 
-        <!-- Map Preview (OSM MapView) with fixed minimum height -->
-        <org.osmdroid.views.MapView
-            android:id="@+id/planningMapView"
+        <!-- Wrap the planningMapView in a FrameLayout -->
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="300dp"
+            android:id="@+id/planningMapContainer"
             app:layout_constraintTop_toBottomOf="@id/btnGenerateRoute"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="8dp"/>
+            android:layout_margin="8dp">
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/planningMapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/osmAttributionMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:autoLink="web"
+                android:background="@android:color/darker_gray"
+                android:padding="4dp"
+                android:text="@string/openstreetmap_license_attr"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:ignore="TextContrastCheck" />
+        </FrameLayout>
 
         <!-- Open in Mapy.cz Button (hidden initially) -->
         <Button
@@ -217,7 +237,7 @@
             android:visibility="gone"
             android:backgroundTint="@color/mapyCZ"
             android:textColor="@color/white"
-            app:layout_constraintTop_toBottomOf="@id/planningMapView"
+            app:layout_constraintTop_toBottomOf="@id/planningMapContainer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="8dp"/>

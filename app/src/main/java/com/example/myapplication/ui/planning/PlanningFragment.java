@@ -118,7 +118,7 @@ public class PlanningFragment extends Fragment {
 
         // Initialize map view
         planningMapView.setMultiTouchControls(true);
-        planningMapView.getController().setZoom(7.0);
+        planningMapView.getController().setZoom(7.5);
         planningMapView.getController().setCenter(new GeoPoint(49.8175, 15.4730));
         // Prevent parent from intercepting touch events
         planningMapView.setOnTouchListener((v, event) -> {

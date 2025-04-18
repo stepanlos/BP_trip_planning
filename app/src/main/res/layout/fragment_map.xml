@@ -2,24 +2,50 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="55dp">
+    android:layout_height="match_parent">
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/osmMapView"
+    <!-- fragment_map.xml -->
+    <FrameLayout
+        android:id="@+id/map_container_map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="55dp">
 
-    <!-- Floating Action Button for adding new place -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddPlace"
-        android:layout_width="126dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="20dp"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/green"
-        app:fabSize="normal" />
+        <!-- OSM Map -->
+        <org.osmdroid.views.MapView
+            android:id="@+id/osmMapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- License attribution -->
+        <TextView
+            android:id="@+id/osmAttributionMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:autoLink="web"
+            android:background="@android:color/darker_gray"
+            android:padding="4dp"
+            android:text="@string/openstreetmap_license_attr"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            tools:ignore="TextContrastCheck" />
+
+        <!-- Floating Action Button for adding new place -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddPlace"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="20dp"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="@color/green"
+            app:fabSize="normal"
+            tools:ignore="SpeakableTextPresentCheck" />
+    </FrameLayout>
+
+
 </FrameLayout>

@@ -8,7 +8,6 @@
     <string name="place_id">ID místa</string>
     <string name="save">Uložit</string>
     <string name="time_requirement_minutes">Časová náročnost (hodiny)</string>
-    <string name="title_home">Home</string>
     <string name="title_map">Mapa</string>
     <string name="title_planning">Plánování</string>
     <string name="title_history">Historie</string>
@@ -17,7 +16,7 @@
     <string name="work_cost">Cena práce</string>
     <string name="caretaker">Správce</string>
     <string name="centre">Středisko</string>
-    <string name="area">Plocha\n</string>
+    <string name="area">Plocha</string>
     <string name="locked">Uzamčeno</string>
     <string name="url_link_navigation">Otevřít v Mapy.cz</string>
     <string name="end_time">Cílový čas (HH:MM)</string>
@@ -34,4 +33,5 @@
     <string name="generate_route">Generuj trasu</string>
     <string name="open_in_mapy_cz">Otevřít v Mapy.cz</string>
     <string name="choose_point">Vybrat</string>
+    <string name="openstreetmap_license_attr">© OpenStreetMap</string>
 </resources>

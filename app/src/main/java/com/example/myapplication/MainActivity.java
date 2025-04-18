@@ -19,8 +19,8 @@ private ActivityMainBinding binding;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-     binding = ActivityMainBinding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
