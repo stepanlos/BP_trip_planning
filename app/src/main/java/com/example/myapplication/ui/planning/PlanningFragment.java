@@ -324,6 +324,11 @@ public class PlanningFragment extends Fragment {
             }
         }
 
+        if (mandatoryWaypoints.isEmpty() && !cbAddExtra.isChecked()) {
+            Toast.makeText(getContext(), "Přidejte místo průjezdu, nebo vyberte automatické doplnění.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // Build the complete list: start, mandatory waypoints, end
         List<MowingPlace> nodes = new ArrayList<>();
         nodes.add(startPlace);
