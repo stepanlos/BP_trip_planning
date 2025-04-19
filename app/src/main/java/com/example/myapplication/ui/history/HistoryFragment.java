@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.data.MowingPlace;
@@ -44,6 +43,7 @@ public class HistoryFragment extends Fragment {
     private FragmentHistoryBinding binding;
     private RoutePlanRepository routePlanRepository;
     private List<RoutePlan> routePlans;
+    private HistoryAdapter historyAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -51,21 +51,18 @@ public class HistoryFragment extends Fragment {
         binding = FragmentHistoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Enable fragment menu
         setHasOptionsMenu(true);
 
-        // Set up RecyclerView
         binding.recyclerHistory.setLayoutManager(new LinearLayoutManager(getContext()));
 
         routePlanRepository = new RoutePlanRepository();
-        MowingPlacesRepository mowingPlacesRepository = new MowingPlacesRepository();
 
         // Load & sort routes
         routePlans = routePlanRepository.loadRoutePlans(getContext());
         routePlans.sort((a, b) -> b.getDateTime().compareTo(a.getDateTime()));
         Log.d("HistoryFragment", "Loaded route plans: " + routePlans.size());
 
-        // Show empty message if needed
+        // Initial empty-state toggle
         if (routePlans.isEmpty()) {
             binding.recyclerHistory.setVisibility(View.GONE);
             binding.tvEmptyHistory.setVisibility(View.VISIBLE);
@@ -74,15 +71,15 @@ public class HistoryFragment extends Fragment {
             binding.tvEmptyHistory.setVisibility(View.GONE);
         }
 
-        // Attach adapter
-        binding.recyclerHistory.setAdapter(new HistoryAdapter(getContext(), routePlans));
+        // Attach adapter with empty-state callback
+        historyAdapter = new HistoryAdapter(getContext(), routePlans, this::updateEmptyView);
+        binding.recyclerHistory.setAdapter(historyAdapter);
 
         return root;
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // Inflate R.menu.history_menu (contains “Smazat vše”)
         inflater.inflate(R.menu.history_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -96,7 +93,7 @@ public class HistoryFragment extends Fragment {
                     .setPositiveButton("Ano", (d, w) -> {
                         routePlans.clear();
                         routePlanRepository.saveRoutePlans(getContext(), routePlans);
-                        binding.recyclerHistory.getAdapter().notifyDataSetChanged();
+                        historyAdapter.notifyDataSetChanged();
                         binding.recyclerHistory.setVisibility(View.GONE);
                         binding.tvEmptyHistory.setVisibility(View.VISIBLE);
                     })
@@ -107,21 +104,32 @@ public class HistoryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Shows empty-state message when list is empty.
+     */
+    private void updateEmptyView() {
+        if (routePlans.isEmpty()) {
+            binding.recyclerHistory.setVisibility(View.GONE);
+            binding.tvEmptyHistory.setVisibility(View.VISIBLE);
+        }
+    }
 
-    private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+    private static class HistoryAdapter extends androidx.recyclerview.widget.RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
         private final Context context;
         private final List<RoutePlan> plans;
         private final RoutePlanRepository routeRepo;
         private final MowingPlacesRepository mowingRepo;
         private final LayoutInflater inflater;
+        private final Runnable onEmpty;
 
-        HistoryAdapter(Context ctx, List<RoutePlan> plans) {
+        HistoryAdapter(Context ctx, List<RoutePlan> plans, Runnable onEmpty) {
             this.context = ctx;
             this.plans = plans;
             this.routeRepo = new RoutePlanRepository();
             this.mowingRepo = new MowingPlacesRepository();
             this.inflater = LayoutInflater.from(ctx);
+            this.onEmpty = onEmpty;
         }
 
         @NonNull
@@ -135,16 +143,15 @@ public class HistoryFragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
             RoutePlan plan = plans.get(pos);
             h.tvCreationDate.setText("Vytvořeno: " + plan.getDateTime());
-            // One decimal place km/hours
             String stats = String.format(
                     Locale.getDefault(),
                     STATS_FORMAT,
-                    plan.getLength()  / 1000.0,
+                    plan.getLength() / 1000.0,
                     plan.getDuration()
             );
             h.tvStats.setText(stats);
 
-            // Build the list of stops
+            // Build stops list
             h.llStopsContainer.removeAllViews();
             for (String name : plan.getRoutePlaces()) {
                 if ("Start".equals(name) || "End".equals(name)) continue;
@@ -157,7 +164,7 @@ public class HistoryFragment extends Fragment {
                     new DatePickerDialog(context,
                             (DatePicker dp, int y, int m, int d) -> {
                                 String sel = String.format(Locale.getDefault(),
-                                        "%04d-%02d-%02d", y, m+1, d);
+                                        "%04d-%02d-%02d", y, m + 1, d);
                                 List<MowingPlace> places = mowingRepo.loadMowingPlaces(context);
                                 boolean ok = false;
                                 for (MowingPlace p : places) {
@@ -179,22 +186,25 @@ public class HistoryFragment extends Fragment {
                             },
                             c.get(Calendar.YEAR),
                             c.get(Calendar.MONTH),
-                            c.get(Calendar.DAY_OF_MONTH))
-                            .show();
+                            c.get(Calendar.DAY_OF_MONTH)
+                    ).show();
                 });
                 h.llStopsContainer.addView(stopRow);
             }
 
-            // Delete this single route
+            // Delete single route
             h.btnDelete.setOnClickListener(v -> {
                 new AlertDialog.Builder(context)
                         .setTitle("Potvrdit")
                         .setMessage("Opravdu chcete smazat tuto trasu?")
-                        .setPositiveButton("Ano", (d,w) -> {
+                        .setPositiveButton("Ano", (d, w) -> {
                             int idx = h.getAdapterPosition();
                             plans.remove(idx);
                             routeRepo.saveRoutePlans(context, plans);
                             notifyItemRemoved(idx);
+                            if (onEmpty != null && plans.isEmpty()) {
+                                onEmpty.run();
+                            }
                         })
                         .setNegativeButton("Ne", null)
                         .show();
@@ -215,24 +225,25 @@ public class HistoryFragment extends Fragment {
             });
         }
 
-        @Override public int getItemCount() { return plans.size(); }
+        @Override
+        public int getItemCount() {
+            return plans.size();
+        }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
+        static class ViewHolder extends androidx.recyclerview.widget.RecyclerView.ViewHolder {
             TextView tvCreationDate, tvStats;
             LinearLayout llStopsContainer;
             Button btnOpenMapy, btnOpenGoogle, btnDelete;
+
             ViewHolder(@NonNull View v) {
                 super(v);
                 tvCreationDate = v.findViewById(R.id.tvCreationDate);
-                tvStats        = v.findViewById(R.id.tvStats);
+                tvStats = v.findViewById(R.id.tvStats);
                 llStopsContainer = v.findViewById(R.id.llStopsContainer);
-                btnOpenMapy    = v.findViewById(R.id.btnOpenMapyCzRoute);
-                btnOpenGoogle  = v.findViewById(R.id.btnOpenGoogleMapsRoute);
-                btnDelete      = v.findViewById(R.id.btnDeleteRoutePlan);
+                btnOpenMapy = v.findViewById(R.id.btnOpenMapyCzRoute);
+                btnOpenGoogle = v.findViewById(R.id.btnOpenGoogleMapsRoute);
+                btnDelete = v.findViewById(R.id.btnDeleteRoutePlan);
             }
         }
-
-
     }
-
 }
