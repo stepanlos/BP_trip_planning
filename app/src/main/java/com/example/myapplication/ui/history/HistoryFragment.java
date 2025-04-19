@@ -111,6 +111,8 @@ public class HistoryFragment extends Fragment {
             StringBuilder stops = new StringBuilder();
             if (plan.getRoutePlaces() != null) {
                 for (String name : plan.getRoutePlaces()) {
+                    // If start or end, skip
+                    if (name.equals("Start") || name.equals("End")) continue;
                     if (stops.length() > 0) stops.append(", ");
                     stops.append(name);
                 }
