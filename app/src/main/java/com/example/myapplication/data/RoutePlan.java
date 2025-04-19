@@ -15,6 +15,10 @@ public class RoutePlan {
     private String googleMapsUrl;
     // Date and time when the route plan was created (format "yyyy-MM-dd HH:mm")
     private String dateTime;
+    // Distance in meters
+    private double length;
+    // Duration in hours
+    private double duration;
 
     // Getters and Setters
     public List<String> getRoutePlaces() {
@@ -53,5 +57,18 @@ public class RoutePlan {
 
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public double getLength() {
+        return length;
+    }
+    public void setLength(double length) {
+        this.length = length;
+    }
+    public double getDuration() {
+        return duration;
+    }
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 }

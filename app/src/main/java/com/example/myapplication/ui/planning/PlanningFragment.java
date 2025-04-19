@@ -384,6 +384,24 @@ public class PlanningFragment extends Fragment {
                         }
                     }
                 }
+                String formattedMowingTime = String.format("%.1f", totalMowingTime);
+
+                //find out total distance
+                double totalDistance = 0;
+                for (int i = 0; i < finalRoute.size() - 1; i++) {
+                    MowingPlace mp = finalRoute.get(i);
+                    MowingPlace nextMp = finalRoute.get(i + 1);
+                    if (mp.getDistancesToOthers() == null) {
+                        continue;
+                    }
+                    for (MowingPlace.DistanceEntry entry : mp.getDistancesToOthers()) {
+                        if (entry.getId().equals(nextMp.getId())) {
+                            totalDistance += entry.getDistance();
+                            break;
+                        }
+                    }
+                }
+
 
                 mapyCzRouteUrl = generateMapyUrl(finalRoute);
                 googleMapsUrl = generateGoogleMapsUrl(finalRoute);
@@ -396,6 +414,8 @@ public class PlanningFragment extends Fragment {
                 routePlan.setRoutePlaces(finalRoute);
                 routePlan.setMapyCzUrl(mapyCzRouteUrl);
                 routePlan.setGoogleMapsUrl(googleMapsUrl);
+                routePlan.setDuration(totalMowingTime);
+                routePlan.setLength(totalDistance);
                 routePlan.setDateTime(String.format("%tF %tT", System.currentTimeMillis(), System.currentTimeMillis()));
                 RoutePlanRepository routePlanRepository = new RoutePlanRepository();
                 List<RoutePlan> routePlans = routePlanRepository.loadRoutePlans(getContext());
@@ -405,8 +425,14 @@ public class PlanningFragment extends Fragment {
                 routePlans.add(routePlan);
                 routePlanRepository.saveRoutePlans(getContext(), routePlans);
 
-                String formattedMowingTime = String.format("%.1f", totalMowingTime);
-                Toast.makeText(getContext(), "Trasa vytvořena. Celkový čas: " + formattedMowingTime + " h", Toast.LENGTH_LONG).show();
+                //format distance to km
+                String formattedDistance = String.format("%.1f", totalDistance / 1000);
+                Toast.makeText(getContext(), "Trasa vytvořena. Přibližný čas: " +
+                        formattedMowingTime + " h" + ", přibližná vzdálenost: " + formattedDistance
+                        + " km", Toast.LENGTH_LONG).show();
+
+                planningMapView.getController().setZoom(7.5);
+                planningMapView.getController().setCenter(new GeoPoint(49.8175, 15.4730));
                 scrollToBottom();
             }
         };

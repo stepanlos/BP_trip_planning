@@ -632,6 +632,8 @@ public class TSPPlanner {
                 }
             }
         }
+        //TODO heuristic for missing distance
+
         // If not found in either (which should not happen if data is complete), return 0 as fallback
         return 0.0;
     }
