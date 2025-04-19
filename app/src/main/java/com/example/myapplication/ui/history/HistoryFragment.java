@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.history;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,17 +27,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.data.MowingPlace;
+import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.data.RoutePlan;
 import com.example.myapplication.data.RoutePlanRepository;
 import com.example.myapplication.databinding.FragmentHistoryBinding;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class HistoryFragment extends Fragment {
 
+    private static final String STATS_FORMAT = "Vzdálenost: %.1f km, Trvání: %.1f h";
+
     private FragmentHistoryBinding binding;
-    private RecyclerView recyclerView;
-    private HistoryAdapter historyAdapter;
     private RoutePlanRepository routePlanRepository;
     private List<RoutePlan> routePlans;
 
@@ -41,44 +51,54 @@ public class HistoryFragment extends Fragment {
         binding = FragmentHistoryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Enable options menu for "delete all"
+        // Enable fragment menu
         setHasOptionsMenu(true);
 
-        recyclerView = binding.recyclerHistory;
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Set up RecyclerView
+        binding.recyclerHistory.setLayoutManager(new LinearLayoutManager(getContext()));
 
         routePlanRepository = new RoutePlanRepository();
+        MowingPlacesRepository mowingPlacesRepository = new MowingPlacesRepository();
+
+        // Load & sort routes
         routePlans = routePlanRepository.loadRoutePlans(getContext());
-        // Sort route plans by date/time descending (most recent first)
-        routePlans.sort((r1, r2) -> r2.getDateTime().compareTo(r1.getDateTime()));
+        routePlans.sort((a, b) -> b.getDateTime().compareTo(a.getDateTime()));
+        Log.d("HistoryFragment", "Loaded route plans: " + routePlans.size());
 
-        Log.d("HistoryFragment", "Loaded route plans count: " + routePlans.size());
+        // Show empty message if needed
+        if (routePlans.isEmpty()) {
+            binding.recyclerHistory.setVisibility(View.GONE);
+            binding.tvEmptyHistory.setVisibility(View.VISIBLE);
+        } else {
+            binding.recyclerHistory.setVisibility(View.VISIBLE);
+            binding.tvEmptyHistory.setVisibility(View.GONE);
+        }
 
-        // Attach the adapter to the RecyclerView
-        historyAdapter = new HistoryAdapter(routePlans);
-        recyclerView.setAdapter(historyAdapter);
+        // Attach adapter
+        binding.recyclerHistory.setAdapter(new HistoryAdapter(getContext(), routePlans));
 
         return root;
     }
 
-    // Inflate the options menu (with delete all)
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Inflate R.menu.history_menu (contains “Smazat vše”)
         inflater.inflate(R.menu.history_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // Handle options menu selections
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
             new AlertDialog.Builder(getContext())
                     .setTitle("Potvrdit")
                     .setMessage("Opravdu chcete smazat všechny trasy?")
-                    .setPositiveButton("Ano", (dialog, which) -> {
+                    .setPositiveButton("Ano", (d, w) -> {
                         routePlans.clear();
                         routePlanRepository.saveRoutePlans(getContext(), routePlans);
-                        historyAdapter.notifyDataSetChanged();
+                        binding.recyclerHistory.getAdapter().notifyDataSetChanged();
+                        binding.recyclerHistory.setVisibility(View.GONE);
+                        binding.tvEmptyHistory.setVisibility(View.VISIBLE);
                     })
                     .setNegativeButton("Ne", null)
                     .show();
@@ -87,86 +107,132 @@ public class HistoryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    // Inner adapter class for RecyclerView
-    private class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
+    private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+
+        private final Context context;
         private final List<RoutePlan> plans;
+        private final RoutePlanRepository routeRepo;
+        private final MowingPlacesRepository mowingRepo;
+        private final LayoutInflater inflater;
 
-        HistoryAdapter(List<RoutePlan> plans) {
+        HistoryAdapter(Context ctx, List<RoutePlan> plans) {
+            this.context = ctx;
             this.plans = plans;
+            this.routeRepo = new RoutePlanRepository();
+            this.mowingRepo = new MowingPlacesRepository();
+            this.inflater = LayoutInflater.from(ctx);
         }
 
         @NonNull
         @Override
-        public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_plan_item, parent, false);
-            return new HistoryViewHolder(view);
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflater.inflate(R.layout.route_plan_item, parent, false);
+            return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-            RoutePlan plan = plans.get(position);
-            holder.tvCreationDate.setText("Vytvořeno: " + plan.getDateTime());
-            // Display stops as a comma-separated list (excluding start/end)
-            StringBuilder stops = new StringBuilder();
-            if (plan.getRoutePlaces() != null) {
-                for (String name : plan.getRoutePlaces()) {
-                    // If start or end, skip
-                    if (name.equals("Start") || name.equals("End")) continue;
-                    if (stops.length() > 0) stops.append(", ");
-                    stops.append(name);
-                }
-            }
-            holder.tvStops.setText(stops.toString());
+        public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
+            RoutePlan plan = plans.get(pos);
+            h.tvCreationDate.setText("Vytvořeno: " + plan.getDateTime());
+            // One decimal place km/hours
+            String stats = String.format(
+                    Locale.getDefault(),
+                    STATS_FORMAT,
+                    plan.getLength()  / 1000.0,
+                    plan.getDuration()
+            );
+            h.tvStats.setText(stats);
 
-            // Delete button listener
-            holder.btnDelete.setOnClickListener(v -> {
-                int pos = holder.getAdapterPosition();
-                plans.remove(pos);
-                routePlanRepository.saveRoutePlans(getContext(), plans);
-                notifyItemRemoved(pos);
+            // Build the list of stops
+            h.llStopsContainer.removeAllViews();
+            for (String name : plan.getRoutePlaces()) {
+                if ("Start".equals(name) || "End".equals(name)) continue;
+                View stopRow = inflater.inflate(R.layout.item_stop, h.llStopsContainer, false);
+                TextView tv = stopRow.findViewById(R.id.tvStopName);
+                ImageButton btn = stopRow.findViewById(R.id.btnCheckStop);
+                tv.setText(name);
+                btn.setOnClickListener(v -> {
+                    Calendar c = Calendar.getInstance();
+                    new DatePickerDialog(context,
+                            (DatePicker dp, int y, int m, int d) -> {
+                                String sel = String.format(Locale.getDefault(),
+                                        "%04d-%02d-%02d", y, m+1, d);
+                                List<MowingPlace> places = mowingRepo.loadMowingPlaces(context);
+                                boolean ok = false;
+                                for (MowingPlace p : places) {
+                                    if (name.equals(p.getName())) {
+                                        p.getVisitDates().add(sel);
+                                        mowingRepo.saveMowingPlaces(context, places);
+                                        Toast.makeText(context,
+                                                "Místo označeno jako dokončené",
+                                                Toast.LENGTH_SHORT).show();
+                                        ok = true;
+                                        break;
+                                    }
+                                }
+                                if (!ok) {
+                                    Toast.makeText(context,
+                                            "Místo neexistuje",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            },
+                            c.get(Calendar.YEAR),
+                            c.get(Calendar.MONTH),
+                            c.get(Calendar.DAY_OF_MONTH))
+                            .show();
+                });
+                h.llStopsContainer.addView(stopRow);
+            }
+
+            // Delete this single route
+            h.btnDelete.setOnClickListener(v -> {
+                new AlertDialog.Builder(context)
+                        .setTitle("Potvrdit")
+                        .setMessage("Opravdu chcete smazat tuto trasu?")
+                        .setPositiveButton("Ano", (d,w) -> {
+                            int idx = h.getAdapterPosition();
+                            plans.remove(idx);
+                            routeRepo.saveRoutePlans(context, plans);
+                            notifyItemRemoved(idx);
+                        })
+                        .setNegativeButton("Ne", null)
+                        .show();
             });
 
-            // Open in Mapy.cz button listener
-            holder.btnOpenMapyCz.setOnClickListener(v -> {
+            // External map buttons
+            h.btnOpenMapy.setOnClickListener(v -> {
                 if (!TextUtils.isEmpty(plan.getMapyCzUrl())) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(plan.getMapyCzUrl()));
-                    startActivity(intent);
+                    context.startActivity(
+                            new Intent(Intent.ACTION_VIEW, Uri.parse(plan.getMapyCzUrl())));
                 }
             });
-
-            // Open in Google Maps button listener
-            holder.btnOpenGoogleMaps.setOnClickListener(v -> {
+            h.btnOpenGoogle.setOnClickListener(v -> {
                 if (!TextUtils.isEmpty(plan.getGoogleMapsUrl())) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(plan.getGoogleMapsUrl()));
-                    startActivity(intent);
+                    context.startActivity(
+                            new Intent(Intent.ACTION_VIEW, Uri.parse(plan.getGoogleMapsUrl())));
                 }
             });
-//
-//            // Mark stop as completed (dummy implementation)
-//            holder.btnMarkStopCompleted.setOnClickListener(v -> {
-//                Toast.makeText(getContext(), "Místo označeno jako dokončené", Toast.LENGTH_SHORT).show();
-//            });
         }
 
-        @Override
-        public int getItemCount() {
-            return plans.size();
-        }
+        @Override public int getItemCount() { return plans.size(); }
 
-        class HistoryViewHolder extends RecyclerView.ViewHolder {
-            TextView tvCreationDate, tvStops;
-            Button btnOpenMapyCz, btnOpenGoogleMaps, btnDelete, btnMarkStopCompleted;
-
-            HistoryViewHolder(@NonNull View itemView) {
-                super(itemView);
-                tvCreationDate = itemView.findViewById(R.id.tvCreationDate);
-                tvStops = itemView.findViewById(R.id.tvStops);
-                btnOpenMapyCz = itemView.findViewById(R.id.btnOpenMapyCzRoute);
-                btnOpenGoogleMaps = itemView.findViewById(R.id.btnOpenGoogleMapsRoute);
-                btnDelete = itemView.findViewById(R.id.btnDeleteRoutePlan);
-//                btnMarkStopCompleted = itemView.findViewById(R.id.btnMarkStopCompleted);
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvCreationDate, tvStats;
+            LinearLayout llStopsContainer;
+            Button btnOpenMapy, btnOpenGoogle, btnDelete;
+            ViewHolder(@NonNull View v) {
+                super(v);
+                tvCreationDate = v.findViewById(R.id.tvCreationDate);
+                tvStats        = v.findViewById(R.id.tvStats);
+                llStopsContainer = v.findViewById(R.id.llStopsContainer);
+                btnOpenMapy    = v.findViewById(R.id.btnOpenMapyCzRoute);
+                btnOpenGoogle  = v.findViewById(R.id.btnOpenGoogleMapsRoute);
+                btnDelete      = v.findViewById(R.id.btnDeleteRoutePlan);
             }
         }
+
+
     }
+
 }

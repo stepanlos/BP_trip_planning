@@ -8,84 +8,63 @@
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="8dp">
 
-        <!-- Creation date at the top -->
+        <!-- Creation date -->
         <TextView
             android:id="@+id/tvCreationDate"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Datum: 2023-04-08 14:30"
             android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:textStyle="bold" />
 
-        <!-- TextView for stop names (excluding start and end) -->
+        <!-- Distance & duration -->
         <TextView
-            android:id="@+id/tvStops"
-            android:layout_width="0dp"
+            android:id="@+id/tvStats"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Místa: Stop1, Stop2"
+            android:text="Vzdálenost: 0,0 km, Trvání: 0,0 h"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@id/tvCreationDate"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="2dp"/>
 
-        <!-- Button to open in Mapy.cz -->
+        <!-- Container for each via‑point + check button -->
+        <LinearLayout
+            android:id="@+id/llStopsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"/>
 
-        <!-- Button to open in Google Maps -->
+        <!-- Open in Mapy.cz -->
         <Button
             android:id="@+id/btnOpenMapyCzRoute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/mapyCZ"
+            android:text="Otevřít v Mapy.cz"/>
 
-            android:text="Otevřít v Mapy.cz"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvStops" />
-
+        <!-- Open in Google Maps -->
         <Button
             android:id="@+id/btnOpenGoogleMapsRoute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:backgroundTint="@color/googleMapsColor"
+            android:text="Otevřít v Google Maps"/>
 
-            android:text="Otevřít v Google Maps"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnOpenMapyCzRoute" />
-
-        <!-- Button to mark a stop as completed -->
-<!--        <Button-->
-<!--            android:id="@+id/btnMarkStopCompleted"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Označit jako dokončené"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/btnOpenGoogleMapsRoute"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            android:layout_marginTop="4dp"/>-->
-
-        <!-- Delete Route Plan Button -->
+        <!-- Delete this route -->
         <Button
             android:id="@+id/btnDeleteRoutePlan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:backgroundTint="@android:color/holo_red_dark"
-
-            android:text="Smazat trasu"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnOpenGoogleMapsRoute" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="Smazat trasu"/>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

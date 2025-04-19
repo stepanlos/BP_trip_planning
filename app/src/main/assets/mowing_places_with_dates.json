@@ -5,7 +5,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2495,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-24"
+    ],
     "description": "Sepekov",
     "latitude": 49.455392,
     "longitude": 14.384637,
@@ -457,7 +459,11 @@
     "timeRequirement": 1.5,
     "mowingCountPerYear": 2,
     "workCost": 8726,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-14",
+      "2025-05-30",
+      "2025-11-08"
+    ],
     "description": "Protivín",
     "latitude": 49.202319,
     "longitude": 14.231031,
@@ -909,7 +915,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 4623,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-11"
+    ],
     "description": "Nosetín",
     "latitude": 49.526977,
     "longitude": 14.44825,
@@ -1361,7 +1369,9 @@
     "timeRequirement": 0.0,
     "mowingCountPerYear": 2,
     "workCost": 4807,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-07"
+    ],
     "description": "Zběšičky",
     "latitude": 49.39241,
     "longitude": 14.425343,
@@ -1813,7 +1823,11 @@
     "timeRequirement": 2.5,
     "mowingCountPerYear": 3,
     "workCost": 3705,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-22",
+      "2025-04-01",
+      "2025-01-14"
+    ],
     "description": "Strakonice",
     "latitude": 49.252802,
     "longitude": 13.880693,
@@ -2265,7 +2279,10 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 2,
     "workCost": 1892,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-16",
+      "2025-09-02"
+    ],
     "description": "Hoštice",
     "latitude": 49.199342,
     "longitude": 13.900656,
@@ -2717,7 +2734,9 @@
     "timeRequirement": 2.5,
     "mowingCountPerYear": 3,
     "workCost": 4696,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-28"
+    ],
     "description": "Čkyně",
     "latitude": 49.109903,
     "longitude": 13.834571,
@@ -3169,7 +3188,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 5563,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-20",
+      "2025-04-10"
+    ],
     "description": "Dub",
     "latitude": 49.100296,
     "longitude": 14.012429,
@@ -3621,7 +3643,9 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 3,
     "workCost": 9838,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-11"
+    ],
     "description": "Praskolesy",
     "latitude": 49.865592,
     "longitude": 13.930875,
@@ -4073,7 +4097,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 5935,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-30",
+      "2025-12-22"
+    ],
     "description": "Hostomice",
     "latitude": 49.810594,
     "longitude": 14.028067,
@@ -4525,7 +4552,9 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 5642,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-03"
+    ],
     "description": "Mořina",
     "latitude": 49.956213,
     "longitude": 14.204925,
@@ -4977,7 +5006,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 8786,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-15"
+    ],
     "description": "Hostouň nový",
     "latitude": 50.113425,
     "longitude": 14.199703,
@@ -5429,7 +5460,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 9789,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-05",
+      "2025-10-27"
+    ],
     "description": "Hostouň Starý",
     "latitude": 50.116342,
     "longitude": 14.200304,
@@ -5881,7 +5915,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 717,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-13"
+    ],
     "description": "Zlonice",
     "latitude": 50.287147,
     "longitude": 14.091682,
@@ -6333,7 +6369,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8145,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-04",
+      "2025-01-03"
+    ],
     "description": "Spomyšl",
     "latitude": 50.338036,
     "longitude": 14.359048,
@@ -6785,7 +6824,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 5651,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-18",
+      "2025-05-24",
+      "2025-09-10"
+    ],
     "description": "Bosyně",
     "latitude": 50.416061,
     "longitude": 14.546293,
@@ -7237,7 +7280,11 @@
     "timeRequirement": 3.5,
     "mowingCountPerYear": 2,
     "workCost": 4331,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-04",
+      "2025-02-24",
+      "2025-12-10"
+    ],
     "description": "Písková Lhota",
     "latitude": 50.365013,
     "longitude": 14.875514,
@@ -7689,7 +7736,9 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 5625,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-18"
+    ],
     "description": "Pětikozly",
     "latitude": 50.412301,
     "longitude": 14.81129,
@@ -8141,7 +8190,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 3210,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-28",
+      "2025-06-11",
+      "2025-09-25"
+    ],
     "description": "Hořice",
     "latitude": 50.371046,
     "longitude": 15.631284,
@@ -8593,7 +8646,10 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 2088,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-03",
+      "2025-03-07"
+    ],
     "description": "Hradec Králové - Pouchov",
     "latitude": 50.229664,
     "longitude": 15.846735,
@@ -9045,7 +9101,9 @@
     "timeRequirement": 8.0,
     "mowingCountPerYear": 3,
     "workCost": 8222,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-28"
+    ],
     "description": "České Budějovice",
     "latitude": 48.982549,
     "longitude": 14.493791,
@@ -9497,7 +9555,10 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 3988,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-22",
+      "2025-01-16"
+    ],
     "description": "Všemyslice",
     "latitude": 49.227178,
     "longitude": 14.383614,
@@ -9949,7 +10010,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6011,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-07",
+      "2025-12-26",
+      "2025-01-06"
+    ],
     "description": "Mirotice",
     "latitude": 49.43408,
     "longitude": 14.036403,
@@ -10401,7 +10466,9 @@
     "timeRequirement": 1.5,
     "mowingCountPerYear": 3,
     "workCost": 8692,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-11"
+    ],
     "description": "Přelouč",
     "latitude": 50.03603,
     "longitude": 15.572462,
@@ -10853,7 +10920,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 3809,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-09",
+      "2025-02-26",
+      "2025-05-24"
+    ],
     "description": "Kostelec nad Labem",
     "latitude": 50.226788,
     "longitude": 14.581208,
@@ -11305,7 +11376,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6417,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-23",
+      "2025-07-13",
+      "2025-06-05"
+    ],
     "description": "Mirovice",
     "latitude": 49.524038,
     "longitude": 14.031683,
@@ -11757,7 +11832,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 1910,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-18"
+    ],
     "description": "Vodňany",
     "latitude": 49.139929,
     "longitude": 14.134374,
@@ -12209,7 +12286,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7306,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-08",
+      "2025-08-30"
+    ],
     "description": "Kovářov",
     "latitude": 49.522912,
     "longitude": 14.274707,
@@ -12661,7 +12741,11 @@
     "timeRequirement": 1.5,
     "mowingCountPerYear": 2,
     "workCost": 9828,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-17",
+      "2025-11-10",
+      "2025-06-20"
+    ],
     "description": "Čichtice",
     "latitude": 49.095474,
     "longitude": 14.091603,
@@ -13113,7 +13197,10 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 3,
     "workCost": 4896,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-15",
+      "2025-04-05"
+    ],
     "description": "Neveklov",
     "latitude": 49.746577,
     "longitude": 14.535419,
@@ -13565,7 +13652,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 3824,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-20",
+      "2025-10-17",
+      "2025-02-21"
+    ],
     "description": "Měchnov",
     "latitude": 49.801382,
     "longitude": 14.899116,
@@ -14017,7 +14108,10 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 6167,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-17",
+      "2025-07-16"
+    ],
     "description": "Neustupov",
     "latitude": 49.620751,
     "longitude": 14.685627,
@@ -14469,7 +14563,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6071,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-08",
+      "2025-12-12",
+      "2025-02-16"
+    ],
     "description": "Vlašim",
     "latitude": 49.705068,
     "longitude": 14.896745,
@@ -14921,7 +15019,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7924,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-17"
+    ],
     "description": "Načeradec",
     "latitude": 49.609887,
     "longitude": 14.907024,
@@ -15373,7 +15473,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 9127,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-11",
+      "2025-04-30",
+      "2025-10-12"
+    ],
     "description": "Pravonín",
     "latitude": 49.644379,
     "longitude": 14.945191,
@@ -15825,7 +15929,11 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 6489,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-15",
+      "2025-07-08",
+      "2025-11-28"
+    ],
     "description": "Babčice",
     "latitude": 49.477615,
     "longitude": 14.900143,
@@ -16277,7 +16385,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2795,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-09",
+      "2025-04-30",
+      "2025-08-29"
+    ],
     "description": "Přehořov",
     "latitude": 49.237437,
     "longitude": 14.767874,
@@ -16729,7 +16841,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 3791,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-31",
+      "2025-11-18"
+    ],
     "description": "Prudice",
     "latitude": 49.51139,
     "longitude": 14.670734,
@@ -17181,7 +17296,11 @@
     "timeRequirement": 5.0,
     "mowingCountPerYear": 2,
     "workCost": 7612,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-16",
+      "2025-01-01",
+      "2025-03-28"
+    ],
     "description": "Odolena Voda",
     "latitude": 50.232801,
     "longitude": 14.407535,
@@ -17633,7 +17752,9 @@
     "timeRequirement": 1.5,
     "mowingCountPerYear": 3,
     "workCost": 5872,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-06"
+    ],
     "description": "Lysá nad Labem",
     "latitude": 50.203071,
     "longitude": 14.840844,
@@ -18085,7 +18206,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 8123,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-29",
+      "2025-07-04",
+      "2025-05-18"
+    ],
     "description": "Křinec",
     "latitude": 50.26509,
     "longitude": 15.117889,
@@ -18537,7 +18662,10 @@
     "timeRequirement": 5.0,
     "mowingCountPerYear": 2,
     "workCost": 2297,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-17",
+      "2025-02-27"
+    ],
     "description": "Zbraslavice",
     "latitude": 49.813572,
     "longitude": 15.18144,
@@ -18989,7 +19117,9 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 6462,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-11"
+    ],
     "description": "Malešov",
     "latitude": 49.9092,
     "longitude": 15.218901,
@@ -19441,7 +19571,9 @@
     "timeRequirement": 0.5,
     "mowingCountPerYear": 1,
     "workCost": 5443,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-11"
+    ],
     "description": "Pístina",
     "latitude": 49.068536,
     "longitude": 14.886029,
@@ -19893,7 +20025,11 @@
     "timeRequirement": 0.75,
     "mowingCountPerYear": 2,
     "workCost": 2265,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-30",
+      "2025-04-26",
+      "2025-07-09"
+    ],
     "description": "Černovice u Tábora",
     "latitude": 49.380577,
     "longitude": 14.959144,
@@ -20345,7 +20481,11 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 5726,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-07",
+      "2025-03-26",
+      "2025-10-22"
+    ],
     "description": "Třeboň",
     "latitude": 49.022704,
     "longitude": 14.792322,
@@ -20797,7 +20937,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 7806,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-16",
+      "2025-03-19",
+      "2025-12-22"
+    ],
     "description": "Městec Králové",
     "latitude": 50.200865,
     "longitude": 15.282094,
@@ -21249,7 +21393,11 @@
     "timeRequirement": 3.5,
     "mowingCountPerYear": 3,
     "workCost": 2978,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-13",
+      "2025-07-28",
+      "2025-01-02"
+    ],
     "description": "Votice",
     "latitude": 49.638686,
     "longitude": 14.648167,
@@ -21701,7 +21849,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6633,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-14"
+    ],
     "description": "Kovanice",
     "latitude": 50.165617,
     "longitude": 15.065808,
@@ -22153,7 +22303,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8682,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-18"
+    ],
     "description": "Markvarec",
     "latitude": 49.084734,
     "longitude": 15.327267,
@@ -22605,7 +22757,10 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 3289,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-08",
+      "2025-07-26"
+    ],
     "description": "Olšany u Dačic",
     "latitude": 49.135451,
     "longitude": 15.262243,
@@ -23057,7 +23212,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8087,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-26"
+    ],
     "description": "Dolní Bolíkov",
     "latitude": 49.033991,
     "longitude": 15.362681,
@@ -23509,7 +23666,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 1723,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-05"
+    ],
     "description": "Velký Pěčín",
     "latitude": 49.130577,
     "longitude": 15.435764,
@@ -23961,7 +24120,11 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 3787,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-25",
+      "2025-10-25",
+      "2025-10-20"
+    ],
     "description": "Kardašova Řečice",
     "latitude": 49.172164,
     "longitude": 14.850597,
@@ -24413,7 +24576,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 4944,
-    "visitDates": [],
+    "visitDates": [
+      "2025-11-14",
+      "2025-08-28"
+    ],
     "description": "Bohostice",
     "latitude": 49.599323,
     "longitude": 14.133938,
@@ -24865,7 +25031,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 1082,
-    "visitDates": [],
+    "visitDates": [
+      "2025-02-17",
+      "2025-02-19"
+    ],
     "description": "Březnice",
     "latitude": 49.567829,
     "longitude": 13.946419,
@@ -25317,7 +25486,10 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 3,
     "workCost": 4904,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-26",
+      "2025-05-15"
+    ],
     "description": "Čelina",
     "latitude": 49.728865,
     "longitude": 14.319611,
@@ -25769,7 +25941,9 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 9808,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-17"
+    ],
     "description": "Český Krumlov",
     "latitude": 48.81563,
     "longitude": 14.32625,
@@ -26221,7 +26395,9 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 3,
     "workCost": 2057,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-15"
+    ],
     "description": "Příbram",
     "latitude": 49.696849,
     "longitude": 14.023372,
@@ -26673,7 +26849,10 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7306,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-31",
+      "2025-08-06"
+    ],
     "description": "Třebotov",
     "latitude": 49.972903,
     "longitude": 14.301032,
@@ -27125,7 +27304,10 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 2788,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-30",
+      "2025-12-27"
+    ],
     "description": "Zalužany",
     "latitude": 49.545839,
     "longitude": 14.082981,
@@ -27577,7 +27759,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 7690,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-11"
+    ],
     "description": "Zavržice",
     "latitude": 49.628596,
     "longitude": 13.98926,
@@ -28029,7 +28213,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 3,
     "workCost": 3677,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-05",
+      "2025-09-29",
+      "2025-08-17"
+    ],
     "description": "Nová Cerekev",
     "latitude": 49.419016,
     "longitude": 15.120362,
@@ -28481,7 +28669,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 9102,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-29"
+    ],
     "description": "Blovice",
     "latitude": 49.583437,
     "longitude": 13.548011,
@@ -28933,7 +29123,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3898,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-02",
+      "2025-02-17"
+    ],
     "description": "Loučim",
     "latitude": 49.372347,
     "longitude": 13.126393,
@@ -29385,7 +29578,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 6365,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-29",
+      "2025-01-17"
+    ],
     "description": "Dlouhý Újezd",
     "latitude": 49.764237,
     "longitude": 12.61739,
@@ -29837,7 +30033,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 4525,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-04",
+      "2025-09-14",
+      "2025-12-13"
+    ],
     "description": "Domažlice",
     "latitude": 49.448374,
     "longitude": 12.932408,
@@ -30289,7 +30489,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 3156,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-21",
+      "2025-07-02",
+      "2025-05-05"
+    ],
     "description": "Drmoul",
     "latitude": 49.941332,
     "longitude": 12.642838,
@@ -30741,7 +30945,10 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 1,
     "workCost": 1711,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-02",
+      "2025-05-25"
+    ],
     "description": "Hřešihlavy",
     "latitude": 49.928642,
     "longitude": 13.628946,
@@ -31193,7 +31400,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3084,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-10",
+      "2025-01-05",
+      "2025-10-08"
+    ],
     "description": "Horní Lomany",
     "latitude": 50.134171,
     "longitude": 12.343366,
@@ -31645,7 +31856,11 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7558,
-    "visitDates": [],
+    "visitDates": [
+      "2025-10-02",
+      "2025-02-05",
+      "2025-08-22"
+    ],
     "description": "Janovice",
     "latitude": 49.333044,
     "longitude": 13.199817,
@@ -32097,7 +32312,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8918,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-26"
+    ],
     "description": "Kořen",
     "latitude": 49.852461,
     "longitude": 12.84601,
@@ -32549,7 +32766,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 9103,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-11"
+    ],
     "description": "Kožlany",
     "latitude": 50.002324,
     "longitude": 13.52927,
@@ -33001,7 +33220,10 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 7850,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-20",
+      "2025-11-22"
+    ],
     "description": "Malá Šitboř",
     "latitude": 50.043881,
     "longitude": 12.5325,
@@ -33453,7 +33675,11 @@
     "timeRequirement": 4.0,
     "mowingCountPerYear": 2,
     "workCost": 2187,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-23",
+      "2025-12-09",
+      "2025-04-29"
+    ],
     "description": "Město Touškov",
     "latitude": 49.780306,
     "longitude": 13.238985,
@@ -33905,7 +34131,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 947,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-07",
+      "2025-06-12",
+      "2025-11-07"
+    ],
     "description": "Mutěnín",
     "latitude": 49.540804,
     "longitude": 12.752567,
@@ -34357,7 +34587,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 1,
     "workCost": 3130,
-    "visitDates": [],
+    "visitDates": [
+      "2025-01-10",
+      "2025-07-13",
+      "2025-01-23"
+    ],
     "description": "Nečtiny",
     "latitude": 49.974273,
     "longitude": 13.168159,
@@ -34809,7 +35043,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 3492,
-    "visitDates": [],
+    "visitDates": [
+      "2025-05-08",
+      "2025-04-17",
+      "2025-12-14"
+    ],
     "description": "Nové Sedliště",
     "latitude": 49.730237,
     "longitude": 12.669021,
@@ -35261,7 +35499,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 765,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-09"
+    ],
     "description": "Nýrsko",
     "latitude": 49.285034,
     "longitude": 13.151202,
@@ -35713,7 +35953,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8476,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-20"
+    ],
     "description": "Osek",
     "latitude": 49.771843,
     "longitude": 13.591283,
@@ -36165,7 +36407,9 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 1,
     "workCost": 8075,
-    "visitDates": [],
+    "visitDates": [
+      "2025-03-31"
+    ],
     "description": "Pňovany",
     "latitude": 49.772997,
     "longitude": 13.124053,
@@ -36617,7 +36861,9 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 6884,
-    "visitDates": [],
+    "visitDates": [
+      "2025-08-06"
+    ],
     "description": "Pořejov",
     "latitude": 49.72421,
     "longitude": 12.592219,
@@ -37069,7 +37315,10 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 3,
     "workCost": 1933,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-31",
+      "2025-10-17"
+    ],
     "description": "Rabštejn nad Střelou",
     "latitude": 50.04011,
     "longitude": 13.286962,
@@ -37521,7 +37770,11 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 2939,
-    "visitDates": [],
+    "visitDates": [
+      "2025-09-20",
+      "2025-05-25",
+      "2025-09-16"
+    ],
     "description": "Radnice",
     "latitude": 49.854757,
     "longitude": 13.629821,
@@ -37973,7 +38226,11 @@
     "timeRequirement": 1.0,
     "mowingCountPerYear": 2,
     "workCost": 8351,
-    "visitDates": [],
+    "visitDates": [
+      "2025-12-19",
+      "2025-08-24",
+      "2025-02-06"
+    ],
     "description": "Slatina",
     "latitude": 49.397315,
     "longitude": 13.743453,
@@ -38425,7 +38682,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 9931,
-    "visitDates": [],
+    "visitDates": [
+      "2025-07-24",
+      "2025-07-28",
+      "2025-08-30"
+    ],
     "description": "Strážov",
     "latitude": 49.304632,
     "longitude": 13.266915,
@@ -38877,7 +39138,9 @@
     "timeRequirement": 3.0,
     "mowingCountPerYear": 2,
     "workCost": 7839,
-    "visitDates": [],
+    "visitDates": [
+      "2025-04-10"
+    ],
     "description": "Terešov",
     "latitude": 49.886794,
     "longitude": 13.684881,
@@ -39329,7 +39592,11 @@
     "timeRequirement": 2.0,
     "mowingCountPerYear": 2,
     "workCost": 8506,
-    "visitDates": [],
+    "visitDates": [
+      "2025-06-29",
+      "2025-10-14",
+      "2025-04-14"
+    ],
     "description": "Všeruby",
     "latitude": 49.848968,
     "longitude": 13.23677,
