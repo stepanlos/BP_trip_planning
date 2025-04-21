@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Prázdný stav -->
+    <!-- Empty state -->
     <TextView
         android:id="@+id/tvEmptyDone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Zde bude přehled datumů navštívení jednotlivých hřbitovů."
+        android:text="@string/empty_done_state"
         android:textSize="18sp"
         android:visibility="gone"
         android:textAlignment="center"
@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Seznam hotových návštěv -->
+    <!-- List of visited places -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerDone"
         android:layout_width="0dp"
