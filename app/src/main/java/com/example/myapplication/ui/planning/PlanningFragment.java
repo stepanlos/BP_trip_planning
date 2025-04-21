@@ -31,7 +31,6 @@ import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.data.RoutePlan;
 import com.example.myapplication.data.RoutePlanRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
-import com.example.myapplication.util.DiacriticInsensitiveAdapter;
 import com.example.myapplication.util.MatrixApiHelper;
 import com.example.myapplication.util.TSPPlanner;
 

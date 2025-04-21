@@ -1,4 +1,4 @@
-package com.example.myapplication.util;
+package com.example.myapplication.ui.planning;
 
 import android.content.Context;
 import java.text.Normalizer;

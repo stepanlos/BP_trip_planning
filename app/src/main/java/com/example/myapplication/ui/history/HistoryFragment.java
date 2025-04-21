@@ -38,7 +38,7 @@ import java.util.Locale;
 
 public class HistoryFragment extends Fragment {
 
-    private static final String STATS_FORMAT = "Vzdálenost: %.1f km, Trvání: %.1f h";
+    private static final String STATS_FORMAT = "Vzdálenost: %.1f km, Trvání: %.1f h";
 
     private FragmentHistoryBinding binding;
     private RoutePlanRepository routePlanRepository;
