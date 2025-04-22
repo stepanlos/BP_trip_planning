@@ -199,6 +199,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                                             Toast.LENGTH_SHORT)
                                     .show();
                         }
+                        setResult(RESULT_OK, new Intent().putExtra("updatedPlaceId", currentPlace.getId()));
                         finish();
                     },
                     c.get(Calendar.YEAR),
