@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.detail;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -7,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,7 +25,9 @@ import com.example.myapplication.util.NetworkHelper;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
@@ -44,7 +49,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private EditText etCentre;
     private EditText etArea;
     private SwitchMaterial swLocked;
-    private Button btnDelete; // New delete button
+    private Button btnSave; // New delete button
 
     private MowingPlace currentPlace;
     private List<MowingPlace> allPlaces;
@@ -76,7 +81,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         etCentre = findViewById(R.id.etCentre);
         etArea = findViewById(R.id.etArea);
         swLocked = findViewById(R.id.swLocked);
-        btnDelete = findViewById(R.id.btnDelete); // Initialize the delete button
+        btnSave = findViewById(R.id.action_save); // Initialize the delete button
 
 
         boolean isNewPlace = getIntent().getBooleanExtra(EXTRA_NEW_PLACE, false);
@@ -114,12 +119,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
         }
 
         // Set up the delete button with a confirmation dialog
-        btnDelete.setOnClickListener(v -> new AlertDialog.Builder(PlaceDetailActivity.this)
-                .setTitle("Potvrzení")
-                .setMessage("Opravdu chcete odstranit toto místo?")
-                .setPositiveButton("Ano", (dialog, which) -> deleteCurrentPlace())
-                .setNegativeButton("Ne", null)
-                .show());
+        btnSave.setOnClickListener(v -> saveChanges());
 
         etLocation.setFocusable(false);
         etLocation.setClickable(true);
@@ -159,16 +159,61 @@ public class PlaceDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        // Handle the Save action
-        if (id == R.id.action_save) {
-            saveChanges();
+        if (id == R.id.btnDelete) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Potvrzení")
+                    .setMessage("Opravdu chcete odstranit toto místo?")
+                    .setPositiveButton("Ano", (dialog, which) -> deleteCurrentPlace())
+                    .setNegativeButton("Ne", null)
+                    .show();
             return true;
         }
-        // Handle Up (back) button
-        if (id == android.R.id.home) {
+
+        else if (id == R.id.btnAddVisit) {
+            Calendar c = Calendar.getInstance();
+            MowingPlacesRepository mowingRepo = new MowingPlacesRepository();
+
+            DatePickerDialog dpd = new DatePickerDialog(
+                    PlaceDetailActivity.this,
+                    (view, year, month, dayOfMonth) -> {
+                        String sel = String.format(Locale.getDefault(),
+                                "%04d-%02d-%02d",
+                                year, month + 1, dayOfMonth);
+                        List<MowingPlace> places = mowingRepo.loadMowingPlaces(PlaceDetailActivity.this);
+                        boolean ok = false;
+                        for (MowingPlace p : places) {
+                            if (currentPlace.getId().equals(p.getId())) {
+                                p.getVisitDates().add(sel);
+                                mowingRepo.saveMowingPlaces(PlaceDetailActivity.this, places);
+                                Toast.makeText(PlaceDetailActivity.this,
+                                                "Místo označeno jako dokončené",
+                                                Toast.LENGTH_SHORT)
+                                        .show();
+                                ok = true;
+                                break;
+                            }
+                        }
+                        if (!ok) {
+                            Toast.makeText(PlaceDetailActivity.this,
+                                            "Místo neexistuje",
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                        finish();
+                    },
+                    c.get(Calendar.YEAR),
+                    c.get(Calendar.MONTH),
+                    c.get(Calendar.DAY_OF_MONTH)
+            );
+            dpd.show();
+            return true;
+        }
+
+        else if (id == android.R.id.home) {
             finish();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

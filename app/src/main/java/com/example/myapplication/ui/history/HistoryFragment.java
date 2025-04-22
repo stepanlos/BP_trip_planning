@@ -88,7 +88,7 @@ public class HistoryFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
             new AlertDialog.Builder(getContext())
-                    .setTitle("Potvrdit")
+                    .setTitle("Potvrzení")
                     .setMessage("Opravdu chcete smazat všechny trasy?")
                     .setPositiveButton("Ano", (d, w) -> {
                         routePlans.clear();
@@ -194,20 +194,13 @@ public class HistoryFragment extends Fragment {
 
             // Delete single route
             h.btnDelete.setOnClickListener(v -> {
-                new AlertDialog.Builder(context)
-                        .setTitle("Potvrdit")
-                        .setMessage("Opravdu chcete smazat tuto trasu?")
-                        .setPositiveButton("Ano", (d, w) -> {
-                            int idx = h.getAdapterPosition();
-                            plans.remove(idx);
-                            routeRepo.saveRoutePlans(context, plans);
-                            notifyItemRemoved(idx);
-                            if (onEmpty != null && plans.isEmpty()) {
-                                onEmpty.run();
-                            }
-                        })
-                        .setNegativeButton("Ne", null)
-                        .show();
+                int idx = h.getAdapterPosition();
+                plans.remove(idx);
+                routeRepo.saveRoutePlans(context, plans);
+                notifyItemRemoved(idx);
+                if (onEmpty != null && plans.isEmpty()) {
+                    onEmpty.run();
+                }
             });
 
             // External map buttons

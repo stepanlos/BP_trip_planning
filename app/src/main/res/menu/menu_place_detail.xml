@@ -3,8 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/menu_place_detail">
     <item
-        android:id="@+id/action_save"
-        android:title="@string/save"
+        android:id="@+id/btnDelete"
+        android:title="Odstranit"
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/btnAddVisit"
+        android:title="Přidat návštěvu"
+        android:orderInCategory="50"
+        app:showAsAction="never" />
 </menu>

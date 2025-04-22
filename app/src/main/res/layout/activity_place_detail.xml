@@ -3,21 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:amdroid="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:layout_alignTop="@+id/action_save">
+    xmlns:amdroid="http://schemas.android.com/tools">
 
     <!-- Scrollable content with all the TextInputLayouts -->
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="?attr/actionBarSize"
         android:padding="4dp"
-        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toTopOf="@+id/action_save">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -183,14 +181,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Red Delete Button at the bottom -->
     <Button
-        android:id="@+id/btnDelete"
+        android:id="@+id/action_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Odstranit"
-        amdroid:layout_margin="4dp"
-        android:backgroundTint="@android:color/holo_red_dark"
+        android:text="@string/save"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/green"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

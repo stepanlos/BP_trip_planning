@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AlertDialog;
+
 
 import com.example.myapplication.R;
 
@@ -45,7 +47,7 @@ public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         VisitEntry e = entries.get(pos);
-        // formát data
+        // date format
         String formattedDate;
         try {
             Date d = srcFormat.parse(e.getVisitDate());
@@ -53,19 +55,36 @@ public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.ViewHolder> {
         } catch (Exception ex) {
             formattedDate = e.getVisitDate();
         }
-        h.tvPlaceDate.setText(e.getPlaceName() + " – " + formattedDate);
-        h.btnDelete.setOnClickListener(v -> viewModel.removeVisit(context, e));
+
+        // set text
+        h.tvPlaceName.setText(e.getPlaceName());
+        h.tvVisitDate.setText(formattedDate);
+
+        // confirm delete
+        h.btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(context)
+                    .setTitle("Potvrzení")
+                    .setMessage("Opravdu chcete odstranit návštěvu?")
+                    .setPositiveButton("Ano", (dialog, which) ->
+                            viewModel.removeVisit(context, e)
+                    )
+                    .setNegativeButton("Ne", null)
+                    .show();
+        });
     }
+
 
     @Override public int getItemCount() { return entries.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPlaceDate;
+        TextView tvPlaceName, tvVisitDate;
         ImageButton btnDelete;
         ViewHolder(@NonNull View v) {
             super(v);
-            tvPlaceDate = v.findViewById(R.id.tvPlaceDate);
+            tvPlaceName = v.findViewById(R.id.tvPlaceName);
+            tvVisitDate = v.findViewById(R.id.tvVisitDate);
             btnDelete   = v.findViewById(R.id.btnDeleteVisit);
         }
     }
+
 }
