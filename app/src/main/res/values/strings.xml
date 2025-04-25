@@ -28,7 +28,7 @@
     <string name="work_speed">Rychlost práce: 1.0 x</string>
     <string name="add_extra_places_to_route">Doplnit další místa, pokud zbyde čas</string>
     <string name="last_mowing_in">Čas od posledního sečení (týdny):</string>
-    <string name="do_not_add_completed_this_year">Přidávat místa se splněným počtem navštívení pro tento rok</string>
+    <string name="do_not_add_completed_this_year">Přidávat místa se splněným počtem navštívení pro aktuální rok</string>
     <string name="add_waypoint">+ přidat místo průjezdu</string>
     <string name="generate_route">Generuj trasu</string>
     <string name="open_in_mapy_cz">Otevřít v Mapy.cz</string>

@@ -31,6 +31,7 @@ import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.data.RoutePlan;
 import com.example.myapplication.data.RoutePlanRepository;
 import com.example.myapplication.databinding.FragmentPlanningBinding;
+import com.example.myapplication.util.DiacriticInsensitiveAdapter;
 import com.example.myapplication.util.MatrixApiHelper;
 import com.example.myapplication.util.TSPPlanner;
 
@@ -327,6 +328,15 @@ public class PlanningFragment extends Fragment {
             Toast.makeText(getContext(), "Přidejte místo průjezdu, nebo vyberte automatické doplnění.", Toast.LENGTH_LONG).show();
             return;
         }
+
+        // remove duplicates from mandatoryWaypoints
+        List<MowingPlace> uniqueMandatoryWaypoints = new ArrayList<>();
+        for (MowingPlace mp : mandatoryWaypoints) {
+            if (!uniqueMandatoryWaypoints.contains(mp)) {
+                uniqueMandatoryWaypoints.add(mp);
+            }
+        }
+        mandatoryWaypoints = uniqueMandatoryWaypoints;
 
         // Build the complete list: start, mandatory waypoints, end
         List<MowingPlace> nodes = new ArrayList<>();

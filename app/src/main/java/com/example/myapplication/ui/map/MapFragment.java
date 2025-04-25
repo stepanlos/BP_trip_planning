@@ -87,7 +87,7 @@ public class MapFragment extends Fragment {
         mapView.getOverlays().clear();
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 4; // 1=Jan, … ,12=Dec
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1; // 1=Jan, … ,12=Dec
 
         for (MowingPlace place : places) {
             GeoPoint point = new GeoPoint(place.getLatitude(), place.getLongitude());
