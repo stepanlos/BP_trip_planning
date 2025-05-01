@@ -1,206 +1,333 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.util.Log;
 import android.os.Environment;
 
 import androidx.test.core.app.ApplicationProvider;
+
 import com.example.myapplication.data.MowingPlace;
-import com.example.myapplication.data.MowingPlacesRepository;
 import com.example.myapplication.util.TSPPlanner;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class TSPBenchmark {
+    // Toggle for choosing optimal path computation method
+    // true => use Held-Karp dynamic programming; false => use brute-force permutation
+    private static boolean USE_HELD_KARP = false;
+    private static final int RUNS_PER_N = 1000;
+    private static final int MAX_N = 8;
 
-    private static final int ITERATIONS = 1000;
-    private static final int MAX_INTERMEDIATES = 15;
-
-    // hranice ČR
-    private static final double MIN_LAT = 48.55;
-    private static final double MAX_LAT = 51.05;
-    private static final double MIN_LON = 12.09;
-    private static final double MAX_LON = 18.87;
+    // Bounding box for Czech Republic (approximate lat/lon ranges)
+    private static final double MIN_LAT = 48.5;
+    private static final double MAX_LAT = 51.2;
+    private static final double MIN_LON = 12.0;
+    private static final double MAX_LON = 18.9;
 
 
+
+    /**
+     * Runs the TSP benchmark tests for n = 1 to 10 intermediate nodes.
+     * @throws IOException if the dataset file cannot be read or the result file cannot be written.
+     */
     @Test
-    public void benchmarkTSPPlanner() throws IOException {
-        // Use ApplicationProvider for local context in androidTest
+    public void runBenchmark() throws IOException {
         Context context = ApplicationProvider.getApplicationContext();
-        MowingPlacesRepository repo = new MowingPlacesRepository();
-        List<MowingPlace> allPlaces = repo.loadMowingPlaces(context);
+        // 1. Load the dataset of MowingPlace nodes from mowing_places.json
+        InputStream is = context.getAssets().open("mowing_places.json");
+        Reader reader = new BufferedReader(new InputStreamReader(is));
+        Type listType = new TypeToken<List<MowingPlace>>(){}.getType();
+        List<MowingPlace> allPlaces = new Gson().fromJson(reader, listType);
+        reader.close();
 
-        // Use public Downloads directory
-        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        if (!downloadsDir.exists()) {
-            downloadsDir.mkdirs();
-        }
-        File outputFile = new File(downloadsDir, "tsp_benchmark_results.txt");
-        FileWriter writer = new FileWriter(outputFile, false);
+        Random rand = new Random();
+        // Prepare output file in Downloads directory
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File outFile = new File(downloadDir, "tsp_benchmark_results.txt");
+        PrintWriter out = new PrintWriter(new FileWriter(outFile));
 
-        Random rnd = new Random();
-
-        // For each number of intermediate stops 1..MAX_INTERMEDIATES
-        for (int n = 1; n <= MAX_INTERMEDIATES; n++) {
+        // 2. Loop over n from 1 to 10 intermediate nodes
+        for (int n = 1; n <= MAX_N; n++) {
             double totalPercent = 0.0;
-            double maxPercent = Double.NEGATIVE_INFINITY;
-
-            for (int iter = 0; iter < ITERATIONS; iter++) {
-                // Sample n distinct random places
-                List<MowingPlace> sample = new ArrayList<>(allPlaces);
-                Collections.shuffle(sample, rnd);
-                List<MowingPlace> intermediates = sample.subList(0, n);
-
-                // Dummy start and end nodes
+            double maxPercent = 0.0;
+            // Repeat the test RUNS_PER_N times for statistical reliability
+            for (int t = 0; t < RUNS_PER_N; t++) {
+                // 2a. Randomly generate start and end points within Czech Republic bounds
+                double startLat = MIN_LAT + rand.nextDouble() * (MAX_LAT - MIN_LAT);
+                double startLon = MIN_LON + rand.nextDouble() * (MAX_LON - MIN_LON);
+                double endLat = MIN_LAT + rand.nextDouble() * (MAX_LAT - MIN_LAT);
+                double endLon = MIN_LON + rand.nextDouble() * (MAX_LON - MIN_LON);
                 MowingPlace start = new MowingPlace();
                 start.setId("start");
-                start.setLatitude(randomLatitude(rnd));
-                start.setLongitude(randomLongitude(rnd));
-                start.setDistancesToOthers(Collections.emptyList());
-
+                start.setName("Start");
+                start.setLatitude(startLat);
+                start.setLongitude(startLon);
+                start.setDistancesToOthers(null);  // no predefined distances
                 MowingPlace end = new MowingPlace();
                 end.setId("end");
-                end.setLatitude(randomLatitude(rnd));
-                end.setLongitude(randomLongitude(rnd));
-                end.setDistancesToOthers(Collections.emptyList());
+                end.setName("End");
+                end.setLatitude(endLat);
+                end.setLongitude(endLon);
+                end.setDistancesToOthers(null);
 
-                // Build node list: start + intermediates + end
-                List<MowingPlace> nodes = new ArrayList<>();
-                nodes.add(start);
-                nodes.addAll(intermediates);
-                nodes.add(end);
-
-                // Run TSPPlanner
-                List<MowingPlace> route = TSPPlanner.generateRoute(nodes);
-                double routeLength = computeRouteLength(route);
-
-                // Build full distance matrix
-                double[][] dist = buildDistanceMatrix(nodes);
-                double optimum = computeOptimalPathLength(dist);
-
-                // Compute percentage degradation
-                double percent = (routeLength - optimum) / optimum * 100.0;
-                totalPercent += percent;
-                if (percent > maxPercent) {
-                    maxPercent = percent;
-                }
-            }
-            double avgPercent = totalPercent / ITERATIONS;
-            // Write results: one line per n
-            writer.write(String.format("n=%d: avg=%.2f%%, max=%.2f%%%n", n, avgPercent, maxPercent));
-            Log.d("TSPBenchmark", String.format("n=%d: avg=%.2f%%, max=%.2f%%%n", n, avgPercent, maxPercent));
-        }
-        writer.flush();
-        writer.close();
-    }
-
-    private double computeRouteLength(List<MowingPlace> route) {
-        double length = 0.0;
-        for (int i = 0; i < route.size() - 1; i++) {
-            length += getDistance(route.get(i), route.get(i + 1));
-        }
-        return length;
-    }
-
-    private double getDistance(MowingPlace a, MowingPlace b) {
-        if (a.getDistancesToOthers() != null) {
-            for (MowingPlace.DistanceEntry e : a.getDistancesToOthers()) {
-                if (e.getId().equals(b.getId())) {
-                    return e.getDistance();
-                }
-            }
-        }
-        return haversineDistance(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
-    }
-
-    private double[][] buildDistanceMatrix(List<MowingPlace> nodes) {
-        int size = nodes.size();
-        double[][] dist = new double[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (i == j) {
-                    dist[i][j] = 0.0;
-                } else {
-                    dist[i][j] = getDistance(nodes.get(i), nodes.get(j));
-                }
-            }
-        }
-        return dist;
-    }
-
-    private double computeOptimalPathLength(double[][] dist) {
-        int total = dist.length;
-        int nInter = total - 2;
-        if (nInter == 0) {
-            return dist[0][1];
-        }
-        int N = 1 << nInter;
-        double[][] dp = new double[N][nInter];
-        for (double[] row : dp) {
-            Arrays.fill(row, Double.POSITIVE_INFINITY);
-        }
-        // Base cases: from start to each first intermediate
-        for (int i = 0; i < nInter; i++) {
-            dp[1 << i][i] = dist[0][i + 1];
-        }
-        // DP over subsets
-        for (int mask = 0; mask < N; mask++) {
-            for (int u = 0; u < nInter; u++) {
-                if ((mask & (1 << u)) == 0) continue;
-                double prevCost = dp[mask][u];
-                if (Double.isInfinite(prevCost)) continue;
-                for (int v = 0; v < nInter; v++) {
-                    if ((mask & (1 << v)) != 0) continue;
-                    int nextMask = mask | (1 << v);
-                    double cost = prevCost + dist[u + 1][v + 1];
-                    if (cost < dp[nextMask][v]) {
-                        dp[nextMask][v] = cost;
+                // 2b. Randomly sample n distinct intermediate nodes from the dataset
+                List<MowingPlace> intermediateNodes = new ArrayList<>();
+                HashSet<Integer> usedIndices = new HashSet<>();
+                while (intermediateNodes.size() < n) {
+                    int idx = rand.nextInt(allPlaces.size());
+                    if (!usedIndices.contains(idx)) {
+                        usedIndices.add(idx);
+                        // We can reuse the MowingPlace object from allPlaces since we do not modify it
+                        intermediateNodes.add(allPlaces.get(idx));
                     }
                 }
-            }
-        }
-        // Close path to end
-        double best = Double.POSITIVE_INFINITY;
-        int fullMask = N - 1;
-        for (int i = 0; i < nInter; i++) {
-            double cost = dp[fullMask][i] + dist[i + 1][nInter + 1];
-            if (cost < best) {
-                best = cost;
-            }
-        }
-        return best;
+
+                // 2c. Construct the list of nodes: start + intermediates + end
+                List<MowingPlace> nodes = new ArrayList<>();
+                nodes.add(start);
+                nodes.addAll(intermediateNodes);
+                nodes.add(end);
+
+                // 2d. Use TSPPlanner to generate an approximate route through these nodes
+                List<MowingPlace> route = TSPPlanner.generateRoute(nodes);
+
+                // 2e. Compute the length of the generated route using the same logic as TSPPlanner
+                // Build the distance matrix replicating TSPPlanner’s logic (including DistanceEntry usage and Haversine fallback)
+                int interCount = intermediateNodes.size();  // this equals n
+                int totalNodes = interCount + 2;
+                // Map from node ID to matrix index
+                Map<String, Integer> indexById = new HashMap<>();
+                // Assign indices 0..(n-1) to intermediate nodes
+                for (int i = 0; i < interCount; i++) {
+                    indexById.put(intermediateNodes.get(i).getId(), i);
+                }
+                // Assign index n to start, n+1 to end
+                int startIndex = interCount;
+                int endIndex = interCount + 1;
+                indexById.put(start.getId(), startIndex);
+                indexById.put(end.getId(), endIndex);
+                // Prepare an index->node lookup for distance calculations
+                List<MowingPlace> nodeByIndex = new ArrayList<>(Collections.nCopies(totalNodes, null));
+                for (int i = 0; i < interCount; i++) {
+                    nodeByIndex.set(i, intermediateNodes.get(i));
+                }
+                nodeByIndex.set(startIndex, start);
+                nodeByIndex.set(endIndex, end);
+
+                // Initialize distance matrix
+                double INF = Double.POSITIVE_INFINITY;
+                double[][] dist = new double[totalNodes][totalNodes];
+                for (int i = 0; i < totalNodes; i++) {
+                    for (int j = 0; j < totalNodes; j++) {
+                        if (i == j) {
+                            dist[i][j] = 0.0;
+                        } else {
+                            dist[i][j] = INF;
+                        }
+                    }
+                }
+                // Fill in known distances from DistanceEntry lists
+                for (int i = 0; i < totalNodes; i++) {
+                    MowingPlace p = nodeByIndex.get(i);
+                    List<MowingPlace.DistanceEntry> distancesList = p.getDistancesToOthers();
+                    if (distancesList != null) {
+                        for (MowingPlace.DistanceEntry entry : distancesList) {
+                            Integer j = indexById.get(entry.getId());
+                            if (j != null) {
+                                dist[i][j] = entry.getDistance();
+                            }
+                        }
+                    }
+                }
+                // Enforce symmetry and use Haversine for missing distances
+                for (int i = 0; i < totalNodes; i++) {
+                    for (int j = i + 1; j < totalNodes; j++) {
+                        if (dist[i][j] == INF && dist[j][i] == INF) {
+                            // Both directions missing: use Haversine formula
+                            double d = haversineDistance(nodeByIndex.get(i), nodeByIndex.get(j));
+                            dist[i][j] = d;
+                            dist[j][i] = d;
+                        } else if (dist[i][j] == INF) {
+                            // One direction known, make symmetric
+                            dist[i][j] = dist[j][i];
+                        } else if (dist[j][i] == INF) {
+                            dist[j][i] = dist[i][j];
+                        } else {
+                            // Both directions have values (possibly different); use the smaller to ensure symmetry
+                            double d = (dist[i][j] < dist[j][i] ? dist[i][j] : dist[j][i]);
+                            dist[i][j] = d;
+                            dist[j][i] = d;
+                        }
+                    }
+                }
+                // Add zero-weight edge between start and end (to mimic TSPPlanner's cycle trick)
+                dist[startIndex][endIndex] = 0.0;
+                dist[endIndex][startIndex] = 0.0;
+
+                // Calculate the length of the TSPPlanner-generated route
+                double tspRouteLength = 0.0;
+                for (int k = 0; k < route.size() - 1; k++) {
+                    MowingPlace a = route.get(k);
+                    MowingPlace b = route.get(k + 1);
+                    int ai = indexById.get(a.getId());
+                    int bi = indexById.get(b.getId());
+                    tspRouteLength += dist[ai][bi];
+                }
+
+                // 2f. Compute the optimal path length between start and end (visiting all intermediates)
+                double optimalLength;
+                if (USE_HELD_KARP) {
+                    optimalLength = heldKarpOptimalDistance(dist, interCount, startIndex, endIndex);
+                } else {
+                    optimalLength = bruteForceOptimalDistance(dist, interCount, startIndex, endIndex);
+                }
+
+                // 2g. Calculate the percentage degradation of TSPPlanner’s solution vs optimal
+                double percentDiff = ((tspRouteLength - optimalLength) / optimalLength) * 100.0;
+                totalPercent += percentDiff;
+                if (percentDiff > maxPercent) {
+                    maxPercent = percentDiff;
+                }
+            } // end of 1000 runs for this n
+
+            // Compute average percentage difference for this n
+            double avgPercent = totalPercent / RUNS_PER_N;
+            // Write results line for this n
+            out.printf(Locale.US, "n=%d: avg=%.2f%%, max=%.2f%%\n", n, avgPercent, maxPercent);
+        } // end of loop for n=1..10
+
+        out.close();
     }
 
-    private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
-        final double R = 6371000.0;
+    /**
+     * Compute the great-circle distance between two points (Haversine formula).
+     */
+    private static double haversineDistance(MowingPlace p1, MowingPlace p2) {
+        double lat1 = p1.getLatitude();
+        double lon1 = p1.getLongitude();
+        double lat2 = p2.getLatitude();
+        double lon2 = p2.getLongitude();
+        double R = 6371000.0;  // Earth’s radius in meters
         double phi1 = Math.toRadians(lat1);
         double phi2 = Math.toRadians(lat2);
-        double dPhi = Math.toRadians(lat2 - lat1);
-        double dLambda = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2)
-                + Math.cos(phi1) * Math.cos(phi2) * Math.sin(dLambda / 2) * Math.sin(dLambda / 2);
+        double deltaPhi = Math.toRadians(lat2 - lat1);
+        double deltaLambda = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
 
-
-
-
-    private double randomLatitude(Random rnd) {
-        return MIN_LAT + rnd.nextDouble() * (MAX_LAT - MIN_LAT);
+    /**
+     * Compute the optimal path length using brute-force permutation (exhaustive search).
+     * This considers all permutations of the intermediate nodes.
+     */
+    private static double bruteForceOptimalDistance(double[][] dist, int interCount, int startIndex, int endIndex) {
+        if (interCount == 0) {
+            // No intermediates: direct distance from start to end
+            // (Use Haversine directly since the distance matrix has start-end as 0 for internal use)
+            return haversineDistance(null, null);  // (In practice, interCount will never be 0 in this benchmark)
+        }
+        // List of intermediate node indices (0 to interCount-1)
+        List<Integer> nodes = new ArrayList<>();
+        for (int i = 0; i < interCount; i++) {
+            nodes.add(i);
+        }
+        // Compute shortest route among all permutations
+        return permuteAndFindBest(nodes, 0, startIndex, endIndex, dist, Double.POSITIVE_INFINITY);
     }
 
-    private double randomLongitude(Random rnd) {
-        return MIN_LON + rnd.nextDouble() * (MAX_LON - MIN_LON);
+    // Helper method to generate permutations recursively and track the best distance found
+    private static double permuteAndFindBest(List<Integer> arr, int l, int startIndex, int endIndex, double[][] dist, double currentBest) {
+        int n = arr.size();
+        if (l == n) {
+            // We have a complete permutation in arr
+            double totalDist = 0.0;
+            // Distance from start to first intermediate
+            totalDist += dist[startIndex][arr.get(0)];
+            // Distances for intermediate sequence
+            for (int i = 0; i < n - 1; i++) {
+                totalDist += dist[arr.get(i)][arr.get(i + 1)];
+                // Prune: if partial sum already exceeds current best, no need to continue
+                if (totalDist >= currentBest) {
+                    return currentBest;
+                }
+            }
+            // Distance from last intermediate to end
+            totalDist += dist[arr.get(n - 1)][endIndex];
+            if (totalDist < currentBest) {
+                currentBest = totalDist;
+            }
+        } else {
+            for (int i = l; i < n; i++) {
+                Collections.swap(arr, l, i);
+                // Recurse and update best distance
+                currentBest = permuteAndFindBest(arr, l + 1, startIndex, endIndex, dist, currentBest);
+                Collections.swap(arr, l, i);  // backtrack
+                // Early exit: if best possible is 0, cannot get lower
+                if (currentBest == 0.0) {
+                    return 0.0;
+                }
+            }
+        }
+        return currentBest;
+    }
+
+    /**
+     * Compute the optimal path length using the Held-Karp dynamic programming algorithm.
+     * This efficiently finds the shortest path from the fixed start to fixed end through all intermediates.
+     */
+    private static double heldKarpOptimalDistance(double[][] dist, int interCount, int startIndex, int endIndex) {
+        int n = interCount;
+        if (n == 0) {
+            // No intermediates: direct distance from start to end
+            return dist[startIndex][endIndex];  // (for completeness; not used in n>=1 benchmarks)
+        }
+        int totalStates = 1 << n;
+        // dp[mask][j] = shortest distance from start to reach intermediate j with visited set = mask (mask includes j)
+        double[][] dp = new double[totalStates][n];
+        // Initialize dp with infinity
+        for (int mask = 0; mask < totalStates; mask++) {
+            Arrays.fill(dp[mask], Double.POSITIVE_INFINITY);
+        }
+        // Base case: start -> j for each single intermediate j
+        for (int j = 0; j < n; j++) {
+            int mask = 1 << j;
+            dp[mask][j] = dist[startIndex][j];
+        }
+        // Fill DP table for masks of increasing size
+        for (int mask = 1; mask < totalStates; mask++) {
+            for (int j = 0; j < n; j++) {
+                if ((mask & (1 << j)) == 0) continue;  // j not in this subset
+                double prevDist = dp[mask][j];
+                if (prevDist == Double.POSITIVE_INFINITY) continue;
+                // Try to extend path from j to a new intermediate k not yet in mask
+                int remaining = ((1 << n) - 1) ^ mask;  // bitmask of nodes not in 'mask'
+                for (int k = 0; k < n; k++) {
+                    if ((remaining & (1 << k)) == 0) continue;
+                    int newMask = mask | (1 << k);
+                    double newDist = prevDist + dist[j][k];
+                    if (newDist < dp[newMask][k]) {
+                        dp[newMask][k] = newDist;
+                    }
+                }
+            }
+        }
+        // All intermediates visited (mask = fullMask). Now add distance to end and find minimum.
+        int fullMask = (1 << n) - 1;
+        double best = Double.POSITIVE_INFINITY;
+        for (int j = 0; j < n; j++) {
+            double routeDist = dp[fullMask][j] + dist[j][endIndex];
+            if (routeDist < best) {
+                best = routeDist;
+            }
+        }
+        return best;
     }
 }

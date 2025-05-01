@@ -38,7 +38,9 @@ dependencies {
     implementation(libs.jakewharton.threetenabp)
 
     implementation(libs.osmdroid.android)
-    implementation(libs.gson)
+    implementation(libs.gson);
+    implementation("org.jgrapht:jgrapht-core:1.3.0")
+
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -51,4 +53,6 @@ dependencies {
     testImplementation(libs.core)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+
 }
