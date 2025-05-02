@@ -262,14 +262,14 @@ public class TSPPlanner {
      * that minimally increases the total route duration, as long as the overall route time stays within
      * the allowed limit.
      *
-     * <p>Filtering criteria for candidate cemeteries:
-     * <ul>
-     *   <li>If {@code addVisited} is false, only consider cemeteries that have not already been visited
+     * Filtering criteria for candidate cemeteries:
+     *
+     *   If {addVisited} is false, only consider cemeteries that have not already been visited
      *       the required number of times this year (i.e., visited fewer times than their
-     *       {@code mowingCountPerYear}).</li>
-     *   <li>Exclude any cemetery that was visited within {@code timeFromLastVisit} weeks from the
-     *       current date.</li>
-     * </ul>
+     *       {mowingCountPerYear}).
+     *   Exclude any cemetery that was visited within {timeFromLastVisit} weeks from the
+     *       current date.
+     *
      *
      * @param currentRoute       The current ordered route (with "start" at index 0 and "end" at last index).
      * @param allAvailablePlaces All available MowingPlace objects (potential extra cemeteries to add).

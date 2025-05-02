@@ -17,10 +17,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class TSPBenchmark {
-    // Toggle for choosing optimal path computation method
-    // true => use Held-Karp dynamic programming; false => use brute-force permutation
-    private static boolean USE_HELD_KARP = true;
-    private static final int RUNS_PER_N = 10000;
+
+    private static final int RUNS_PER_N = 1000;
     private static final int MAX_N = 10;
 
     // Bounding box for Czech Republic (approximate lat/lon ranges)
@@ -28,8 +26,6 @@ public class TSPBenchmark {
     private static final double MAX_LAT = 51.2;
     private static final double MIN_LON = 12.0;
     private static final double MAX_LON = 18.9;
-
-
 
     /**
      * Runs the TSP benchmark tests for n  intermediate nodes.
@@ -183,12 +179,8 @@ public class TSPBenchmark {
 
 
                 // Compute the optimal path length between start and end (visiting all intermediates)
-                double optimalLength;
-                if (USE_HELD_KARP) {
-                    optimalLength = heldKarpOptimalDistance(dist, interCount, startIndex, endIndex);
-                } else {
-                    optimalLength = bruteForceOptimalDistance(dist, interCount, startIndex, endIndex);
-                }
+                double optimalLength = bruteForceOptimalDistance(dist, interCount, startIndex, endIndex);
+
 
                 // Calculate the length of the TSPPlanner-generated route
                 double tspRouteLength = 0.0;
@@ -209,26 +201,6 @@ public class TSPBenchmark {
                 if (percentDiff < minPercent) {
                     minPercent = percentDiff;
                 }
-
-
-                //if first is not start and last is not end
-                if (!route.get(0).getId().equals(start.getId()) || !route.get(route.size() - 1).getId().equals(end.getId())) {
-                    String pathids = "";
-                    for (MowingPlace place : route) {
-                        pathids += place.getId() + " ";
-                    }
-                    out.println("Path IDs: " + pathids);
-                }
-                //if number of places is not equal to n+2
-                if (route.size() != n + 2) {
-                    String pathids = "";
-                    for (MowingPlace place : route) {
-                        pathids += place.getId() + " ";
-                    }
-                    out.println(n + " Path IDs: " + pathids);
-                }
-
-
             } // end of runs for this n
 
             // Compute average percentage difference for this n
@@ -311,57 +283,5 @@ public class TSPBenchmark {
             }
         }
         return currentBest;
-    }
-
-    /**
-     * Compute the optimal path length using the Held-Karp dynamic programming algorithm.
-     * This efficiently finds the shortest path from the fixed start to fixed end through all intermediates.
-     */
-    private static double heldKarpOptimalDistance(double[][] dist, int interCount, int startIndex, int endIndex) {
-        int n = interCount;
-        if (n == 0) {
-            // No intermediates: direct distance from start to end
-            return dist[startIndex][endIndex];  // (for completeness; not used in n>=1 benchmarks)
-        }
-        int totalStates = 1 << n;
-        // dp[mask][j] = shortest distance from start to reach intermediate j with visited set = mask (mask includes j)
-        double[][] dp = new double[totalStates][n];
-        // Initialize dp with infinity
-        for (int mask = 0; mask < totalStates; mask++) {
-            Arrays.fill(dp[mask], Double.POSITIVE_INFINITY);
-        }
-        // Base case: start -> j for each single intermediate j
-        for (int j = 0; j < n; j++) {
-            int mask = 1 << j;
-            dp[mask][j] = dist[startIndex][j];
-        }
-        // Fill DP table for masks of increasing size
-        for (int mask = 1; mask < totalStates; mask++) {
-            for (int j = 0; j < n; j++) {
-                if ((mask & (1 << j)) == 0) continue;  // j not in this subset
-                double prevDist = dp[mask][j];
-                if (prevDist == Double.POSITIVE_INFINITY) continue;
-                // Try to extend path from j to a new intermediate k not yet in mask
-                int remaining = ((1 << n) - 1) ^ mask;  // bitmask of nodes not in 'mask'
-                for (int k = 0; k < n; k++) {
-                    if ((remaining & (1 << k)) == 0) continue;
-                    int newMask = mask | (1 << k);
-                    double newDist = prevDist + dist[j][k];
-                    if (newDist < dp[newMask][k]) {
-                        dp[newMask][k] = newDist;
-                    }
-                }
-            }
-        }
-        // All intermediates visited (mask = fullMask). Now add distance to end and find minimum.
-        int fullMask = (1 << n) - 1;
-        double best = Double.POSITIVE_INFINITY;
-        for (int j = 0; j < n; j++) {
-            double routeDist = dp[fullMask][j] + dist[j][endIndex];
-            if (routeDist < best) {
-                best = routeDist;
-            }
-        }
-        return best;
     }
 }
