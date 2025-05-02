@@ -182,18 +182,35 @@ public class TSPPlanner {
         route.add(cycle.get((pos + 1) % M));
 
         // if we ended up with end at front, just flip the whole route
-        if (!route.get(0).equals(start)) {
+        if (!route.get(0).equals(start) || !route.get(route.size() - 1).equals(end)) {
             Collections.reverse(route);
         }
 
+
+        // Remove duplicates: ensure each node visited once with leaving start  at the first position and end at the last
+        Set<String> seen = new HashSet<>();
+        List<MowingPlace> finalRoute = new ArrayList<>();
+        for (MowingPlace place : route) {
+            if (!seen.contains(place.getId())) {
+                seen.add(place.getId());
+                finalRoute.add(place);
+            }
+        }
+        // Ensure start is first and end is last
+        if (!finalRoute.get(0).equals(start)) {
+            finalRoute.remove(start);
+            finalRoute.add(0, start);
+        }
+        if (!finalRoute.get(finalRoute.size() - 1).equals(end)) {
+            finalRoute.remove(end);
+            finalRoute.add(end);
+        }
         // route now goes: start → … → end, visits every node exactly once,
         // and has the same 3/2‐approximation guarantee as Christofides.
-        return route;
+        return finalRoute;
     }
 
-    // --------------------------------------------------------------------------------
-    // helpers: same as before
-    // --------------------------------------------------------------------------------
+
 
     private static double computeDistance(MowingPlace a, MowingPlace b) {
         int da = Integer.MAX_VALUE, db = Integer.MAX_VALUE;

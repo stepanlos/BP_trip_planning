@@ -54,8 +54,8 @@ public class TSPBenchmark {
         // 2. Loop over n from 1 to 10 intermediate nodes
         for (int n = 1; n <= MAX_N; n++) {
             double totalPercent = 0.0;
-            double maxPercent = 0.0;
-            double minPercent = 0.0;
+            double maxPercent = Double.NEGATIVE_INFINITY;
+            double minPercent = Double.POSITIVE_INFINITY;
             // Repeat the test RUNS_PER_N times for statistical reliability
             for (int t = 0; t < RUNS_PER_N; t++) {
                 // 2a. Randomly generate start and end points within Czech Republic bounds
@@ -94,8 +94,7 @@ public class TSPBenchmark {
                 nodes.addAll(intermediateNodes);
                 nodes.add(end);
 
-                // 2d. Use TSPPlanner to generate an approximate route through these nodes
-                List<MowingPlace> route = TSPPlanner.generateRoute(nodes);
+
 
                 // 2e. Compute the length of the generated route using the same logic as TSPPlanner
                 // Build the distance matrix replicating TSPPlanner’s logic (including DistanceEntry usage and Haversine fallback)
@@ -167,15 +166,9 @@ public class TSPBenchmark {
                     }
                 }
 
-                // Calculate the length of the TSPPlanner-generated route
-                double tspRouteLength = 0.0;
-                for (int k = 0; k < route.size() - 1; k++) {
-                    MowingPlace a = route.get(k);
-                    MowingPlace b = route.get(k + 1);
-                    int ai = indexById.get(a.getId());
-                    int bi = indexById.get(b.getId());
-                    tspRouteLength += dist[ai][bi];
-                }
+
+
+
 
 
                 int total = nodes.size();
@@ -191,6 +184,27 @@ public class TSPBenchmark {
                     }
                 }
 
+                // Synchronize distancesToOthers to reflect FW-metric
+                for (int i = 0; i < totalNodes; i++) {
+                    MowingPlace mi = nodeByIndex.get(i);
+                    List<MowingPlace.DistanceEntry> newList = new ArrayList<>();
+                    for (int j = 0; j < totalNodes; j++) {
+                        if (i == j) continue;
+                        MowingPlace.DistanceEntry de = new MowingPlace.DistanceEntry();
+                        de.setId(nodeByIndex.get(j).getId());
+                        de.setDistance((int)Math.round(dist[i][j]));
+                        de.setDuration(0); // or set proper duration if needed
+                        newList.add(de);
+                    }
+                    mi.setDistancesToOthers(newList);
+                }
+
+
+                // 2d. Use TSPPlanner to generate an approximate route through these nodes
+                List<MowingPlace> route = TSPPlanner.generateRoute(nodes);
+
+
+
                 // 2f. Compute the optimal path length between start and end (visiting all intermediates)
                 double optimalLength;
                 if (USE_HELD_KARP) {
@@ -199,13 +213,23 @@ public class TSPBenchmark {
                     optimalLength = bruteForceOptimalDistance(dist, interCount, startIndex, endIndex);
                 }
 
+                // Calculate the length of the TSPPlanner-generated route
+                double tspRouteLength = 0.0;
+                for (int k = 0; k < route.size() - 1; k++) {
+                    MowingPlace a = route.get(k);
+                    MowingPlace b = route.get(k + 1);
+                    int ai = indexById.get(a.getId());
+                    int bi = indexById.get(b.getId());
+                    tspRouteLength += dist[ai][bi];
+                }
+
                 // 2g. Calculate the percentage degradation of TSPPlanner’s solution vs optimal
                 double percentDiff = ((tspRouteLength - optimalLength) / optimalLength) * 100.0;
                 totalPercent += percentDiff;
                 if (percentDiff > maxPercent) {
                     maxPercent = percentDiff;
                 }
-                if (percentDiff < minPercent || minPercent == 0.0) {
+                if (percentDiff < minPercent) {
                     minPercent = percentDiff;
                 }
 
@@ -218,9 +242,17 @@ public class TSPBenchmark {
                     }
                     out.println("Path IDs: " + pathids);
                 }
+                //if number of places is not equal to n+2
+                if (route.size() != n + 2) {
+                    String pathids = "";
+                    for (MowingPlace place : route) {
+                        pathids += place.getId() + " ";
+                    }
+                    out.println(n + " Path IDs: " + pathids);
+                }
 
 
-            } // end of 1000 runs for this n
+            } // end of runs for this n
 
             // Compute average percentage difference for this n
             double avgPercent = totalPercent / RUNS_PER_N;
