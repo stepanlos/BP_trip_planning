@@ -231,6 +231,7 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mapView.onResume(); // important for osmdroid
+        mapViewModel.loadData(); // reload data when fragment is resumed
     }
 
     @Override

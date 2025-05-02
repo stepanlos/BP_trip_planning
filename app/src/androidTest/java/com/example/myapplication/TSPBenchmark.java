@@ -20,8 +20,8 @@ public class TSPBenchmark {
     // Toggle for choosing optimal path computation method
     // true => use Held-Karp dynamic programming; false => use brute-force permutation
     private static boolean USE_HELD_KARP = true;
-    private static final int RUNS_PER_N = 1000;
-    private static final int MAX_N = 14;
+    private static final int RUNS_PER_N = 10000;
+    private static final int MAX_N = 10;
 
     // Bounding box for Czech Republic (approximate lat/lon ranges)
     private static final double MIN_LAT = 48.5;
@@ -38,7 +38,7 @@ public class TSPBenchmark {
     @Test
     public void runBenchmark() throws IOException {
         Context context = ApplicationProvider.getApplicationContext();
-        // 1. Load the dataset of MowingPlace nodes from mowing_places.json
+        // Load the dataset of MowingPlace nodes from mowing_places.json
         InputStream is = context.getAssets().open("mowing_places.json");
         Reader reader = new BufferedReader(new InputStreamReader(is));
         Type listType = new TypeToken<List<MowingPlace>>(){}.getType();
@@ -46,19 +46,19 @@ public class TSPBenchmark {
         reader.close();
 
         Random rand = new Random();
-        // Prepare output file in Downloads directory
+        // Prepare output file in directory
         File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File outFile = new File(downloadDir, "tsp_benchmark_results.txt");
         PrintWriter out = new PrintWriter(new FileWriter(outFile));
 
-        // 2. Loop over n from 1 to 10 intermediate nodes
+        // Loop over n from 1 to 10 intermediate nodes
         for (int n = 1; n <= MAX_N; n++) {
             double totalPercent = 0.0;
             double maxPercent = Double.NEGATIVE_INFINITY;
             double minPercent = Double.POSITIVE_INFINITY;
             // Repeat the test RUNS_PER_N times for statistical reliability
             for (int t = 0; t < RUNS_PER_N; t++) {
-                // 2a. Randomly generate start and end points within Czech Republic bounds
+                // Randomly generate start and end points within aprox Czech Republic bounds
                 double startLat = MIN_LAT + rand.nextDouble() * (MAX_LAT - MIN_LAT);
                 double startLon = MIN_LON + rand.nextDouble() * (MAX_LON - MIN_LON);
                 double endLat = MIN_LAT + rand.nextDouble() * (MAX_LAT - MIN_LAT);
@@ -76,7 +76,7 @@ public class TSPBenchmark {
                 end.setLongitude(endLon);
                 end.setDistancesToOthers(null);
 
-                // 2b. Randomly sample n distinct intermediate nodes from the dataset
+                // Randomly sample n distinct intermediate nodes from the dataset
                 List<MowingPlace> intermediateNodes = new ArrayList<>();
                 HashSet<Integer> usedIndices = new HashSet<>();
                 while (intermediateNodes.size() < n) {
@@ -88,7 +88,7 @@ public class TSPBenchmark {
                     }
                 }
 
-                // 2c. Construct the list of nodes: start + intermediates + end
+                // Construct the list of nodes: start + intermediates + end
                 List<MowingPlace> nodes = new ArrayList<>();
                 nodes.add(start);
                 nodes.addAll(intermediateNodes);
@@ -96,7 +96,6 @@ public class TSPBenchmark {
 
 
 
-                // 2e. Compute the length of the generated route using the same logic as TSPPlanner
                 // Build the distance matrix replicating TSPPlanner’s logic (including DistanceEntry usage and Haversine fallback)
                 int interCount = intermediateNodes.size();  // this equals n
                 int totalNodes = interCount + 2;
@@ -166,11 +165,6 @@ public class TSPBenchmark {
                     }
                 }
 
-
-
-
-
-
                 int total = nodes.size();
                 // 2f) Metric closure via Floyd–Warshall
                 for (int k = 0; k < total; k++) {
@@ -184,28 +178,11 @@ public class TSPBenchmark {
                     }
                 }
 
-                // Synchronize distancesToOthers to reflect FW-metric
-                for (int i = 0; i < totalNodes; i++) {
-                    MowingPlace mi = nodeByIndex.get(i);
-                    List<MowingPlace.DistanceEntry> newList = new ArrayList<>();
-                    for (int j = 0; j < totalNodes; j++) {
-                        if (i == j) continue;
-                        MowingPlace.DistanceEntry de = new MowingPlace.DistanceEntry();
-                        de.setId(nodeByIndex.get(j).getId());
-                        de.setDistance((int)Math.round(dist[i][j]));
-                        de.setDuration(0); // or set proper duration if needed
-                        newList.add(de);
-                    }
-                    mi.setDistancesToOthers(newList);
-                }
-
-
-                // 2d. Use TSPPlanner to generate an approximate route through these nodes
+                // Use TSPPlanner to generate an approximate route through these nodes
                 List<MowingPlace> route = TSPPlanner.generateRoute(nodes);
 
 
-
-                // 2f. Compute the optimal path length between start and end (visiting all intermediates)
+                // Compute the optimal path length between start and end (visiting all intermediates)
                 double optimalLength;
                 if (USE_HELD_KARP) {
                     optimalLength = heldKarpOptimalDistance(dist, interCount, startIndex, endIndex);
@@ -223,7 +200,7 @@ public class TSPBenchmark {
                     tspRouteLength += dist[ai][bi];
                 }
 
-                // 2g. Calculate the percentage degradation of TSPPlanner’s solution vs optimal
+                // Calculate the percentage degradation of TSPPlanner’s solution vs optimal
                 double percentDiff = ((tspRouteLength - optimalLength) / optimalLength) * 100.0;
                 totalPercent += percentDiff;
                 if (percentDiff > maxPercent) {
