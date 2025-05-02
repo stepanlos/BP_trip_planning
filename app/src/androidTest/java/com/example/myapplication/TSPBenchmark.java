@@ -19,9 +19,9 @@ import java.util.*;
 public class TSPBenchmark {
     // Toggle for choosing optimal path computation method
     // true => use Held-Karp dynamic programming; false => use brute-force permutation
-    private static boolean USE_HELD_KARP = false;
+    private static boolean USE_HELD_KARP = true;
     private static final int RUNS_PER_N = 1000;
-    private static final int MAX_N = 8;
+    private static final int MAX_N = 14;
 
     // Bounding box for Czech Republic (approximate lat/lon ranges)
     private static final double MIN_LAT = 48.5;
@@ -32,7 +32,7 @@ public class TSPBenchmark {
 
 
     /**
-     * Runs the TSP benchmark tests for n = 1 to 10 intermediate nodes.
+     * Runs the TSP benchmark tests for n  intermediate nodes.
      * @throws IOException if the dataset file cannot be read or the result file cannot be written.
      */
     @Test
@@ -55,6 +55,7 @@ public class TSPBenchmark {
         for (int n = 1; n <= MAX_N; n++) {
             double totalPercent = 0.0;
             double maxPercent = 0.0;
+            double minPercent = 0.0;
             // Repeat the test RUNS_PER_N times for statistical reliability
             for (int t = 0; t < RUNS_PER_N; t++) {
                 // 2a. Randomly generate start and end points within Czech Republic bounds
@@ -165,9 +166,6 @@ public class TSPBenchmark {
                         }
                     }
                 }
-                // Add zero-weight edge between start and end (to mimic TSPPlanner's cycle trick)
-                dist[startIndex][endIndex] = 0.0;
-                dist[endIndex][startIndex] = 0.0;
 
                 // Calculate the length of the TSPPlanner-generated route
                 double tspRouteLength = 0.0;
@@ -177,6 +175,20 @@ public class TSPBenchmark {
                     int ai = indexById.get(a.getId());
                     int bi = indexById.get(b.getId());
                     tspRouteLength += dist[ai][bi];
+                }
+
+
+                int total = nodes.size();
+                // 2f) Metric closure via Floyd–Warshall
+                for (int k = 0; k < total; k++) {
+                    for (int i = 0; i < total; i++) {
+                        for (int j = 0; j < total; j++) {
+                            double via = dist[i][k] + dist[k][j];
+                            if (via < dist[i][j]) {
+                                dist[i][j] = via;
+                            }
+                        }
+                    }
                 }
 
                 // 2f. Compute the optimal path length between start and end (visiting all intermediates)
@@ -193,12 +205,27 @@ public class TSPBenchmark {
                 if (percentDiff > maxPercent) {
                     maxPercent = percentDiff;
                 }
+                if (percentDiff < minPercent || minPercent == 0.0) {
+                    minPercent = percentDiff;
+                }
+
+
+                //if first is not start and last is not end
+                if (!route.get(0).getId().equals(start.getId()) || !route.get(route.size() - 1).getId().equals(end.getId())) {
+                    String pathids = "";
+                    for (MowingPlace place : route) {
+                        pathids += place.getId() + " ";
+                    }
+                    out.println("Path IDs: " + pathids);
+                }
+
+
             } // end of 1000 runs for this n
 
             // Compute average percentage difference for this n
             double avgPercent = totalPercent / RUNS_PER_N;
             // Write results line for this n
-            out.printf(Locale.US, "n=%d: avg=%.2f%%, max=%.2f%%\n", n, avgPercent, maxPercent);
+            out.printf(Locale.US, "n=%d: avg=%.2f%%, max=%.2f%%, min=%.2f%%%n", n, avgPercent, maxPercent, minPercent);
         } // end of loop for n=1..10
 
         out.close();
@@ -230,9 +257,7 @@ public class TSPBenchmark {
      */
     private static double bruteForceOptimalDistance(double[][] dist, int interCount, int startIndex, int endIndex) {
         if (interCount == 0) {
-            // No intermediates: direct distance from start to end
-            // (Use Haversine directly since the distance matrix has start-end as 0 for internal use)
-            return haversineDistance(null, null);  // (In practice, interCount will never be 0 in this benchmark)
+            return dist[startIndex][endIndex];  // (for completeness; not used in n>=1 benchmarks)
         }
         // List of intermediate node indices (0 to interCount-1)
         List<Integer> nodes = new ArrayList<>();

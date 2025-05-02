@@ -1,9 +1,18 @@
 package com.example.myapplication.util;
 
+import android.util.Log;
+
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlace.DistanceEntry;
+
+import org.jgrapht.alg.cycle.HierholzerEulerianCycle;
+import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.Multigraph;
 import org.threeten.bp.LocalDate;
+
 import java.util.*;
+
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -12,6 +21,7 @@ import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlace.DistanceEntry;
+
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.tour.ChristofidesThreeHalvesApproxMetricTSP;
@@ -24,102 +34,208 @@ import java.util.List;
 
 public class TSPPlanner {
 
+    /**
+     * Returns a 3/2-approximate path from "start" → … → "end"
+     * visiting every MowingPlace exactly once.
+     */
     public static List<MowingPlace> generateRoute(List<MowingPlace> nodes) {
-        if (nodes == null || nodes.isEmpty()) {
-            return Collections.emptyList();
+        //if only one intermediate place, return start, intermediate, end
+        if (nodes.size() == 3) {
+            return List.of(nodes.get(0), nodes.get(1), nodes.get(2));
         }
-        // Najdi start a end
+
+        // 1) identify start/end
         MowingPlace start = null, end = null;
         for (MowingPlace p : nodes) {
             if ("start".equals(p.getId())) start = p;
             else if ("end".equals(p.getId())) end = p;
         }
         if (start == null || end == null) {
-            // Bez pevného startu/endu fallback na původní pořadí
-            return new ArrayList<>(nodes);
+            throw new IllegalArgumentException("Must include both start and end");
         }
 
-        // Dummy uzel
-        MowingPlace dummy = new MowingPlace();
-        dummy.setId("dummy");
-
-        // 1) Vytvoř graf a přidej vrcholy
-        Graph<MowingPlace, DefaultWeightedEdge> graph =
+        // 2) build the complete, metric weighted graph
+        Graph<MowingPlace, DefaultWeightedEdge> complete =
                 new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
         for (MowingPlace p : nodes) {
-            graph.addVertex(p);
+            complete.addVertex(p);
         }
-        graph.addVertex(dummy);
-
-        // 2) Přidej vážené hrany (kompletní graf)
-        List<MowingPlace> all = new ArrayList<>(nodes);
-        all.add(dummy);
-        for (int i = 0; i < all.size(); i++) {
-            for (int j = i + 1; j < all.size(); j++) {
-                MowingPlace u = all.get(i), v = all.get(j);
-                double w;
-                // dummy↔start a dummy↔end mají váhu 0
-                if ((u == dummy && (v == start || v == end)) ||
-                        (v == dummy && (u == start || u == end))) {
-                    w = 0.0;
-                } else {
-                    w = computeDistance(u, v);
-                }
-                DefaultWeightedEdge e = graph.addEdge(u, v);
-                graph.setEdgeWeight(e, w);
+        int n = nodes.size();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                MowingPlace a = nodes.get(i), b = nodes.get(j);
+                DefaultWeightedEdge e = complete.addEdge(a, b);
+                complete.setEdgeWeight(e, computeDistance(a, b));
             }
         }
 
-        // 3) Spusť Christofidesovu 1.5-approximaci
-        ChristofidesThreeHalvesApproxMetricTSP<MowingPlace, DefaultWeightedEdge> solver =
-                new ChristofidesThreeHalvesApproxMetricTSP<>();
-        GraphPath<MowingPlace, DefaultWeightedEdge> tour = solver.getTour(graph);
+        // 3) compute an MST on that graph
+        KruskalMinimumSpanningTree<MowingPlace, DefaultWeightedEdge> kruskal =
+                new KruskalMinimumSpanningTree<>(complete);
+        Set<DefaultWeightedEdge> mstEdges = new HashSet<>(kruskal.getSpanningTree().getEdges());
 
-        // 4) Z cyklu odstraň dummy na začátku i konci → dostaneš path start→…→end
-        List<MowingPlace> ordered = new ArrayList<>(tour.getVertexList());
-        if (!ordered.isEmpty() && ordered.get(0).equals(dummy)) {
-            ordered.remove(0);
+        // 4) find all odd‐degree vertices in the MST
+        Set<MowingPlace> odd = new HashSet<>();
+        for (MowingPlace v : complete.vertexSet()) {
+            int deg = 0;
+            for (DefaultWeightedEdge e : mstEdges) {
+                if (complete.getEdgeSource(e).equals(v) ||
+                        complete.getEdgeTarget(e).equals(v)) {
+                    deg++;
+                }
+            }
+            if ((deg & 1) == 1) {
+                odd.add(v);
+            }
         }
-        if (!ordered.isEmpty() && ordered.get(ordered.size() - 1).equals(dummy)) {
-            ordered.remove(ordered.size() - 1);
+        // 4b) symmetric‐difference with {start, end}
+        //    this flips membership of start/end in the odd‐set,
+        //    guaranteeing |odd| remains even.
+        if (!odd.remove(start)) {
+            odd.add(start);
         }
-        return ordered;
+        if (!odd.remove(end)) {
+            odd.add(end);
+        }
+
+        // 5) form the induced complete subgraph on those odd vertices
+        Graph<MowingPlace, DefaultWeightedEdge> oddComplete =
+                new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        for (MowingPlace v : odd) {
+            oddComplete.addVertex(v);
+        }
+        List<MowingPlace> oddList = new ArrayList<>(odd);
+        for (int i = 0; i < oddList.size(); i++) {
+            for (int j = i + 1; j < oddList.size(); j++) {
+                MowingPlace a = oddList.get(i), b = oddList.get(j);
+                DefaultWeightedEdge e = oddComplete.addEdge(a, b);
+                double w = complete.getEdgeWeight(complete.getEdge(a, b));
+                oddComplete.setEdgeWeight(e, w);
+            }
+        }
+
+        // 6) compute a minimum‐weight perfect matching on that odd set
+        KolmogorovMinimumWeightPerfectMatching<MowingPlace, DefaultWeightedEdge> matchingAlg =
+                new KolmogorovMinimumWeightPerfectMatching<>(oddComplete);
+        MatchingAlgorithm.Matching<MowingPlace, DefaultWeightedEdge> matching =
+                matchingAlg.getMatching();
+        Set<DefaultWeightedEdge> matchEdges = matching.getEdges();
+
+        // 7) build a multigraph that merges MST + matching edges
+        Multigraph<MowingPlace, DefaultEdge> multi =
+                new Multigraph<>(DefaultEdge.class);
+        // add all vertices
+        for (MowingPlace v : complete.vertexSet()) {
+            multi.addVertex(v);
+        }
+        // add MST edges
+        for (DefaultWeightedEdge e : mstEdges) {
+            MowingPlace u = complete.getEdgeSource(e);
+            MowingPlace v = complete.getEdgeTarget(e);
+            multi.addEdge(u, v);
+        }
+        // add matching edges
+        for (DefaultWeightedEdge e : matchEdges) {
+            MowingPlace u = oddComplete.getEdgeSource(e);
+            MowingPlace v = oddComplete.getEdgeTarget(e);
+            multi.addEdge(u, v);
+        }
+
+        // 8) add one artificial edge start–end to make the graph Eulerian
+        multi.addEdge(start, end);
+
+        // 9) compute an Eulerian cycle
+        HierholzerEulerianCycle<MowingPlace, DefaultEdge> eulerAlg =
+                new HierholzerEulerianCycle<>();
+        List<MowingPlace> cycle = eulerAlg.getEulerianCycle(multi).getVertexList();
+
+        // 10) trim duplicate last vertex if present
+        int M = cycle.size();
+        if (M > 1 && cycle.get(0).equals(cycle.get(M - 1))) {
+            cycle = cycle.subList(0, M - 1);
+            M = cycle.size();
+        }
+
+        // 11) locate our artificial start–end edge in the cycle
+        int pos = -1;
+        for (int i = 0; i < M; i++) {
+            MowingPlace a = cycle.get(i);
+            MowingPlace b = cycle.get((i + 1) % M);
+            if ((a.equals(start) && b.equals(end)) ||
+                    (a.equals(end) && b.equals(start))) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos < 0) {
+            throw new IllegalStateException("Eulerian cycle never used the artificial start–end edge");
+        }
+
+        // 12) break the cycle at that edge, reversing if needed so we go start→…→end
+        List<MowingPlace> route = new ArrayList<>(M);
+        // walk backwards from pos to include every vertex once
+        for (int k = 0; k < M - 1; k++) {
+            int idx = (pos - k + M) % M;
+            route.add(cycle.get(idx));
+        }
+        // finally include the other endpoint of the artificial edge
+        route.add(cycle.get((pos + 1) % M));
+
+        // if we ended up with end at front, just flip the whole route
+        if (!route.get(0).equals(start)) {
+            Collections.reverse(route);
+        }
+
+        // route now goes: start → … → end, visits every node exactly once,
+        // and has the same 3/2‐approximation guarantee as Christofides.
+        return route;
     }
 
-    // Pomocná funkce pro metrickou váhu (zdroj: původní Haversine + distance list)
+    // --------------------------------------------------------------------------------
+    // helpers: same as before
+    // --------------------------------------------------------------------------------
+
     private static double computeDistance(MowingPlace a, MowingPlace b) {
+        int da = Integer.MAX_VALUE, db = Integer.MAX_VALUE;
         if (a.getDistancesToOthers() != null) {
-            for (DistanceEntry de : a.getDistancesToOthers()) {
-                if (de.getId().equals(b.getId())) {
-                    return de.getDistance();
+            for (DistanceEntry e : a.getDistancesToOthers()) {
+                if (b.getId().equals(e.getId())) {
+                    da = e.getDistance();
+                    break;
                 }
             }
         }
         if (b.getDistancesToOthers() != null) {
-            for (DistanceEntry de : b.getDistancesToOthers()) {
-                if (de.getId().equals(a.getId())) {
-                    return de.getDistance();
+            for (DistanceEntry e : b.getDistancesToOthers()) {
+                if (a.getId().equals(e.getId())) {
+                    db = e.getDistance();
+                    break;
                 }
             }
         }
-        return haversineDistance(a.getLatitude(), a.getLongitude(),
-                b.getLatitude(), b.getLongitude());
+        if (da != Integer.MAX_VALUE || db != Integer.MAX_VALUE) {
+            return Math.min(da, db);
+        }
+        return haversineDistance(
+                a.getLatitude(), a.getLongitude(),
+                b.getLatitude(), b.getLongitude()
+        );
     }
 
-    // Původní Haversine
-    private static double haversineDistance(double lat1, double lon1,
-                                            double lat2, double lon2) {
-        final double R = 6371000.0;
-        double dPhi = Math.toRadians(lat2 - lat1);
-        double dLam = Math.toRadians(lon2 - lon1);
-        double phi1 = Math.toRadians(lat1);
-        double phi2 = Math.toRadians(lat2);
-        double a = Math.sin(dPhi / 2) * Math.sin(dPhi / 2)
-                + Math.cos(phi1) * Math.cos(phi2)
-                * Math.sin(dLam / 2) * Math.sin(dLam / 2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    private static double haversineDistance(
+            double lat1, double lon1,
+            double lat2, double lon2
+    ) {
+        final double R = 6_371_000.0;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double φ1 = Math.toRadians(lat1);
+        double φ2 = Math.toRadians(lat2);
+        double h = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(φ1) * Math.cos(φ2)
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
     }
-
 
 
     /**
@@ -138,12 +254,12 @@ public class TSPPlanner {
      *       current date.</li>
      * </ul>
      *
-     * @param currentRoute      The current ordered route (with "start" at index 0 and "end" at last index).
+     * @param currentRoute       The current ordered route (with "start" at index 0 and "end" at last index).
      * @param allAvailablePlaces All available MowingPlace objects (potential extra cemeteries to add).
-     * @param endTime           Total allowed route time in minutes (time constraint from start to end).
-     * @param speedMultiplier   Multiplier to adjust mowing speed (affects mowing time only; travel time is unchanged).
-     * @param addVisited        If false, skip cemeteries already visited enough times this year.
-     * @param timeFromLastVisit Exclude cemeteries visited within this many weeks of today.
+     * @param endTime            Total allowed route time in minutes (time constraint from start to end).
+     * @param speedMultiplier    Multiplier to adjust mowing speed (affects mowing time only; travel time is unchanged).
+     * @param addVisited         If false, skip cemeteries already visited enough times this year.
+     * @param timeFromLastVisit  Exclude cemeteries visited within this many weeks of today.
      * @return Updated route with extra cemeteries inserted where possible without exceeding the time limit.
      */
     public static List<MowingPlace> addExtraCemeteries(List<MowingPlace> currentRoute,
