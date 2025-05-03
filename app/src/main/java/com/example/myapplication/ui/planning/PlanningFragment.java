@@ -355,7 +355,7 @@ public class PlanningFragment extends Fragment {
             if (updatesCompleted.get() >= 2) {
                 // Both start and end updates have finished (successfully or not)
                 // Now proceed with route generation:
-                finalRoute = TSPPlanner.generateRoute(nodes);
+                finalRoute = new ArrayList<>(TSPPlanner.generateRoute(nodes));
                 if (cbAddExtra.isChecked()) {
                     // Add extra cemeteries if checkbox is checked
                     //try to parse last mowing time to int
