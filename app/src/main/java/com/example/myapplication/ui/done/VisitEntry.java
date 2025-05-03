@@ -3,7 +3,7 @@ package com.example.myapplication.ui.done;
 public class VisitEntry {
     private final String placeId;
     private final String placeName;
-    private final String visitDate; // formát "yyyy-MM-dd"
+    private final String visitDate; // formatted as "yyyy-MM-dd"
 
     public VisitEntry(String placeId, String placeName, String visitDate) {
         this.placeId = placeId;

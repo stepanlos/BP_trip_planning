@@ -180,7 +180,7 @@ public class PlanningFragment extends Fragment {
             startActivityForResult(intent, REQUEST_CODE_END);
         });
 
-        // Add Waypoint button listener: only add new waypoint if poslední je vyplněno
+        // Add Waypoint button listener: only add new waypoint if last one is filled
         btnAddWaypoint.setOnClickListener(v -> {
             if (llWaypoints.getChildCount() > 0) {
                 View lastChild = llWaypoints.getChildAt(llWaypoints.getChildCount() - 1);

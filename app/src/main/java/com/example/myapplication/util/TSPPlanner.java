@@ -19,15 +19,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.alg.matching.blossom.v5.KolmogorovMinimumWeightPerfectMatching;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 
-import com.example.myapplication.data.MowingPlace;
-import com.example.myapplication.data.MowingPlace.DistanceEntry;
-
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.jgrapht.alg.tour.ChristofidesThreeHalvesApproxMetricTSP;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -400,7 +391,7 @@ public class TSPPlanner {
                     double newTravelSec      = getDurationSeconds(prev, candidate)
                             + getDurationSeconds(candidate, next);
                     double travelIncreaseSec = newTravelSec - originalTravelSec;
-                    // výběr čistě podle nárůstu jízdy
+                    // pick the best candidate with the least travel increase
                     if (travelIncreaseSec < bestTravelIncreaseSec) {
                         bestTravelIncreaseSec = travelIncreaseSec;
                         bestCandidateMowSec   = candidateMowSec;
@@ -410,10 +401,10 @@ public class TSPPlanner {
                 }
             }
 
-            // jestli žádný kandidát, skončíme
+            // If no candidate was found, break the loop
             if (bestCandidate == null) break;
 
-            // zkontrolujeme časový limit složený z jízdy + sekání
+            // Check if adding this candidate exceeds the allowed time
             double newRouteTimeSec = currentRouteTimeSec
                     + bestTravelIncreaseSec
                     + bestCandidateMowSec;
@@ -422,7 +413,7 @@ public class TSPPlanner {
                 continue;
             }
 
-            // vložíme a aktualizujeme čas
+            // Insert the best candidate into the route at the best position
             currentRoute.add(bestInsertIndex, bestCandidate);
             candidates.remove(bestCandidate);
             currentRouteTimeSec = newRouteTimeSec;

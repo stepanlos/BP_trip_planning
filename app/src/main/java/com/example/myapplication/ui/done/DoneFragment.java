@@ -32,7 +32,7 @@ public class DoneFragment extends Fragment {
         adapter = new DoneAdapter(getContext(), viewModel, List.of());
         binding.recyclerDone.setAdapter(adapter);
 
-        // Pozor: musíme načíst data z kontextu
+        // Load data and update UI
         viewModel.getVisitEntries(getContext()).observe(getViewLifecycleOwner(), entries -> {
             if (entries.isEmpty()) {
                 binding.recyclerDone.setVisibility(View.GONE);

@@ -28,7 +28,7 @@ public class DoneViewModel extends ViewModel {
         repo = new MowingPlacesRepository();
     }
 
-    /** Načte a seřadí všechny VisitEntry z JSONu */
+
     public LiveData<List<VisitEntry>> getVisitEntries(Context context) {
         List<MowingPlace> places = repo.loadMowingPlaces(context);
         List<VisitEntry> entries = new ArrayList<>();
@@ -37,7 +37,7 @@ public class DoneViewModel extends ViewModel {
                 entries.add(new VisitEntry(p.getId(), p.getName(), date));
             }
         }
-        // řadit podle data sestupně
+        // sort by date descending
         Collections.sort(entries, new Comparator<VisitEntry>() {
             @Override
             public int compare(VisitEntry e1, VisitEntry e2) {
@@ -54,7 +54,6 @@ public class DoneViewModel extends ViewModel {
         return visitEntriesLiveData;
     }
 
-    /** Smaže jedno datum u daného místa a znovu načte data */
     public void removeVisit(Context context, VisitEntry entry) {
         List<MowingPlace> places = repo.loadMowingPlaces(context);
         for (MowingPlace p : places) {
@@ -64,7 +63,7 @@ public class DoneViewModel extends ViewModel {
             }
         }
         repo.saveMowingPlaces(context, places);
-        // znovu načíst
+        // refresh the list
         getVisitEntries(context);
     }
 }
