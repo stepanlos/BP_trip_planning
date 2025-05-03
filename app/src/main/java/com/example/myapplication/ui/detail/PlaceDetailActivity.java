@@ -297,7 +297,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     TextUtils.isEmpty(etTimeRequirement.getText().toString().trim()) ||
                     TextUtils.isEmpty(etMowingCount.getText().toString().trim()) ||
                     TextUtils.isEmpty(etPlaceName.getText().toString().trim())) {
-                Toast.makeText(this, "Jméno,poloha, časová náročnost a počet sečí jsou povinné položky.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Jméno, poloha, časová náročnost a počet sečí jsou povinné položky.", Toast.LENGTH_LONG).show();
                 return;
             }
         }
