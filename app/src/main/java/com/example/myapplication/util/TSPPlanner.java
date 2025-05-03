@@ -386,50 +386,45 @@ public class TSPPlanner {
 
         // 3. Greedily insert extra cemeteries one by one based on minimal increase in route duration.
         while (true) {
-            MowingPlace bestCandidate = null;
-            int bestInsertIndex = -1;
-            double bestIncreaseSec = Double.POSITIVE_INFINITY;
+            double bestTravelIncreaseSec = Double.POSITIVE_INFINITY;
+            double bestCandidateMowSec      = 0.0;
+            MowingPlace bestCandidate        = null;
+            int         bestInsertIndex      = -1;
 
-            // Evaluate each remaining candidate and each possible insertion position for that candidate
             for (MowingPlace candidate : candidates) {
-                // Calculate candidate's mowing time in seconds (adjusted by speed)
                 double candidateMowSec = (candidate.getTimeRequirement() / speedMultiplier) * 3600.0;
-                // Try inserting the candidate between every pair of consecutive points in the current route
                 for (int i = 0; i < currentRoute.size() - 1; i++) {
                     MowingPlace prev = currentRoute.get(i);
                     MowingPlace next = currentRoute.get(i + 1);
-                    // Compute travel time if candidate is inserted between prev and next
                     double originalTravelSec = getDurationSeconds(prev, next);
-                    double newTravelSec = getDurationSeconds(prev, candidate) + getDurationSeconds(candidate, next);
+                    double newTravelSec      = getDurationSeconds(prev, candidate)
+                            + getDurationSeconds(candidate, next);
                     double travelIncreaseSec = newTravelSec - originalTravelSec;
-                    // Total time increase would be travel increase plus the candidate's mowing time
-                    double totalIncreaseSec = travelIncreaseSec + candidateMowSec;
-                    // Track if this is the smallest increase found so far
-                    if (totalIncreaseSec < bestIncreaseSec) {
-                        bestIncreaseSec = totalIncreaseSec;
-                        bestCandidate = candidate;
-                        bestInsertIndex = i + 1;  // new candidate will be inserted at this position
+                    // výběr čistě podle nárůstu jízdy
+                    if (travelIncreaseSec < bestTravelIncreaseSec) {
+                        bestTravelIncreaseSec = travelIncreaseSec;
+                        bestCandidateMowSec   = candidateMowSec;
+                        bestCandidate         = candidate;
+                        bestInsertIndex       = i + 1;
                     }
                 }
             }
 
-            // If no candidate can be inserted (no candidates left or none found), exit the loop
-            if (bestCandidate == null) {
-                break;
-            }
+            // jestli žádný kandidát, skončíme
+            if (bestCandidate == null) break;
 
-            // Check if adding this best candidate keeps the route within the allowed time
-            double newRouteTimeSec = currentRouteTimeSec + bestIncreaseSec;
+            // zkontrolujeme časový limit složený z jízdy + sekání
+            double newRouteTimeSec = currentRouteTimeSec
+                    + bestTravelIncreaseSec
+                    + bestCandidateMowSec;
             if (newRouteTimeSec > allowedTimeSec) {
-                // Adding the best candidate would exceed the allowed time, so we cannot add any more.
-                break;
+                candidates.remove(bestCandidate);
+                continue;
             }
 
-            // Otherwise, insert the best candidate at the determined position
+            // vložíme a aktualizujeme čas
             currentRoute.add(bestInsertIndex, bestCandidate);
-            // Remove the added candidate from the list of available candidates
             candidates.remove(bestCandidate);
-            // Update the current route time to include this insertion's time cost
             currentRouteTimeSec = newRouteTimeSec;
             // Continue to the next iteration to attempt adding another candidate
         }
