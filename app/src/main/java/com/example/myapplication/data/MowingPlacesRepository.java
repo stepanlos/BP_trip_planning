@@ -16,11 +16,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Repository class for managing MowingPlace data.
+ * This class handles loading and saving mowing places from/to JSON files.
+ */
 public class MowingPlacesRepository {
+
 
     private static final String TAG = "MowingPlacesRepository";
     private static final String JSON_FILE_NAME = "mowing_places.json";
 
+    /**
+     * Loads a list of MowingPlace objects from a JSON file.
+     * The method first checks internal storage; if the file is not found, it loads from assets.
+     *
+     * @param context The application context used to access files and assets.
+     * @return A list of MowingPlace objects, or an empty list if an error occurs.
+     */
     public List<MowingPlace> loadMowingPlaces(Context context) {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
@@ -50,7 +62,14 @@ public class MowingPlacesRepository {
         }
     }
 
-    // Saves the provided list of places into internal storage as JSON.
+    /**
+     * Saves a list of MowingPlace objects to a JSON file.
+     * The method saves the file in internal storage.
+     *
+     * @param context The application context used to access files.
+     * @param places  The list of MowingPlace objects to save.
+     * @return true if the save operation was successful, false otherwise.
+     */
     public boolean saveMowingPlaces(Context context, List<MowingPlace> places) {
         try {
             Gson gson = new Gson();
@@ -70,6 +89,13 @@ public class MowingPlacesRepository {
         }
     }
 
+    /**
+     * Generates the next ID for a new MowingPlace.
+     * The method checks the existing IDs and returns the next available ID.
+     *
+     * @param context The application context used to access files.
+     * @return The next available ID as an integer.
+     */
     public int getNextId(Context context) {
         // Reload places (or use cached highestId if available)
         List<MowingPlace> places = loadMowingPlaces(context);

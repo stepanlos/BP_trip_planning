@@ -13,15 +13,32 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+/**
+ * Activity for selecting a location on a map.
+ * The user can tap on the map to place a marker and confirm the selected location.
+ */
 public class LocationPickerActivity extends AppCompatActivity {
 
+    /**
+     * Constants for passing selected latitude and longitude back to the calling activity.
+     */
     public static final String EXTRA_SELECTED_LAT = "extra_selected_lat";
+
+    /**
+     * Constant for passing selected longitude back to the calling activity.
+     */
     public static final String EXTRA_SELECTED_LON = "extra_selected_lon";
 
     private MapView mapView;
     private Marker marker;
     private Button btnConfirm;
 
+    /**
+     * Called when the activity is created.
+     * Initializes the map view, sets up the marker, and handles user interactions.
+     *
+     * @param savedInstanceState The saved instance state bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +90,10 @@ public class LocationPickerActivity extends AppCompatActivity {
         });
     }
 
-    // Handle Up button in ActionBar
+    /**
+     *  Called when the options menu item is selected.
+     *  Handles the back navigation when the home button is pressed.
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home){
@@ -83,11 +103,20 @@ public class LocationPickerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Called when the activity is resumed.
+     * Resumes the map view to allow user interaction.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mapView.onResume();
     }
+
+    /**
+     * Called when the activity is paused.
+     * Pauses the map view to save resources.
+     */
     @Override
     protected void onPause() {
         super.onPause();

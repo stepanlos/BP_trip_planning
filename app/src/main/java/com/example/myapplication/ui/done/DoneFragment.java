@@ -14,12 +14,25 @@ import com.example.myapplication.databinding.FragmentDoneBinding;
 
 import java.util.List;
 
+/**
+ * Fragment that displays a list of completed visits.
+ * It uses a RecyclerView to show the list of VisitEntry objects.
+ */
 public class DoneFragment extends Fragment {
 
     private FragmentDoneBinding binding;
     private DoneAdapter adapter;
     private DoneViewModel viewModel;
 
+    /**
+     * Called when the fragment is created.
+     * It initializes the ViewModel and sets up the RecyclerView.
+     *
+     * @param inflater           The LayoutInflater used to inflate the fragment's view.
+     * @param container          The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState A Bundle containing the saved state of the fragment.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +60,10 @@ public class DoneFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Called when the view is destroyed.
+     * It sets the binding to null to avoid memory leaks.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

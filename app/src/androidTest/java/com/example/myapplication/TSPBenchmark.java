@@ -16,6 +16,11 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * Benchmark tests for the TSP (Traveling Salesman Problem) solution.
+ * This class generates random start and end points within the approximate bounds of the Czech Republic,
+ * and measures the performance of the TSPPlanner against a brute-force optimal solution.
+ */
 public class TSPBenchmark {
 
     private static final int RUNS_PER_N = 1000;
@@ -249,7 +254,10 @@ public class TSPBenchmark {
         return permuteAndFindBest(nodes, 0, startIndex, endIndex, dist, Double.POSITIVE_INFINITY);
     }
 
-    // Helper method to generate permutations recursively and track the best distance found
+    /**
+     * Recursive function to find the best permutation of nodes.
+     * This is a brute-force approach.
+     */
     private static double permuteAndFindBest(List<Integer> arr, int l, int startIndex, int endIndex, double[][] dist, double currentBest) {
         int n = arr.size();
         if (l == n) {

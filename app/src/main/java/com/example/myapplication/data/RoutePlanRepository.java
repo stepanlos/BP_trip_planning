@@ -21,6 +21,13 @@ public class RoutePlanRepository {
     private static final String TAG = "RoutePlanRepository";
     private static final String JSON_FILE_NAME = "route_plans.json";
 
+    /**
+     * Loads route plans from a JSON file.
+     * If the file is not found in internal storage, it loads from assets.
+     *
+     * @param context The application context used to access files and assets.
+     * @return A list of RoutePlan objects, or an empty list if an error occurs.
+     */
     public List<RoutePlan> loadRoutePlans(Context context) {
         try {
             File file = new File(context.getFilesDir(), JSON_FILE_NAME);
@@ -48,6 +55,13 @@ public class RoutePlanRepository {
         }
     }
 
+    /**
+     * Saves route plans to a JSON file in internal storage.
+     *
+     * @param context The application context used to access files.
+     * @param plans   The list of RoutePlan objects to save.
+     * @return true if the save operation was successful, false otherwise.
+     */
     public boolean saveRoutePlans(Context context, List<RoutePlan> plans) {
         try {
             Gson gson = new Gson();

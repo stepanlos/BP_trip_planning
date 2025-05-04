@@ -1,7 +1,5 @@
 package com.example.myapplication.util;
 
-import android.util.Log;
-
 import com.example.myapplication.data.MowingPlace;
 import com.example.myapplication.data.MowingPlace.DistanceEntry;
 
@@ -23,6 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * TSPPlanner is a utility class for solving a variation of the Traveling Salesman Problem (TSP).
+ * It provides methods to generate an approximate route and augment it with additional stops
+ * while respecting constraints such as time limits and visit frequency.
+ */
 public class TSPPlanner {
 
     /**
@@ -202,7 +205,15 @@ public class TSPPlanner {
     }
 
 
-
+    /**
+     * Computes the distance between two MowingPlace objects.
+     * If a direct distance is available in the distance lists of the objects, it is used.
+     * Otherwise, the haversine formula is used to calculate the distance based on latitude and longitude.
+     *
+     * @param a The first MowingPlace.
+     * @param b The second MowingPlace.
+     * @return The distance between the two places.
+     */
     private static double computeDistance(MowingPlace a, MowingPlace b) {
         int da = Integer.MAX_VALUE, db = Integer.MAX_VALUE;
         if (a.getDistancesToOthers() != null) {
@@ -230,6 +241,15 @@ public class TSPPlanner {
         );
     }
 
+    /**
+     * Calculates the haversine distance between two geographical points.
+     *
+     * @param lat1 Latitude of the first point in degrees.
+     * @param lon1 Longitude of the first point in degrees.
+     * @param lat2 Latitude of the second point in degrees.
+     * @param lon2 Longitude of the second point in degrees.
+     * @return The haversine distance in meters.
+     */
     private static double haversineDistance(
             double lat1, double lon1,
             double lat2, double lon2

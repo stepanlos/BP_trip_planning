@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.detail;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,12 +27,25 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Activity for displaying and editing details of a mowing place.
+ * This activity allows users to view, edit, and save details of a specific mowing place.
+ */
 public class PlaceDetailActivity extends AppCompatActivity {
 
+    /**
+     * Intent extra key for the place ID.
+     */
     public static final String EXTRA_PLACE_ID = "extra_place_id";
 
+    /**
+     * Intent extra key for indicating if a new place is being created.
+     */
     public static final String EXTRA_NEW_PLACE = "extra_new_place";
 
+    /**
+     * Request code for location picker activity.
+     */
     private static final int REQUEST_CODE_LOCATION = 1001;
 
 
@@ -132,7 +143,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         });
     }
 
-    // Populate the UI with the details of the current place
+    /**
+     * Populates the UI fields with the details of the current place.
+     */
     private void populateFields() {
         etPlaceName.setText(currentPlace.getName());
         etTimeRequirement.setText(String.valueOf(currentPlace.getTimeRequirement()));
@@ -147,14 +160,25 @@ public class PlaceDetailActivity extends AppCompatActivity {
         swLocked.setChecked(currentPlace.getLocked() == 1);
     }
 
-    // Inflate the menu with the Save action
+    /**
+     * Inflates the menu with the remove and add visit options.
+     *
+     * @param menu The options menu in which items are placed.
+     * @return True if the menu is successfully created.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_place_detail, menu);
         return true;
     }
 
-    // Handle ActionBar item clicks
+
+    /**
+     * Handles menu item selections.
+     *
+     * @param item The selected menu item.
+     * @return True if the menu item is handled.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -218,6 +242,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handles the result from the location picker activity.
+     *
+     * @param requestCode The request code for the activity.
+     * @param resultCode  The result code from the activity.
+     * @param data        The intent data returned from the activity.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -230,7 +261,10 @@ public class PlaceDetailActivity extends AppCompatActivity {
         // (Keep any other requestCode branches if needed)
     }
 
-    // Save changes to the current place and update repository
+
+    /**
+     * Saves the changes made to the current place.
+     */
     private void saveChanges() {
         boolean changedLocation = false;
 
@@ -384,7 +418,9 @@ public class PlaceDetailActivity extends AppCompatActivity {
         }
     }
 
-    // Delete the current place and remove its references from all other places
+    /**
+     * Deletes the current place from the list and updates the repository.
+     */
     private void deleteCurrentPlace() {
         // Remove the current place from the list
         allPlaces.remove(currentPlace);

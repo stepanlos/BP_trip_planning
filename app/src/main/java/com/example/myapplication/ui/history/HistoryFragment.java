@@ -36,6 +36,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Fragment that displays a list of route plans.
+ * It uses a RecyclerView to show the list of RoutePlan objects.
+ */
 public class HistoryFragment extends Fragment {
 
     private static final String STATS_FORMAT = "Vzdálenost: %.1f km, Trvání: %.1f h";
@@ -45,6 +49,15 @@ public class HistoryFragment extends Fragment {
     private List<RoutePlan> routePlans;
     private HistoryAdapter historyAdapter;
 
+    /**
+     * Called when the fragment is created.
+     * It initializes the RecyclerView and loads the route plans.
+     *
+     * @param inflater           The LayoutInflater used to inflate the fragment's view.
+     * @param container          The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState A Bundle containing the saved state of the fragment.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -78,12 +91,23 @@ public class HistoryFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Called when the view is destroyed.
+     * It sets the binding to null to avoid memory leaks.
+     */
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.history_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /**
+     * Handles menu item selection.
+     * If the "Delete All" option is selected, it shows a confirmation dialog.
+     *
+     * @param item The selected menu item.
+     * @return true if the menu item was handled, false otherwise.
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_delete_all) {
@@ -114,6 +138,9 @@ public class HistoryFragment extends Fragment {
         }
     }
 
+    /**
+     * Adapter for displaying route plans in a RecyclerView.
+     */
     private static class HistoryAdapter extends androidx.recyclerview.widget.RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
         private final Context context;
@@ -123,6 +150,13 @@ public class HistoryFragment extends Fragment {
         private final LayoutInflater inflater;
         private final Runnable onEmpty;
 
+        /**
+         * Constructor for the HistoryAdapter.
+         *
+         * @param ctx    The context used to inflate views and access resources.
+         * @param plans  The list of RoutePlan objects to display.
+         * @param onEmpty A callback to run when the list becomes empty.
+         */
         HistoryAdapter(Context ctx, List<RoutePlan> plans, Runnable onEmpty) {
             this.context = ctx;
             this.plans = plans;
@@ -132,6 +166,14 @@ public class HistoryFragment extends Fragment {
             this.onEmpty = onEmpty;
         }
 
+        /**
+         * Creates a new ViewHolder for the RecyclerView.
+         * Inflates the layout for each item in the list.
+         *
+         * @param parent   The parent view that this ViewHolder will be attached to.
+         * @param viewType The type of the view to create.
+         */
+
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -139,6 +181,13 @@ public class HistoryFragment extends Fragment {
             return new ViewHolder(view);
         }
 
+        /**
+         * Binds the data to the ViewHolder.
+         * Sets the creation date, stats, and handles button clicks.
+         *
+         * @param h   The ViewHolder to bind data to.
+         * @param pos The position of the item in the list.
+         */
         @Override
         public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
             RoutePlan plan = plans.get(pos);
@@ -218,16 +267,31 @@ public class HistoryFragment extends Fragment {
             });
         }
 
+        /**
+         * Returns the number of items in the list.
+         *
+         * @return The size of the plans list.
+         */
         @Override
         public int getItemCount() {
             return plans.size();
         }
 
+        /**
+         * ViewHolder class for holding the views for each item in the RecyclerView.
+         * It contains references to the TextViews, LinearLayout, and Buttons.
+         */
         static class ViewHolder extends androidx.recyclerview.widget.RecyclerView.ViewHolder {
             TextView tvCreationDate, tvStats;
             LinearLayout llStopsContainer;
             Button btnOpenMapy, btnOpenGoogle, btnDelete;
 
+            /**
+             * Constructor for the ViewHolder.
+             * It initializes the views using findViewById.
+             *
+             * @param v The root view of the item layout.
+             */
             ViewHolder(@NonNull View v) {
                 super(v);
                 tvCreationDate = v.findViewById(R.id.tvCreationDate);

@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.map;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,17 +24,24 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-
+/**
+ * Fragment that displays a map with markers for mowing places.
+ * It uses the osmdroid library for map rendering and interaction.
+ * This fragment allows users to view and interact with mowing places on the map.
+ */
 public class MapFragment extends Fragment {
 
     private FragmentMapBinding binding;
     private MapViewModel mapViewModel;
     private MapView mapView;
 
+    /**
+     * ActivityResultLauncher for handling the result from PlaceDetailActivity.
+     * This is used to reload the data when returning from the detail activity.
+     */
     private ActivityResultLauncher<Intent> detailActivityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -51,6 +57,15 @@ public class MapFragment extends Fragment {
             }
     );
 
+    /**
+     * Called when the fragment is created.
+     * It initializes the ViewModel and sets up the map view.
+     *
+     * @param inflater           The LayoutInflater used to inflate the fragment's view.
+     * @param container          The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState A Bundle containing the saved state of the fragment.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -81,6 +96,12 @@ public class MapFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Update the map markers based on the list of mowing places.
+     * This method clears existing markers and adds new ones based on the provided list.
+     *
+     * @param places The list of MowingPlace objects to display on the map.
+     */
     private void updateMapMarkers(List<MowingPlace> places) {
         mapView.getOverlays().clear();
 
@@ -219,12 +240,22 @@ public class MapFragment extends Fragment {
         return R.drawable.marker_yellow;
     }
 
+    /**
+     * Show the details of a selected place in PlaceDetailActivity.
+     * This method is called when a marker on the map is clicked.
+     *
+     * @param place The MowingPlace object representing the selected place.
+     */
     private void showPlaceDetail(MowingPlace place) {
         Intent intent = new Intent(getContext(), PlaceDetailActivity.class);
         intent.putExtra(PlaceDetailActivity.EXTRA_PLACE_ID, place.getId());
         detailActivityLauncher.launch(intent);
     }
 
+    /**
+     * Called when the fragment is resumed.
+     * It resumes the map view and reloads data from the ViewModel.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -232,12 +263,20 @@ public class MapFragment extends Fragment {
         mapViewModel.loadData(); // reload data when fragment is resumed
     }
 
+    /**
+     * Called when the fragment is paused.
+     * It pauses the map view.
+     */
     @Override
     public void onPause() {
         super.onPause();
         mapView.onPause(); // important for osmdroid
     }
 
+    /**
+     * Called when the view is destroyed.
+     * It sets the binding to null to avoid memory leaks.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

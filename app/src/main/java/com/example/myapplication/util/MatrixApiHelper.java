@@ -18,6 +18,10 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility class for making API calls to the Matrix API for distance calculations.
+ * This class handles the logic for batching requests and processing responses.
+ */
 public class MatrixApiHelper {
 
     private static final String TAG = "MatrixApiHelper";
@@ -26,8 +30,22 @@ public class MatrixApiHelper {
     private static final int MAX_BATCH_SIZE = 100;
     private static final int MAX_CALLS = 10;
 
+    /**
+     * Callback interface for handling API responses.
+     * This interface defines methods for success and failure scenarios.
+     */
     public interface MatrixApiCallback {
+        /**
+         * Called when the API call is successful.
+         * This method should be implemented to handle the success scenario.
+         */
         void onSuccess();
+        /**
+         * Called when the API call fails.
+         * This method should be implemented to handle the failure scenario.
+         *
+         * @param errorMessage The error message describing the failure.
+         */
         void onFailure(String errorMessage);
     }
 

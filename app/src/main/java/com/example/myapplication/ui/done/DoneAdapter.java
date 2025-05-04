@@ -19,6 +19,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Adapter for displaying a list of completed visits in a RecyclerView.
+ * Each item shows the place name and visit date, with an option to delete the visit.
+ */
 public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.ViewHolder> {
 
     private final Context context;
@@ -27,23 +31,46 @@ public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.ViewHolder> {
     private final SimpleDateFormat srcFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private final SimpleDateFormat dstFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
+    /**
+     * Constructor for DoneAdapter.
+     *
+     * @param context  The context in which the adapter is used.
+     * @param viewModel The ViewModel associated with this adapter.
+     * @param entries   The list of VisitEntry objects to display.
+     */
     public DoneAdapter(Context context, DoneViewModel viewModel, List<VisitEntry> entries) {
         this.context = context;
         this.viewModel = viewModel;
         this.entries = entries;
     }
 
+    /**
+     * Sets the list of VisitEntry objects to display.
+     *
+     * @param entries The new list of VisitEntry objects.
+     */
     public void setEntries(List<VisitEntry> entries) {
         this.entries = entries;
         notifyDataSetChanged();
     }
 
+    /**
+     * Returns the list of VisitEntry objects currently displayed.
+     *
+     * @return The list of VisitEntry objects.
+     */
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.item_done_visit, parent, false);
         return new ViewHolder(v);
     }
 
+    /**
+     * Binds the data to the ViewHolder for a specific position.
+     *
+     * @param h   The ViewHolder to bind data to.
+     * @param pos The position of the item in the list.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         VisitEntry e = entries.get(pos);
@@ -73,9 +100,16 @@ public class DoneAdapter extends RecyclerView.Adapter<DoneAdapter.ViewHolder> {
         });
     }
 
-
+    /**
+     * Returns the number of items in the list.
+     *
+     * @return The number of VisitEntry objects.
+     */
     @Override public int getItemCount() { return entries.size(); }
 
+    /**
+     * ViewHolder class for holding the views for each item in the RecyclerView.
+     */
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvPlaceName, tvVisitDate;
         ImageButton btnDelete;

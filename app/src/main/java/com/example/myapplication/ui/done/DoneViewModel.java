@@ -17,18 +17,33 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * ViewModel class for managing the data and logic of the DoneFragment.
+ * This class handles loading and removing visit entries.
+ */
 public class DoneViewModel extends ViewModel {
 
     private final MutableLiveData<List<VisitEntry>> visitEntriesLiveData;
     private final MowingPlacesRepository repo;
     private final SimpleDateFormat srcFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
+    /**
+     * Constructor for DoneViewModel.
+     * Initializes the MutableLiveData object and the repository.
+     */
     public DoneViewModel() {
         visitEntriesLiveData = new MutableLiveData<>();
         repo = new MowingPlacesRepository();
     }
 
 
+    /**
+     * Loads the visit entries from the repository and returns them as LiveData.
+     * The entries are sorted by date in descending order.
+     *
+     * @param context The application context used to access files and assets.
+     * @return A LiveData object containing a list of VisitEntry objects.
+     */
     public LiveData<List<VisitEntry>> getVisitEntries(Context context) {
         List<MowingPlace> places = repo.loadMowingPlaces(context);
         List<VisitEntry> entries = new ArrayList<>();
@@ -54,6 +69,12 @@ public class DoneViewModel extends ViewModel {
         return visitEntriesLiveData;
     }
 
+    /**
+     * Removes a visit entry from the list and updates the repository.
+     *
+     * @param context The application context used to access files and assets.
+     * @param entry   The VisitEntry object to be removed.
+     */
     public void removeVisit(Context context, VisitEntry entry) {
         List<MowingPlace> places = repo.loadMowingPlaces(context);
         for (MowingPlace p : places) {

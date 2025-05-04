@@ -44,6 +44,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Fragment for planning a route using the TSP algorithm.
+ * Users can select start and end locations, add waypoints, and generate a route.
+ * The generated route can be viewed in Mapy.cz and Google Maps.
+ */
 public class PlanningFragment extends Fragment {
 
     private FragmentPlanningBinding binding;
@@ -83,6 +88,15 @@ public class PlanningFragment extends Fragment {
     private static final int REQUEST_CODE_START = 101;
     private static final int REQUEST_CODE_END = 102;
 
+    /**
+     * Called when the fragment is created.
+     * It initializes the UI components and sets up listeners for user interactions.
+     *
+     * @param inflater           The LayoutInflater used to inflate the fragment's view.
+     * @param container          The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState A Bundle containing the saved state of the fragment.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -213,7 +227,9 @@ public class PlanningFragment extends Fragment {
         return root;
     }
 
-    // Close soft keyboard
+    /**
+     * Hides the keyboard if it is open.
+     */
     private void closeKeyboard() {
         View view = getActivity().getCurrentFocus();
         if (view != null) {
@@ -222,12 +238,24 @@ public class PlanningFragment extends Fragment {
         }
     }
 
-    // Scroll NestedScrollView to bottom
+    /**
+     * Scrolls the NestedScrollView to the bottom.
+     */
     private void scrollToBottom() {
         nestedScrollView.post(() -> nestedScrollView.fullScroll(View.FOCUS_DOWN));
     }
 
-    // Handle results from LocationPickerActivity
+    /**
+     * Handles the result from the LocationPickerActivity.
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -243,7 +271,9 @@ public class PlanningFragment extends Fragment {
         }
     }
 
-    // Adds a new waypoint entry row to the container (llWaypoints)
+    /**
+     * Adds a new waypoint entry to the list of waypoints.
+     */
     private void addWaypointEntry() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View waypointView = inflater.inflate(R.layout.waypoint_item, llWaypoints, false);
@@ -271,7 +301,10 @@ public class PlanningFragment extends Fragment {
         llWaypoints.addView(waypointView);
     }
 
-    // Generate route using TSPPlanner with mandatory waypoints
+    /**
+     * Generates the route based on user inputs and available places.
+     * Validates inputs, retrieves distances, and computes the route using TSP algorithm.
+     */
     private void generateRoute() {
         // Parse start and end location (format "lat,lon")
         String startLocStr = etStartLocation.getText().toString().trim();
@@ -476,7 +509,12 @@ public class PlanningFragment extends Fragment {
         });
     }
 
-    // Draw polyline on map preview
+    /**
+     * Updates the map preview with the generated route.
+     * Clears previous overlays and adds a new polyline for the route.
+     *
+     * @param route The list of MowingPlace objects representing the route.
+     */
     private void updateMapPreview(List<MowingPlace> route) {
         planningMapView.getOverlays().clear();
         Polyline polyline = new Polyline();
@@ -489,7 +527,11 @@ public class PlanningFragment extends Fragment {
         planningMapView.invalidate();
     }
 
-    // Generate Mapy.cz URL
+    /**
+     * Generates a Mapy.cz URL for the route.
+     * @param route The list of MowingPlace objects representing the route.
+     * @return The generated Mapy.cz URL.
+     */
     private String generateMapyUrl(List<MowingPlace> route) {
         if (route.size() < 2) {
             return "";
@@ -514,8 +556,11 @@ public class PlanningFragment extends Fragment {
         return url;
     }
 
-    // Generate Google Maps URL for directions.
-    // Format: https://www.google.com/maps/dir/?api=1&origin=lat,lon&destination=lat,lon&waypoints=lat,lon|lat,lon&travelmode=driving
+    /**
+     * Generates a Google Maps URL for the route.
+     * @param route The list of MowingPlace objects representing the route.
+     * @return The generated Google Maps URL.
+     */
     private String generateGoogleMapsUrl(List<MowingPlace> route) {
         if (route.size() < 2)
             return "";
@@ -540,16 +585,29 @@ public class PlanningFragment extends Fragment {
         return url.toString();
     }
 
+    /**
+     * Formats the time in minutes to a string in the format "HH:MM".
+     * @param totalMinutes The total time in minutes.
+     * @return The formatted time string.
+     */
     private String formatTime(int totalMinutes) {
         int hour = totalMinutes / 60;
         int minute = totalMinutes % 60;
         return String.format("%02d:%02d", hour, minute);
     }
 
+    /**
+     * Callback interface for time selection.
+     */
     public interface TimePickerCallback {
         void onTimeSelected(int hour, int minute);
     }
 
+    /**
+     * Shows a time picker dialog for selecting time.
+     * @param initialMinutes The initial time in minutes.
+     * @param callback The callback to handle the selected time.
+     */
     private void showTimePicker(int initialMinutes, TimePickerCallback callback) {
         int initialHour = initialMinutes / 60;
         int initialMinute = initialMinutes % 60;
@@ -558,6 +616,9 @@ public class PlanningFragment extends Fragment {
         }, initialHour, initialMinute, true).show();
     }
 
+    /**
+     * Opens the Mapy.cz route in a browser.
+     */
     private void openMapyCz() {
         if (mapyCzRouteUrl == null || mapyCzRouteUrl.isEmpty()) {
             Toast.makeText(getContext(), "Trasa není vygenerována", Toast.LENGTH_SHORT).show();
@@ -567,7 +628,9 @@ public class PlanningFragment extends Fragment {
         startActivity(intent);
     }
 
-    // Open Google Maps route in browser
+    /**
+     * Opens the Google Maps route in a browser.
+     */
     private void openGoogleMaps() {
         if (googleMapsUrl == null || googleMapsUrl.isEmpty()) {
             Toast.makeText(getContext(), "Trasa není vygenerována", Toast.LENGTH_SHORT).show();
