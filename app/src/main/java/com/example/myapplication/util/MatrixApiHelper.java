@@ -26,7 +26,7 @@ public class MatrixApiHelper {
 
     private static final String TAG = "MatrixApiHelper";
     private static final String API_MATRIX_PLANNING = "https://api.mapy.cz/v1/routing/matrix-m";
-    private static final String API_KEY = "tTgH_bTEkT-C_FAUZ_PF98K1pdGdpLT-OXOxtR9pMFU";
+    private static final String API_KEY = "R7tjOhH_zFXWvRg7_hJvsv1y2qYueI-p8WW5dVLJc_o";
     private static final int MAX_BATCH_SIZE = 100;
     private static final int MAX_CALLS = 10;
 

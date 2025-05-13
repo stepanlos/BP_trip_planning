@@ -600,6 +600,11 @@ public class PlanningFragment extends Fragment {
      * Callback interface for time selection.
      */
     public interface TimePickerCallback {
+        /**
+         * Called when the time is selected.
+         * @param hour The selected hour.
+         * @param minute The selected minute.
+         */
         void onTimeSelected(int hour, int minute);
     }
 

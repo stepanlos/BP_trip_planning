@@ -31,6 +31,8 @@ public class TSPPlanner {
     /**
      * Returns a 3/2-approximate path from "start" → … → "end"
      * visiting every MowingPlace exactly once.
+     * @param nodes The list of MowingPlace objects to visit.
+     * @return A list of MowingPlace objects representing the route.
      */
     public static List<MowingPlace> generateRoute(List<MowingPlace> nodes) {
         //if only one intermediate place, return start, intermediate, end
